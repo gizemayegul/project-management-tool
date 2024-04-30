@@ -1,0 +1,23 @@
+{
+  "name": "express-vite-fullstack-template",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "fullstack": "concurrently --kill-others \"npm --prefix ./server run dev\" \"npm --prefix ./client run dev\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gizemayegul/express-vite-fullstack-template.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gizemayegul/express-vite-fullstack-template/issues"
+  },
+  "homepage": "https://github.com/gizemayegul/express-vite-fullstack-template#readme",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
