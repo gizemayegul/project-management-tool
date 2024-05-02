@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import Projects from "../models/Projects.model";
 import isAuthenticated from "../middleware/isAutenticated";
+import { CustomRequest, CustomResponse } from "../types/ types"; // Assuming the types are defined in a separate file called "types.ts"
 
 interface UserRequestBody {
   email: string;
@@ -80,7 +81,11 @@ userRoute.post(
   }
 );
 
-userRoute.get("/verify", isAuthenticated, (req, res, next) => {
-  res.json(req.user);
-});
+userRoute.get(
+  "/verify",
+  isAuthenticated,
+  (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
+    res.json(req.user);
+  }
+);
 export default userRoute;
