@@ -2,7 +2,6 @@ import { Router, Request, Response, NextFunction } from "express";
 import User from "../models/User.model";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import Projects from "../models/Projects.model";
 import isAuthenticated from "../middleware/isAutenticated";
 import { CustomRequest, CustomResponse } from "../types/ types"; // Assuming the types are defined in a separate file called "types.ts"
 
@@ -23,10 +22,12 @@ userRoute.post(
     try {
       const checkEmail = await User.findOne({ email: email });
       if (checkEmail) {
-        res.status(409).json("email already exists");
+        res.status(409).json({ message: "email already exists" });
         return;
       }
       const salt = await bcrypt.genSalt(10);
+      console.log(password, "paswsword");
+      console.log("email", email);
       const hashedPassword = await bcrypt.hash(password, salt);
       const createdUser = await User.create({
         email: email,
@@ -59,7 +60,7 @@ userRoute.post(
       const hashedPassword: any = findUser?.password;
       const isMatch = await bcrypt.compare(password, hashedPassword);
       if (!isMatch) {
-        res.status(400).json("the informations are not correct");
+        res.status(400).json({ message: "the informations are not correct" });
         return;
       }
       const {
