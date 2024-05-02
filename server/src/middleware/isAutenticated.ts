@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { NextFunction } from "express";
-import { CustomRequest, CustomResponse } from "../types/ types"; // Assuming the types are defined in a separate file called "types.ts"
+import { CustomRequest, CustomResponse } from "../types/ types";
 
 export const isAuthenticated = (
   req: CustomRequest,
