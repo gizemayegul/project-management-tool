@@ -1,4 +1,4 @@
-import express, { Express, Request, Response, Application } from "express";
+import express, { Application } from "express";
 import dotenv from "dotenv";
 dotenv.config();
 import "./db";
