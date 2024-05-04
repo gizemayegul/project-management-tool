@@ -1,23 +1,27 @@
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 const API_URL = import.meta.env.VITE_SERVER_URL;
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const response: object = await axios.post(`${API_URL}/api/login`, {
+      const response = await axios.post(`${API_URL}/api/login`, {
         email: email,
         password: password,
       });
       console.log(response);
       setError("");
+      navigate("/dashboard");
+      localStorage.setItem("token", response.data.token);
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         setError(err.response?.data.message);
