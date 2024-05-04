@@ -1,24 +1,32 @@
 import "./App.css";
 import "./index.css";
 import Signup from "./Pages/Signup/Signup";
-import { useEffect, useState } from "react";
-import axios from "axios";
 import { Route, Routes } from "react-router-dom";
 import Navbar from "./Components/Navbar/Navbar";
 import Login from "./Pages/Login/Login";
-
-const API_URL = import.meta.env.VITE_SERVER_URL;
-console.log(API_URL);
-
+import Dashboard from "./Pages/Dashboard/Dashboard";
+import { AuthContext } from "./Context/AuthContext";
+import { useContext } from "react";
+import ProtectedRoute from "./utils/ ProtectedRoute";
+import NotFound from "./Pages/NotFound/NotFound";
 function App() {
+  const user = useContext(AuthContext);
+
   return (
     <>
-      {/* <div className="text-3xl font-bold underline">{data}</div> */}
       <Navbar />
       <Routes>
-        {/* <Route path="/" element={<Home />} /> */}
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute user={user}>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );
