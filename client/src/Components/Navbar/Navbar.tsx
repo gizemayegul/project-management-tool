@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 export default function Navbar() {
   return (
-    <div>
+    <div data-testid="navbar">
       {/* <Link to="/">Home</Link> */}
       <nav className="bg-gray-800">
         <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
