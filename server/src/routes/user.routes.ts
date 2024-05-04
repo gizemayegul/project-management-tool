@@ -3,7 +3,7 @@ import User from "../models/User.model";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import isAuthenticated from "../middleware/isAutenticated";
-import { CustomRequest, CustomResponse } from "../types/ types"; // Assuming the types are defined in a separate file called "types.ts"
+import { CustomRequest, CustomResponse } from "../types/ types";
 
 interface UserRequestBody {
   email: string;
@@ -17,17 +17,22 @@ userRoute.post(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { email, password, name } = req.body as UserRequestBody;
     if (!email || !password || !name) {
-      res.status(400).json("Please fill all fields");
+      res
+        .status(400)
+        .json({ message: "Please provide email, password, and name" });
+      return;
     }
     try {
       const checkEmail = await User.findOne({ email: email });
       if (checkEmail) {
-        res.status(409).json({ message: "email already exists" });
+        res.status(409).json({
+          message: "Email already exists. Please choose a different email.",
+        });
         return;
       }
       const salt = await bcrypt.genSalt(10);
-      console.log(password, "paswsword");
-      console.log("email", email);
+      res.status(200).json({ message: "User created successfully" });
+
       const hashedPassword = await bcrypt.hash(password, salt);
       const createdUser = await User.create({
         email: email,
@@ -36,10 +41,10 @@ userRoute.post(
       });
 
       const { password: _, ...userInfo } = createdUser.toObject();
-      res.json({ userInfo });
     } catch (err) {
-      console.error(err, "an error occured while creating user");
-      res.status(500).json("An error occurred while creating user");
+      res
+        .status(500)
+        .json({ message: "An error occurred while creating user" });
     }
   }
 );
@@ -49,18 +54,18 @@ userRoute.post(
   async (req: Request, res: Response, NextFunction: NextFunction) => {
     const { email, password } = req.body as UserRequestBody;
     if (!email || !password) {
-      res.status(400).json("Please fill the all the fields");
+      res.status(400).json({ message: "Please provide email and password" });
       return;
     }
     try {
       const findUser = await User.findOne({ email });
       if (!findUser) {
-        res.status(400).json("user is not found please sign up");
+        res.status(400).json({ message: "User not found. Please sign up." });
       }
       const hashedPassword: any = findUser?.password;
       const isMatch = await bcrypt.compare(password, hashedPassword);
       if (!isMatch) {
-        res.status(400).json({ message: "the informations are not correct" });
+        res.status(400).json({ message: "Invalid email or password" });
         return;
       }
       const {
