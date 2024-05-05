@@ -21,7 +21,6 @@ export default function Login() {
         email: email,
         password: password,
       });
-      console.log(response);
       setError("");
       setToken(response.data.token);
       navigate("/dashboard");
