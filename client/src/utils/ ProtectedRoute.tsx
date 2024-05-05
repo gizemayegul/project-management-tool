@@ -1,28 +1,12 @@
-import { Navigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import Loading from "../Components/Loading/Loading";
+import { AuthContext } from "../Context/AuthContext";
+import { useContext } from "react";
+import React from "react";
 
 interface userChild {
-  user: boolean | null;
-  children: React.ReactElement;
+  children: React.ReactNode;
 }
-export default function ProtectedRoute({ user, children }: userChild) {
-  const [loading, setLoading] = useState(true);
-  //   console.log(user, "atbegin");
+export default function ProtectedRoute({ children }: userChild) {
+  const { isLoggedIn } = useContext(AuthContext);
 
-  useEffect(() => {
-    if (user) {
-      setLoading(false);
-    }
-  }, [user]);
-
-  if (loading) {
-    return (
-      <div>
-        {" "}
-        <Loading />
-      </div>
-    );
-  }
-  return user ? <>{children}</> : <Navigate to="/signup" />;
+  if (isLoggedIn) return children;
 }

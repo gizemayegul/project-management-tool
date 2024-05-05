@@ -2,6 +2,8 @@ import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../../Context/AuthContext";
 const API_URL = import.meta.env.VITE_SERVER_URL;
 
 export default function Login() {
@@ -9,6 +11,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { setToken } = useContext(AuthContext);
 
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,8 +23,8 @@ export default function Login() {
       });
       console.log(response);
       setError("");
+      setToken(response.data.token);
       navigate("/dashboard");
-      localStorage.setItem("token", response.data.token);
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         setError(err.response?.data.message);

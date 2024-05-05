@@ -76,7 +76,7 @@ userRoute.post(
 
       const token = jwt.sign(payload, process.env.JWT_SECRET || "", {
         algorithm: "HS256",
-        expiresIn: "3d",
+        expiresIn: "6h",
       });
       res
         .status(201)
