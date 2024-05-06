@@ -11,6 +11,10 @@ const boardsSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Projects",
     },
+    boardInitialColumns: {
+      type: [String],
+      default: ["Todo", "Inprogress", "Done"],
+    },
   },
   {
     timestamps: true,

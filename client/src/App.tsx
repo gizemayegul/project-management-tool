@@ -12,6 +12,8 @@ import NotFound from "./Pages/NotFound/NotFound";
 import Profile from "./Pages/Profile/Profile";
 import { useNavigate } from "react-router-dom";
 import Home from "./Pages/Home/Home";
+import CreateProject from "./Pages/CreateProject/CreateProject";
+import Projects from "./Pages/Projects/Projects";
 
 function App() {
   const { userExpire } = useContext(AuthContext);
@@ -42,6 +44,22 @@ function App() {
           element={
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/createaproject"
+          element={
+            <ProtectedRoute>
+              <CreateProject />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/projects"
+          element={
+            <ProtectedRoute>
+              <Projects />
             </ProtectedRoute>
           }
         />

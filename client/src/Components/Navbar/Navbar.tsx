@@ -15,12 +15,7 @@ export default function Navbar() {
             >
               Home
             </Link>
-            <Link
-              className="bg-gray-900 text-white rounded-md px-3 py-2 ml-3 text-sm font-medium"
-              to="/"
-            >
-              Projects
-            </Link>
+
             <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-end">
               <div className="flex space-x-4">
                 {!isLoggedIn ? (
@@ -41,6 +36,18 @@ export default function Navbar() {
                   </>
                 ) : (
                   <>
+                    <Link
+                      className="bg-gray-900 text-white rounded-md px-3 py-2 ml-3 text-sm font-medium"
+                      to="/dashboard"
+                    >
+                      Dashboard
+                    </Link>
+                    <Link
+                      className="bg-gray-900 text-white rounded-md px-3 py-2 ml-3 text-sm font-medium"
+                      to="/projects"
+                    >
+                      Projects
+                    </Link>
                     <Link
                       to="/profile"
                       className="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"

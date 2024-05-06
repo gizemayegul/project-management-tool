@@ -6,13 +6,13 @@ const projectsSchema = new Schema(
       type: String,
       default: "My new Project",
       required: [true, "Project name is required"],
+      unique: true,
     },
 
     userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
     },
-    boardInitialColumns: ["Todo", "Inprogress", "Done"],
   },
   {
     timestamps: true,
