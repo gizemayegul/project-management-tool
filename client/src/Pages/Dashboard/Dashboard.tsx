@@ -2,27 +2,23 @@ import { useContext } from "react";
 import { AuthContext } from "../../Context/AuthContext";
 import Empty from "../../Components/Empty/Empty";
 import { useNavigate } from "react-router-dom";
+import { ProjectContext } from "../../Context/ProjectContext";
+import ProjectButton from "../../Components/ProjectButton/ProjectButton";
 
 export default function Dashboard() {
   const { user } = useContext(AuthContext);
+  const { projects } = useContext(ProjectContext);
+
   const navigate = useNavigate();
 
   return (
     <div>
-      <div className="flex justify-between content-center flex-col ">
-        <h1>
-          Welcome {user && user.name} you haven't created a new project yet,
-        </h1>
-        <button
-          onClick={() => {
-            navigate("/createaproject");
-          }}
-          className=" bg-indigo-600  text-white hover:bg-indigo-500  hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-        >
-          Create a New project
-        </button>{" "}
-      </div>
-      <Empty />
+      <h1>
+        Welcome {user && user.name}{" "}
+        {!projects?.length && "you haven't created a new project yet,"}
+      </h1>
+      <ProjectButton />
+      {!projects?.length && <Empty />}
     </div>
   );
 }

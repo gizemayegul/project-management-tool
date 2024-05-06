@@ -4,7 +4,7 @@ import Signup from "./Pages/Signup/Signup";
 import { Route, Routes } from "react-router-dom";
 import Navbar from "./Components/Navbar/Navbar";
 import Login from "./Pages/Login/Login";
-import Dashboard from "./Pages/Dashboard/Dashboard";
+import Dashboard from "./Pages/Dashboard/Dashboard.1";
 import { AuthContext } from "./Context/AuthContext";
 import { useContext, useEffect } from "react";
 import ProtectedRoute from "./utils/ ProtectedRoute";
