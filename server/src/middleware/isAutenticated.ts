@@ -15,7 +15,10 @@ export const isAuthenticated = (
 
   jwt.verify(token, process.env.JWT_SECRET as string, (error, decoded) => {
     if (error) return res.status(401).json({ message: "Unauthorized" });
-    req.user = { ...(decoded as object), isAuthenticated: true };
+    req.user = { ...(decoded as Object), isAuthenticated: true };
+    // console.log(req.user._id, "useridmiddleware");
+    // console.log(req.user, "mw");
+    // console.log(decoded, "dec");
     next();
   });
 };

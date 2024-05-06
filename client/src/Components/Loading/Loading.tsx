@@ -1,4 +1,4 @@
-import loading from "../../assets/loadingAnimation.json";
+import loading from "../../assets/json/loadingAnimation.json";
 import { Player } from "@lottiefiles/react-lottie-player";
 export default function Loading() {
   return (
