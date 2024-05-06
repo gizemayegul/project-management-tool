@@ -1,15 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios, { AxiosError } from "axios";
 const API_URL = import.meta.env.VITE_SERVER_URL;
 import { useNavigate } from "react-router-dom";
+import { ProjectContext } from "../../Context/ProjectContext";
 
 export default function CreateProject() {
   const [projectName, setProjectName] = useState<string | undefined>("");
   const [error, setError] = useState<string | undefined>("");
   const localStoreToken = localStorage.getItem("token");
   const navigate = useNavigate();
+  const { setProjects } = useContext(ProjectContext);
 
-  const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(projectName);
     const createProject = async () => {
@@ -27,6 +29,15 @@ export default function CreateProject() {
         if (err instanceof AxiosError) {
           console.log(err, "errorr");
           setError(err.response?.data.message);
+        }
+      } finally {
+        try {
+          const response = await axios.get(`${API_URL}/projects/projects`, {
+            headers: { Authorization: localStoreToken },
+          });
+          console.log(response.data.projects);
+        } catch (error) {
+          console.log(error);
         }
       }
     };
