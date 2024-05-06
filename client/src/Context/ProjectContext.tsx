@@ -5,16 +5,17 @@ import axios from "axios";
 
 type ProjectContextType = {
   projects: [] | null;
+  setProjects: React.Dispatch<React.SetStateAction<null | any[]>>;
 };
 const ProjectContext = createContext<ProjectContextType>({
   projects: null,
+  setProjects: () => {},
 });
 const API_URL = import.meta.env.VITE_SERVER_URL;
 
 function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
   const localStoreToken = localStorage.getItem("token");
 
-  //   console.log(user);
   const [projects, setProjects] = useState(null);
   useEffect(() => {
     const fetchProjects = async () => {
@@ -29,10 +30,17 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
       }
     };
     fetchProjects();
-  }, [localStoreToken, projects]);
+  }, []);
 
   return (
-    <ProjectContext.Provider value={{ projects }}>
+    <ProjectContext.Provider
+      value={{
+        projects,
+        setProjects: setProjects as React.Dispatch<
+          React.SetStateAction<any[] | null>
+        >,
+      }}
+    >
       {props.children}
     </ProjectContext.Provider>
   );
