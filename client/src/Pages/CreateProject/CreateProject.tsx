@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 const API_URL = import.meta.env.VITE_SERVER_URL;
 import { useNavigate } from "react-router-dom";
 
 export default function CreateProject() {
   const [projectName, setProjectName] = useState<string | undefined>("");
+  const [error, setError] = useState<string | undefined>("");
   const localStoreToken = localStorage.getItem("token");
   const navigate = useNavigate();
 
@@ -21,12 +22,15 @@ export default function CreateProject() {
           }
         );
         console.log(response.data.projects);
-      } catch (error) {
-        console.log(error);
+        navigate("/projects");
+      } catch (err: unknown) {
+        if (err instanceof AxiosError) {
+          console.log(err, "errorr");
+          setError(err.response?.data.message);
+        }
       }
     };
     createProject();
-    // navigate("/projects");
 
     //TODO : projects page is not updated directly maybe it is better move them inside context
   };
@@ -52,6 +56,13 @@ export default function CreateProject() {
           {" "}
           Create
         </button>
+        {error && (
+          <div>
+            <p className=" bg-red-400 p-1.5 mt-2 rounded-md text-white px-3 py-2 text-sm font-semibold  flex w-full justify-center">
+              {error}
+            </p>
+          </div>
+        )}
       </form>
     </div>
   );

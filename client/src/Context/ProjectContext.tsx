@@ -29,7 +29,7 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
       }
     };
     fetchProjects();
-  }, [localStoreToken]);
+  }, [localStoreToken, projects]);
 
   return (
     <ProjectContext.Provider value={{ projects }}>
