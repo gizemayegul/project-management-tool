@@ -66,4 +66,24 @@ projectRoute.get(
   }
 );
 
+projectRoute.get(
+  "/projects/:projectId",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
+    const { projectId } = req.params;
+    if (!projectId) {
+      res.status(400).json({ message: "An expected error happened" });
+      return;
+    }
+    try {
+      const findProject = await Projects.find({ _id: projectId });
+      console.log(findProject);
+      res.status(200).json(findProject);
+    } catch (error) {
+      console.error({
+        message: "An error occurred while fetching the projects user",
+      });
+    }
+  }
+);
 export default projectRoute;

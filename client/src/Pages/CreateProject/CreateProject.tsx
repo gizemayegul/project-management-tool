@@ -36,6 +36,7 @@ export default function CreateProject() {
             headers: { Authorization: localStoreToken },
           });
           console.log(response.data.projects);
+          setProjects(response.data.projects);
         } catch (error) {
           console.log(error);
         }
