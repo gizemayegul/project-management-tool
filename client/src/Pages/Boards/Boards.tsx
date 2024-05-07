@@ -1,56 +1,63 @@
-import { useContext } from "react";
-import { ProjectContext } from "../../Context/ProjectContext";
-// import CreateProject from "../CreateProject/CreateProject";
-// import ProjectButton from "../../Components/ProjectButton/ProjectButton";
-import { Link } from "react-router-dom";
-import ProjectButton from "../../Components/ProjectButton/ProjectButton";
+import { useParams, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import axios from "axios";
+const API_URL = import.meta.env.VITE_SERVER_URL;
+export default function Boards() {
+  const [boards, setBoards] = useState<any>([]);
+  const { projectId } = useParams();
 
-export default function Projects() {
-  interface Project {
-    projectName: string;
+  interface Board {
+    boardName: string;
     _id: number;
     updatedAt: string;
     createdAt: string;
   }
-  const { projects } = useContext(ProjectContext);
-  console.log(projects);
-  // return (
-  //   <>
-  //     <ProjectButton />
-  //     {Array.isArray(projects) &&
-  //       projects.map((project: Project, index: number) => (
-  //         <div key={index}>{project.projectName}</div>
-  //       ))}
-  //   </>
-  // );
-  return (
-    <div className="px-20">
-      <ProjectButton />
-      <h1>Projects</h1>
+  const localStoreToken = localStorage.getItem("token");
 
+  useEffect(() => {
+    const fetchBoards = async () => {
+      try {
+        const response = await axios.get(
+          `${API_URL}/board/${projectId}/boards`,
+          {
+            headers: { Authorization: localStoreToken },
+          }
+        );
+        setBoards(response.data.boards);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching boards:", error);
+      }
+    };
+
+    fetchBoards();
+  }, [projectId]);
+  return (
+    <div>
+      <h1>Boardds</h1>
       <ul role="list" className="divide-y divide-gray-100">
-        {Array.isArray(projects) &&
-          projects.map((project: Project) => (
-            <Link key={project._id} to={`/projects/${project._id}`}>
+        {boards &&
+          boards.map((board: Board) => (
+            <Link key={board._id} to={`/boards/${board._id}`}>
               <li className="flex justify-between gap-x-6 py-5">
                 <div className="flex min-w-0 gap-x-4">
                   <img
                     className="h-12 w-12 flex-none rounded-full bg-gray-50"
-                    src={project.projectName}
+                    src={board.boardName}
                     alt=""
                   />
                   <div className="min-w-0 flex-auto">
                     <p className="text-sm font-semibold leading-6 text-gray-900">
-                      {project.projectName}
+                      {board.boardName}
                     </p>
                     <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                      {project.updatedAt}{" "}
+                      {board.updatedAt}{" "}
                     </p>
                   </div>
                 </div>
                 <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
                   <p className="text-sm leading-6 text-gray-900">
-                    {project.createdAt}
+                    {board.createdAt}
                   </p>
                   {/* {person.lastSeen ? (
                 <p className="mt-1 text-xs leading-5 text-gray-500">

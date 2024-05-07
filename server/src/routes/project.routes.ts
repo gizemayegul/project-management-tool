@@ -1,7 +1,6 @@
 import { Router, Request, Response, NextFunction } from "express";
 import isAuthenticated from "../middleware/isAutenticated";
 import { CustomRequest, CustomResponse } from "../types/ types";
-import User from "../models/User.model";
 import Projects from "../models/Projects.model";
 
 const projectRoute = Router();
