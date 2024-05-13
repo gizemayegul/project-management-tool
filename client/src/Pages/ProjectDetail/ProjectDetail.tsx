@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Boards from "../Boards/Boards";
 
 const API_URL = import.meta.env.VITE_SERVER_URL;
 interface ProjectsDetails {
@@ -34,7 +35,7 @@ export default function ProjectDetail() {
   }, [projectId]);
   return (
     <div>
-      {projectDetail && projectDetail.projectName}
+      <div>{projectDetail && projectDetail.projectName}</div>
       <button
         className=" bg-indigo-600  text-white hover:bg-indigo-500  hover:text-white rounded-md px-3 py-2 text-sm font-medium"
         type="submit"
@@ -45,6 +46,7 @@ export default function ProjectDetail() {
         {" "}
         Create Board
       </button>{" "}
+      <Boards />
     </div>
   );
 }

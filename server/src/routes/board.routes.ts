@@ -58,5 +58,28 @@ boardRoute.get(
     }
   }
 );
+boardRoute.get(
+  "/:projectId/boards/:boardId",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
+    const { projectId, boardId } = req.params;
+    console.log(projectId);
+    if (!projectId || !boardId) {
+      res.status(400).json({ message: "An expected error happened" });
+      return;
+    }
+    try {
+      const fetchBoards = await Boards.find({
+        projectId: projectId,
+        _id: boardId,
+      });
+      res.status(200).json({ boards: fetchBoards });
+    } catch (error) {
+      console.error({
+        message: "An error occurred while fetching the boards user",
+      });
+    }
+  }
+);
 
 export default boardRoute;

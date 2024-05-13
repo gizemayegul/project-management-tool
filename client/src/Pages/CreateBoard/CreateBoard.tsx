@@ -22,22 +22,12 @@ export default function CreateBoard() {
           }
         );
         console.log(response.data.projects);
-        navigate(`/projects/${projectId}/boards`);
+        navigate(`/projects/${projectId}`);
       } catch (err: unknown) {
         if (err instanceof AxiosError) {
           console.log(err, "errorr");
           setError(err.response?.data.message);
         }
-        //   } finally {
-        //     try {
-        //       const response = await axios.get(`${API_URL}/projects/projects`, {
-        //         headers: { Authorization: localStoreToken },
-        //       });
-        //       console.log(response.data.projects);
-        //       setProjects(response.data.projects);
-        //     } catch (error) {
-        //       console.log(error);
-        //     }
       }
     };
     createBoard();

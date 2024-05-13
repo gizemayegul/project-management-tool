@@ -17,6 +17,7 @@ import Projects from "./Pages/Projects/Projects";
 import ProjectDetail from "./Pages/ProjectDetail/ProjectDetail";
 import CreateBoard from "./Pages/CreateBoard/CreateBoard";
 import Boards from "./Pages/Boards/Boards";
+import BoardsDetails from "./Pages/BoardsDetails/BoardsDetails";
 
 function App() {
   const { userExpire } = useContext(AuthContext);
@@ -82,11 +83,19 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
+        {/* <Route
           path="/projects/:projectId/boards"
           element={
             <ProtectedRoute>
               <Boards />
+            </ProtectedRoute>
+          }
+        /> */}
+        <Route
+          path="/projects/:projectId/boards/:boardId"
+          element={
+            <ProtectedRoute>
+              <BoardsDetails />
             </ProtectedRoute>
           }
         />

@@ -38,7 +38,10 @@ export default function Boards() {
       <ul role="list" className="divide-y divide-gray-100">
         {boards &&
           boards.map((board: Board) => (
-            <Link key={board._id} to={`/boards/${board._id}`}>
+            <Link
+              key={board._id}
+              to={`/projects/${projectId}/boards/${board._id}`}
+            >
               <li className="flex justify-between gap-x-6 py-5">
                 <div className="flex min-w-0 gap-x-4">
                   <img
