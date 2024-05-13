@@ -12,8 +12,17 @@ const boardsSchema = new Schema(
       ref: "Projects",
     },
     boardInitialColumns: {
-      type: [String],
-      default: ["Todo", "Inprogress", "Done"],
+      type: [
+        {
+          statusName: String,
+          _id: { type: Schema.Types.ObjectId, auto: true },
+        },
+      ],
+      default: [
+        { statusName: "Todo" },
+        { statusName: "Inprogress" },
+        { statusName: "Done" },
+      ],
     },
   },
   {

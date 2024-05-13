@@ -3,6 +3,7 @@ import axios, { AxiosError } from "axios";
 
 const API_URL = import.meta.env.VITE_SERVER_URL;
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
   const [name, setName] = useState("");
@@ -10,6 +11,7 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,6 +25,7 @@ export default function Signup() {
       console.log(response);
       setError("");
       setSuccess(response.data.message);
+      navigate("/login");
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         console.log(err, "errorr");

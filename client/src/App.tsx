@@ -4,7 +4,7 @@ import Signup from "./Pages/Signup/Signup";
 import { Route, Routes } from "react-router-dom";
 import Navbar from "./Components/Navbar/Navbar";
 import Login from "./Pages/Login/Login";
-import Dashboard from "./Pages/Dashboard/Dashboard.1";
+import Dashboard from "./Pages/Dashboard/Dashboard";
 import { AuthContext } from "./Context/AuthContext";
 import { useContext, useEffect } from "react";
 import ProtectedRoute from "./utils/ ProtectedRoute";
@@ -15,6 +15,9 @@ import Home from "./Pages/Home/Home";
 import CreateProject from "./Pages/CreateProject/CreateProject";
 import Projects from "./Pages/Projects/Projects";
 import ProjectDetail from "./Pages/ProjectDetail/ProjectDetail";
+import CreateBoard from "./Pages/CreateBoard/CreateBoard";
+import Boards from "./Pages/Boards/Boards";
+import BoardsDetails from "./Pages/BoardsDetails/BoardsDetails";
 
 function App() {
   const { userExpire } = useContext(AuthContext);
@@ -69,6 +72,30 @@ function App() {
           element={
             <ProtectedRoute>
               <ProjectDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/projects/:projectId/boards/createboard"
+          element={
+            <ProtectedRoute>
+              <CreateBoard />
+            </ProtectedRoute>
+          }
+        />
+        {/* <Route
+          path="/projects/:projectId/boards"
+          element={
+            <ProtectedRoute>
+              <Boards />
+            </ProtectedRoute>
+          }
+        /> */}
+        <Route
+          path="/projects/:projectId/boards/:boardId"
+          element={
+            <ProtectedRoute>
+              <BoardsDetails />
             </ProtectedRoute>
           }
         />
