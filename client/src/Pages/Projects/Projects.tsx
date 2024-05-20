@@ -3,7 +3,7 @@ import { ProjectContext } from "../../Context/ProjectContext";
 // import CreateProject from "../CreateProject/CreateProject";
 // import ProjectButton from "../../Components/ProjectButton/ProjectButton";
 import { Link } from "react-router-dom";
-import ProjectButton from "../../Components/ProjectButton/ProjectButton";
+import CreateButton from "../../Components/CreateButton/CreateButton";
 
 export default function Projects() {
   interface Project {
@@ -11,6 +11,7 @@ export default function Projects() {
     _id: number;
     updatedAt: string;
     createdAt: string;
+    imageUrl: string;
   }
   const { projects } = useContext(ProjectContext);
   console.log(projects);
@@ -25,7 +26,10 @@ export default function Projects() {
   // );
   return (
     <div className="px-20">
-      <ProjectButton />
+      <CreateButton
+        name={"Create new Project"}
+        toNavigate={"/createaproject"}
+      />
       <h1>Projects</h1>
 
       <ul role="list" className="divide-y divide-gray-100">
@@ -36,7 +40,7 @@ export default function Projects() {
                 <div className="flex min-w-0 gap-x-4">
                   <img
                     className="h-12 w-12 flex-none rounded-full bg-gray-50"
-                    src={project.projectName}
+                    src={project.imageUrl}
                     alt=""
                   />
                   <div className="min-w-0 flex-auto">
