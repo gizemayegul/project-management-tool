@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from "react";
-// import { useContext } from "react";
-// import { AuthContext } from "./AuthContext";
+import { useContext } from "react";
+import { AuthContext } from "./AuthContext";
+
 import axios from "axios";
 
 type ProjectContextType = {
@@ -14,23 +15,27 @@ const ProjectContext = createContext<ProjectContextType>({
 const API_URL = import.meta.env.VITE_SERVER_URL;
 
 function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
+  const { isLoggedIn } = useContext(AuthContext);
+
   const localStoreToken = localStorage.getItem("token");
 
   const [projects, setProjects] = useState(null);
   useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/projects/projects`, {
-          headers: { Authorization: localStoreToken },
-        });
-        console.log(response.data.projects);
-        setProjects(response.data.projects);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchProjects();
-  }, []);
+    if (isLoggedIn) {
+      const fetchProjects = async () => {
+        try {
+          const response = await axios.get(`${API_URL}/projects/projects`, {
+            headers: { Authorization: localStoreToken },
+          });
+          console.log(response.data.projects);
+          setProjects(response.data.projects);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      fetchProjects();
+    }
+  }, [localStoreToken, isLoggedIn]);
 
   return (
     <ProjectContext.Provider

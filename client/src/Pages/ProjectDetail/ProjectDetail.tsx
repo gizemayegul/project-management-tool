@@ -1,14 +1,15 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Boards from "../Boards/Boards";
+import CreateButton from "../../Components/CreateButton/CreateButton";
 
 const API_URL = import.meta.env.VITE_SERVER_URL;
-interface ProjectsDetails {
+type ProjectsDetails = {
   projectDetail: object | string;
   projectName: string;
-}
+};
 
 export default function ProjectDetail() {
   const { projectId } = useParams();
@@ -36,17 +37,14 @@ export default function ProjectDetail() {
   return (
     <div>
       <div>{projectDetail && projectDetail.projectName}</div>
-      <button
-        className=" bg-indigo-600  text-white hover:bg-indigo-500  hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-        type="submit"
-        onClick={() => {
-          navigate(`/projects/${projectId}/boards/createboard`);
-        }}
-      >
-        {" "}
-        Create Board
-      </button>{" "}
-      <Boards />
+      <h1>Boardds</h1>
+      <CreateButton
+        name={"Create new Board"}
+        toNavigate={`/projects/${projectId}/boards/createboard`}
+      />
+      <div>
+        <Boards />
+      </div>
     </div>
   );
 }

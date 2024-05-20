@@ -5,6 +5,7 @@ const tasksSchema = new Schema(
     taskName: {
       type: String,
       default: "Untitled",
+      required: true,
     },
     boardId: {
       type: Schema.Types.ObjectId,
@@ -16,7 +17,7 @@ const tasksSchema = new Schema(
       enum: ["P1", "P2", "P3"],
     },
     taskStatus: {
-      type: String,
+      type: Schema.Types.ObjectId,
       status: "",
     },
   },

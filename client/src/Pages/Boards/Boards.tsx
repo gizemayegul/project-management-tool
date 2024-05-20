@@ -11,6 +11,7 @@ export default function Boards() {
     _id: number;
     updatedAt: string;
     createdAt: string;
+    imageUrl: string;
   }
   const localStoreToken = localStorage.getItem("token");
 
@@ -34,7 +35,6 @@ export default function Boards() {
   }, [projectId]);
   return (
     <div>
-      <h1>Boardds</h1>
       <ul role="list" className="divide-y divide-gray-100">
         {boards &&
           boards.map((board: Board) => (
@@ -46,7 +46,7 @@ export default function Boards() {
                 <div className="flex min-w-0 gap-x-4">
                   <img
                     className="h-12 w-12 flex-none rounded-full bg-gray-50"
-                    src={board.boardName}
+                    src={board.imageUrl}
                     alt=""
                   />
                   <div className="min-w-0 flex-auto">
