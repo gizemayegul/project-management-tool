@@ -5,10 +5,10 @@ import { useNavigate } from "react-router-dom";
 import Boards from "../Boards/Boards";
 
 const API_URL = import.meta.env.VITE_SERVER_URL;
-interface ProjectsDetails {
+type ProjectsDetails = {
   projectDetail: object | string;
   projectName: string;
-}
+};
 
 export default function ProjectDetail() {
   const { projectId } = useParams();

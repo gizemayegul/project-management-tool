@@ -1,13 +1,26 @@
-import React from "react";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
+import React from "react";
 import axios from "axios";
 const API_URL = import.meta.env.VITE_SERVER_URL;
+
+type BoardDetail = {
+  BoardDetail: object | String;
+  boardName: String;
+  boardInitialColumns:
+    | [
+        {
+          statusName: String | null;
+          _id: React.Key | string | null;
+        }
+      ]
+    | null;
+};
 
 export default function BoardsDetails() {
   const { boardId, projectId } = useParams();
   console.log(projectId);
-  const [boards, setBoards] = useState("");
+  const [boards, setBoards] = useState<BoardDetail | null>();
   const localStoreToken = localStorage.getItem("token");
   console.log(boards);
 
@@ -32,11 +45,10 @@ export default function BoardsDetails() {
     <div>
       <div>
         {boards &&
-          boards.boardInitialColumns.map((column) => (
+          boards.boardInitialColumns?.map((column) => (
             <div key={column._id}>{column.statusName}</div>
           ))}
       </div>
-      {boards.initi}
     </div>
   );
 }

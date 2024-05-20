@@ -9,11 +9,11 @@ import { ProjectContextWrapper } from "./Context/ProjectContext.tsx";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <AuthProviderWrapper>
-      <ProjectContextWrapper>
-        <Router>
+      <Router>
+        <ProjectContextWrapper>
           <App />
-        </Router>
-      </ProjectContextWrapper>
+        </ProjectContextWrapper>
+      </Router>
     </AuthProviderWrapper>
   </React.StrictMode>
 );
