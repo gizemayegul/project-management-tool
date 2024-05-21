@@ -16,7 +16,7 @@ const boardsSchema = new Schema(
       default:
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4WmAlrjjUTOOYs35vGliGHYUdtUkXyQ-t9cyThMmGX0Uh4gtmZ0lkJE8ixZIRSSmgJzI&usqp=CAU",
     },
-    boardInitialColumns: {
+    boardColumns: {
       type: [
         {
           statusName: String,
