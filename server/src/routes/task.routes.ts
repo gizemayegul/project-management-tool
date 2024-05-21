@@ -12,11 +12,12 @@ interface UserRequestBody {
 }
 
 taskRoute.post(
-  "/create",
+  "/create/:boardId",
   isAuthenticated,
   async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
-    const { boardId, taskName, taskPriority, taskStatus } =
-      req.body as UserRequestBody;
+    const { boardId } = req.params;
+    console.log(boardId);
+    const { taskName, taskPriority, taskStatus } = req.body as UserRequestBody;
     try {
       const response = await Tasks.create({
         boardId,

@@ -73,7 +73,7 @@ boardRoute.get(
         projectId: projectId,
         _id: boardId,
       });
-      res.status(200).json({ boards: fetchBoards });
+      res.status(200).json(fetchBoards);
     } catch (error) {
       console.error({
         message: "An error occurred while fetching the boards user",
