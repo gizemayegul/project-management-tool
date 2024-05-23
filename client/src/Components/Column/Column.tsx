@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Task from "../Tasks/Task";
+import { DndContext, closestCenter } from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+
 const API_URL: string = import.meta.env.VITE_SERVER_URL;
 const localStoreToken = localStorage.getItem("token");
 type boardTaskType = {
@@ -26,6 +33,7 @@ export default function Column({
   boardTasks,
 }: Props) {
   const [inputTask, setInputTask] = useState<string | string[]>("");
+
   //!Todo any time event change this
 
   const handleTaskSubmit = async (e: any) => {
@@ -54,20 +62,40 @@ export default function Column({
       console.log(error);
     }
   };
+  const onDragEnd = (event: any) => {
+    console.log("OnDragEnd", event);
+    const { active, over } = event;
+    if (active.id === over.id) {
+      return;
+    }
+    setBoardTasks((prev) => {
+      const oldIndex = prev.findIndex((task) => task._id === active.id);
+      const newIndex = prev.findIndex((task) => task._id === over.id);
+
+      return arrayMove(prev, oldIndex, newIndex);
+    });
+  };
 
   return (
     <div>
       <div>{statusName}</div>
-      {Array.isArray(boardTasks) &&
-        boardTasks.map(
-          (task) =>
-            task.taskStatus === columnId && (
-              <div key={task._id} className="border-2">
-                {" "}
-                <Task taskName={task.taskName} taskId={task._id} />
-              </div>
-            )
-        )}
+      <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+        <SortableContext
+          items={boardTasks?.map((items) => items._id) ?? []}
+          strategy={verticalListSortingStrategy}
+        >
+          {Array.isArray(boardTasks) &&
+            boardTasks.map(
+              (task) =>
+                task.taskStatus === columnId && (
+                  <div key={task._id} className="border-2 my-3">
+                    {" "}
+                    <Task taskName={task.taskName} taskId={task._id} />
+                  </div>
+                )
+            )}{" "}
+        </SortableContext>
+      </DndContext>
 
       <form onSubmit={handleTaskSubmit}>
         <label htmlFor="AddTask">

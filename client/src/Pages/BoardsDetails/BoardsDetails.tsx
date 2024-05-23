@@ -2,7 +2,6 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Column from "../../Components/Column/Column";
-import Task from "../../Components/Tasks/Task";
 
 type initialColumnsType = {
   boardColumns: {
@@ -62,6 +61,12 @@ export default function BoardsDetails() {
     };
     fetchTasks();
   }, []);
+  function onDragEnd(event: any) {
+    console.log("column", event);
+    if (event.over && event.over.id === "droppable") {
+      console.log("lol");
+    }
+  }
 
   return (
     <div className="flex">
