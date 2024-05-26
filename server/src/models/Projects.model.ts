@@ -17,6 +17,7 @@ const projectsSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
+    boards: [{ type: Schema.Types.ObjectId, ref: "Board" }],
   },
   {
     timestamps: true,

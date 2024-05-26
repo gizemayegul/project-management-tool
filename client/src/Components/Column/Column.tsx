@@ -1,56 +1,68 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import sort from "../../assets/images/sort.png";
 import Task from "../Tasks/Task";
-import { useDroppable } from "@dnd-kit/core";
+import React from "react";
 import {
   SortableContext,
-  rectSwappingStrategy,
+  rectSortingStrategy,
+  useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { DndContext } from "@dnd-kit/core";
 
 const API_URL: string = import.meta.env.VITE_SERVER_URL;
 const localStoreToken = localStorage.getItem("token");
-type boardTaskType = {
+type taskType = {
   _id: string;
-  taskName: string;
   boardId: string;
-  taskPriority: string[];
-  taskStatus: string;
+  taskName: string;
+  index: number;
+  length: number;
+  columnId: string;
+  columnName: string;
+  taskPriority: string;
 }[];
-
 type Props = {
   statusName: string;
   columnId: string;
   boardId: string | undefined;
-  boardTasks: boardTaskType | undefined;
-  setBoardTasks: React.Dispatch<React.SetStateAction<boardTaskType>>;
 };
-export default function Column({
-  statusName,
-  columnId,
-  boardId,
-  setBoardTasks,
-  boardTasks,
-}: Props) {
+export default function Column({ statusName, columnId, boardId }: Props) {
   const [inputTask, setInputTask] = useState<string | string[]>("");
-  const { isOver, setNodeRef } = useDroppable({
-    id: columnId,
-  });
+  const [columnTasks, setColumnTasks] = useState<taskType>([]);
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: columnId });
   const style = {
-    color: isOver ? "green" : undefined,
+    transform: CSS.Transform.toString(transform),
+    transition,
   };
 
-  //!Todo any time event change this
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/task/tasks/${columnId}`, {
+          headers: { Authorization: localStoreToken },
+        });
+        setColumnTasks(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchTasks();
+  }, []);
 
-  const handleTaskSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        `${API_URL}/task/create/${boardId}`,
+        `${API_URL}/task/create/${columnId}`,
         {
-          taskStatus: columnId,
           taskName: inputTask,
-          index: 1,
+          boardId: boardId,
+          index: columnTasks.length,
+          columnName: statusName,
         },
         {
           headers: { Authorization: localStoreToken },
@@ -58,38 +70,35 @@ export default function Column({
       );
       console.log(response);
       if (response.status === 200) {
-        if (Array.isArray(boardTasks)) {
-          setBoardTasks((prev) => [...prev, response.data]);
-        } else {
-          setBoardTasks(response.data);
-        }
+        setColumnTasks([...columnTasks, response.data]);
+      } else {
+        setColumnTasks(response.data);
       }
       setInputTask("");
+      console.log(columnTasks);
     } catch (error) {
       console.log(error);
     }
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="basis-1/2 border-2">
-      <div>{statusName}</div>
-      {/* <SortableContext
-        strategy={verticalListSortingStrategy}
-        items={boardTasks?.map((task) => task._id) || []}
-        id={columnId}
-      > */}
-      {Array.isArray(boardTasks) &&
-        boardTasks.map(
-          (task) =>
-            task.taskStatus === columnId && (
-              <div key={task._id} className="border-2 my-3">
-                {" "}
-                <Task taskName={task.taskName} taskId={task._id} />
-              </div>
-            )
-        )}{" "}
-      {/* </SortableContext> */}
-      <form onSubmit={handleTaskSubmit}>
+    <div className="flex flex-col mx-2" ref={setNodeRef} style={style}>
+      <div className="border-2 flex justify-between  bg-slate-700 text-white">
+        {statusName}
+        <img {...attributes} {...listeners} src={sort} />
+      </div>
+      <DndContext onDragEnd={handleTaskEnd}>
+        <SortableContext
+          items={columnTasks.map((task) => ({ id: task._id }))}
+          strategy={verticalListSortingStrategy}
+        >
+          {columnTasks &&
+            columnTasks.map((task) => (
+              <Task taskId={task._id} taskName={task.taskName} key={task._id} />
+            ))}
+        </SortableContext>
+      </DndContext>
+      <form onSubmit={handleSubmit}>
         <label htmlFor="AddTask">
           Add New Task
           <input

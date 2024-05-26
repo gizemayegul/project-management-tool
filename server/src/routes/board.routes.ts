@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from "express";
 import isAuthenticated from "../middleware/isAutenticated";
 import { CustomRequest, CustomResponse } from "../types/ types";
 import Boards from "../models/Boards.model";
+import Columns from "../models/Columns.model";
 const boardRoute = Router();
 
 boardRoute.post(
@@ -9,7 +10,6 @@ boardRoute.post(
   isAuthenticated,
   async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
     const { projectId } = req.params;
-    console.log(projectId);
     const { boardName } = req.body;
     if (!boardName) {
       res.status(400).json({ message: "Please provide a board name" });
@@ -20,7 +20,20 @@ boardRoute.post(
         projectId: projectId,
         boardName: boardName,
       });
+      const defaultColumns = ["To Do", "In Progress", "Done"];
+      for (const columnName of defaultColumns) {
+        console.log(columnName);
+        const column = await Columns.create({
+          boardId: createBoard._id,
+          columnName: columnName,
+          tasks: [],
+          index: defaultColumns.indexOf(columnName),
+        });
+        createBoard.columns.push(column._id);
+      }
+      await createBoard.save();
       const { ...boardInfo } = createBoard.toObject();
+
       res.status(200).json({
         success: true,
         message: "Board created successfully",

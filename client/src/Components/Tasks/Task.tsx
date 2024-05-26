@@ -1,5 +1,6 @@
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
+import sort from "../../assets/images/sort.png";
 
 type Props = {
   taskName: string;
@@ -8,7 +9,7 @@ type Props = {
 
 export default function Task({ taskName, taskId }: Props) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: taskId,
+    id: taskId.toString(),
   });
 
   const style = {
@@ -18,12 +19,13 @@ export default function Task({ taskName, taskId }: Props) {
   return (
     <div
       ref={setNodeRef}
-      {...attributes}
-      {...listeners}
       style={style}
-      className="py-6"
+      className="px-6 border-2 my-2 mx-2 flex justify-between"
     >
       <div>{taskName}</div>
+      <div>
+        <img src={sort} {...attributes} {...listeners} />
+      </div>
     </div>
   );
 }

@@ -16,14 +16,15 @@ const tasksSchema = new Schema(
       default: "P3",
       enum: ["P1", "P2", "P3"],
     },
-    taskStatus: {
+    columnId: {
       type: Schema.Types.ObjectId,
-      status: "",
+      ref: "Column",
     },
     index: {
       type: Number,
       default: 0,
     },
+    columnName: { type: String },
   },
   {
     timestamps: true,

@@ -3,104 +3,135 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Column from "../../Components/Column/Column";
 import { DndContext, closestCenter } from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  rectSwappingStrategy,
+} from "@dnd-kit/sortable";
 
 type initialColumnsType = {
-  boardColumns: {
-    _id: string;
-    statusName: string;
-  }[];
-  boardName: string;
-  imageUrl: string;
-  projectId: string;
-};
-
-type boardTaskType = {
   _id: string;
-  taskName: string;
   boardId: string;
-  taskPriority: string[];
-  taskStatus: string;
+  columnName: string;
+  index: number;
+  tasks: string | string[];
+  length: number;
 }[];
 
 const API_URL: string = import.meta.env.VITE_SERVER_URL;
 
 export default function BoardsDetails() {
-  const { boardId, projectId } = useParams<{
-    boardId: string;
-    projectId: string;
-  }>();
-  const [initialColumns, setInitialColumns] = useState<initialColumnsType>();
-  const [boardTasks, setBoardTasks] = useState<boardTaskType>([]);
-  const [task, setTask] = useState<boardTaskType>([]);
-
+  const { boardId } = useParams<{ boardId: string }>();
+  const [initialColumns, setInitialColumns] = useState<initialColumnsType>([]);
+  const [addColumn, setAddColumn] = useState("");
   const localStoreToken = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchBoards = async () => {
       try {
         const response = await axios.get(
-          `${API_URL}/board/${projectId}/boards/${boardId}`,
+          `${API_URL}/column/columns/${boardId}`,
           {
             headers: { Authorization: localStoreToken },
           }
         );
-        setInitialColumns(response.data[0]);
+        setInitialColumns(response.data);
       } catch (error) {
         console.log(error);
       }
     };
     fetchBoards();
-  }, []);
+  }, [boardId, localStoreToken]);
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/task/tasks/${boardId}`, {
+  const handleColumnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        `${API_URL}/column/columns/${boardId}`,
+        {
+          index: initialColumns.length,
+          columnName: addColumn,
+          boardId: boardId,
+        },
+        {
           headers: { Authorization: localStoreToken },
-        });
-        setBoardTasks(response.data);
-      } catch (error) {
-        console.log(error);
+        }
+      );
+      if (response.status === 200) {
+        setInitialColumns((prev) => [...prev, response.data]);
+        setAddColumn("");
       }
-    };
-    fetchTasks();
-  }, [task]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  function handleDragEnd(event: any) {
-    console.log(event);
-    const changeTaskStatus = async () => {
-      try {
-        const response = await axios.put(
-          `${API_URL}/task/tasks/${event.active.id}`,
-          { taskStatus: event.over.id },
-          {
-            headers: { Authorization: localStoreToken },
-          }
-        );
-        console.log(response);
-        setTask(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    changeTaskStatus();
-  }
+  const handleDragEnd = async (event: any) => {
+    const { active, over } = event;
+    if (!active || !over) return;
+
+    const oldIndex = initialColumns.findIndex(
+      (column) => column._id === active.id
+    );
+    const newIndex = initialColumns.findIndex(
+      (column) => column._id === over.id
+    );
+
+    if (oldIndex === newIndex) return;
+
+    const newOrder = arrayMove(initialColumns, oldIndex, newIndex);
+    setInitialColumns(newOrder);
+
+    try {
+      await Promise.all(
+        newOrder.map((column, index) =>
+          axios.put(
+            `${API_URL}/column/columns/${column._id}`,
+            { index: index },
+            {
+              headers: { Authorization: localStoreToken },
+            }
+          )
+        )
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCenter}>
       <div className="flex">
-        {initialColumns &&
-          Array.isArray(initialColumns.boardColumns) &&
-          initialColumns.boardColumns.map((column) => (
+        <SortableContext
+          strategy={rectSwappingStrategy}
+          items={initialColumns.map((column) => ({ id: column._id }))}
+        >
+          {initialColumns.map((column) => (
             <Column
               key={column._id}
-              statusName={column.statusName}
+              statusName={column.columnName}
               columnId={column._id}
               boardId={boardId}
-              setBoardTasks={setBoardTasks}
-              boardTasks={boardTasks}
             />
-          ))}{" "}
+          ))}
+          <form onSubmit={handleColumnSubmit}>
+            <div>
+              <label htmlFor="new column">
+                Add New Column
+                <input
+                  className="border-2"
+                  name="new column"
+                  type="text"
+                  value={addColumn}
+                  onChange={(e) => setAddColumn(e.target.value)}
+                />
+              </label>
+            </div>
+            <button className="border-2" type="submit">
+              Add Column
+            </button>
+          </form>
+        </SortableContext>
       </div>
     </DndContext>
   );
