@@ -65,6 +65,7 @@ export default function BoardsDetails() {
       console.log(error);
     }
   };
+  //TODO: Implement any interface
 
   const handleDragEnd = async (event: any) => {
     const { active, over } = event;

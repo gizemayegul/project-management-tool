@@ -54,7 +54,7 @@ taskRoute.get(
   async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
     const { columnId } = req.params;
     try {
-      const response = await Tasks.find({ columnId });
+      const response = await Tasks.find({ columnId }).sort({ index: 1 });
       res.json(response);
     } catch (error) {
       console.log(error);
@@ -68,13 +68,12 @@ taskRoute.put(
   async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
     try {
       const { taskId } = req.params;
-
-      const { columnId } = req.body;
-      // const response = await Tasks.findById(taskId);
+      console.log(taskId, "taslw");
+      const { index } = req.body;
 
       const response = await Tasks.findByIdAndUpdate(
         taskId,
-        { columnId: new ObjectId(columnId) },
+        { index: index },
         { new: true }
       );
       console.log(response, "updated");

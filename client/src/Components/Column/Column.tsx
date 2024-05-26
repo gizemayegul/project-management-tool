@@ -8,9 +8,11 @@ import {
   rectSortingStrategy,
   useSortable,
   verticalListSortingStrategy,
+  arrayMove,
 } from "@dnd-kit/sortable";
+
 import { CSS } from "@dnd-kit/utilities";
-import { DndContext } from "@dnd-kit/core";
+import { DndContext, closestCenter, useDroppable } from "@dnd-kit/core";
 
 const API_URL: string = import.meta.env.VITE_SERVER_URL;
 const localStoreToken = localStorage.getItem("token");
@@ -32,12 +34,21 @@ type Props = {
 export default function Column({ statusName, columnId, boardId }: Props) {
   const [inputTask, setInputTask] = useState<string | string[]>("");
   const [columnTasks, setColumnTasks] = useState<taskType>([]);
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: columnId });
+  const {
+    attributes,
+    listeners,
+    setNodeRef: setSortableRef,
+    transform,
+    transition,
+  } = useSortable({ id: columnId });
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
+
+  const { isOver, setNodeRef: DropRef } = useDroppable({ id: columnId });
+
+  const styleDrop = { backgroundColor: isOver ? "red" : "transparent" };
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -51,7 +62,7 @@ export default function Column({ statusName, columnId, boardId }: Props) {
       }
     };
     fetchTasks();
-  }, []);
+  }, [localStoreToken, columnId]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -81,22 +92,74 @@ export default function Column({ statusName, columnId, boardId }: Props) {
     }
   };
 
+  const handleTaskEnd = async (event: any) => {
+    console.log(event);
+    const { active, over } = event;
+    if (!active || !over) return;
+    if (active.id === over.id) return;
+    const oldIndex = columnTasks.findIndex((task) => task._id === active.id);
+    const newIndex = columnTasks.findIndex((task) => task._id === over.id);
+    console.log(oldIndex, newIndex);
+
+    const newOrder = arrayMove(columnTasks, oldIndex, newIndex);
+    setColumnTasks(newOrder);
+
+    try {
+      const response = await Promise.all(
+        newOrder.map((task, index) =>
+          axios.put(
+            `${API_URL}/task/tasks/${task._id}`,
+            {
+              index: index,
+            },
+            {
+              headers: { Authorization: localStoreToken },
+            }
+          )
+        )
+      );
+      console.log(response.map((response) => response.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleTaskDrop = async (event: any) => {
+    console.log(event);
+
+    try {
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
-    <div className="flex flex-col mx-2" ref={setNodeRef} style={style}>
+    <div className="flex flex-col mx-2" ref={setSortableRef} style={style}>
       <div className="border-2 flex justify-between  bg-slate-700 text-white">
         {statusName}
         <img {...attributes} {...listeners} src={sort} />
       </div>
-      <DndContext onDragEnd={handleTaskEnd}>
-        <SortableContext
-          items={columnTasks.map((task) => ({ id: task._id }))}
-          strategy={verticalListSortingStrategy}
+      <DndContext onDragEnd={handleTaskDrop}>
+        <DndContext
+          onDragEnd={handleTaskEnd}
+          collisionDetection={closestCenter}
         >
-          {columnTasks &&
-            columnTasks.map((task) => (
-              <Task taskId={task._id} taskName={task.taskName} key={task._id} />
-            ))}
-        </SortableContext>
+          <SortableContext
+            items={columnTasks.map((task) => ({ id: task._id }))}
+            strategy={rectSortingStrategy}
+          >
+            <div ref={DropRef} style={styleDrop} className="bg-slate-300">
+              {columnTasks &&
+                columnTasks.map((task) => (
+                  <Task
+                    taskId={task._id}
+                    taskName={task.taskName}
+                    key={task._id}
+                    taskPriority={task.taskPriority}
+                  />
+                ))}
+            </div>
+          </SortableContext>
+        </DndContext>
       </DndContext>
       <form onSubmit={handleSubmit}>
         <label htmlFor="AddTask">
