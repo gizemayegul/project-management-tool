@@ -2,6 +2,7 @@ import Tasks from "../models/Tasks.model";
 import { NextFunction, Router } from "express";
 import { CustomRequest, CustomResponse } from "../types/ types";
 import isAuthenticated from "../middleware/isAutenticated";
+import { ObjectId } from "mongodb";
 
 const taskRoute = Router();
 interface UserRequestBody {
@@ -9,6 +10,7 @@ interface UserRequestBody {
   taskName: string;
   taskPriority: string;
   taskStatus: string;
+  index: number;
 }
 
 taskRoute.post(
@@ -17,7 +19,8 @@ taskRoute.post(
   async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
     const { boardId } = req.params;
     console.log(boardId);
-    const { taskName, taskPriority, taskStatus } = req.body as UserRequestBody;
+    const { taskName, taskPriority, taskStatus, index } =
+      req.body as UserRequestBody;
     try {
       const response = await Tasks.create({
         boardId,
@@ -40,6 +43,29 @@ taskRoute.get(
     const { boardId } = req.params;
     try {
       const response = await Tasks.find({ boardId });
+      res.json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+taskRoute.put(
+  "/tasks/:taskId",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
+    try {
+      const { taskId } = req.params;
+
+      const { taskStatus } = req.body;
+      // const response = await Tasks.findById(taskId);
+
+      const response = await Tasks.findByIdAndUpdate(
+        taskId,
+        { taskStatus: new ObjectId(taskStatus) },
+        { new: true }
+      );
+      console.log(response, "updated");
       res.json(response);
     } catch (error) {
       console.log(error);

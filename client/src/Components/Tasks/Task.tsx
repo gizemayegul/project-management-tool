@@ -1,4 +1,4 @@
-import { useSortable } from "@dnd-kit/sortable";
+import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 
 type Props = {
@@ -7,11 +7,11 @@ type Props = {
 };
 
 export default function Task({ taskName, taskId }: Props) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: taskId });
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id: taskId,
+  });
 
   const style = {
-    transition,
     transform: CSS.Transform.toString(transform),
   };
 
