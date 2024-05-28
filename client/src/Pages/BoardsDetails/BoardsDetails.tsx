@@ -2,10 +2,24 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Column from "../../Components/Column/Column";
-import { DndContext, closestCenter } from "@dnd-kit/core";
+import {
+  restrictToVerticalAxis,
+  restrictToWindowEdges,
+} from "@dnd-kit/modifiers";
+import {
+  DndContext,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  closestCenter,
+  rectIntersection,
+} from "@dnd-kit/core";
 import {
   SortableContext,
   arrayMove,
+  horizontalListSortingStrategy,
   rectSwappingStrategy,
 } from "@dnd-kit/sortable";
 
@@ -24,7 +38,13 @@ export default function BoardsDetails() {
   const { boardId } = useParams<{ boardId: string }>();
   const [initialColumns, setInitialColumns] = useState<initialColumnsType>([]);
   const [addColumn, setAddColumn] = useState("");
+  const [dragEnd, setDragEnd] = useState(false);
   const localStoreToken = localStorage.getItem("token");
+  const sensors = useSensors(
+    useSensor(MouseSensor),
+    useSensor(TouchSensor),
+    useSensor(KeyboardSensor)
+  );
 
   useEffect(() => {
     const fetchBoards = async () => {
@@ -66,45 +86,21 @@ export default function BoardsDetails() {
     }
   };
   //TODO: Implement any interface
-
-  const handleDragEnd = async (event: any) => {
-    const { active, over } = event;
-    if (!active || !over) return;
-
-    const oldIndex = initialColumns.findIndex(
-      (column) => column._id === active.id
-    );
-    const newIndex = initialColumns.findIndex(
-      (column) => column._id === over.id
-    );
-
-    if (oldIndex === newIndex) return;
-
-    const newOrder = arrayMove(initialColumns, oldIndex, newIndex);
-    setInitialColumns(newOrder);
-
-    try {
-      await Promise.all(
-        newOrder.map((column, index) =>
-          axios.put(
-            `${API_URL}/column/columns/${column._id}`,
-            { index: index },
-            {
-              headers: { Authorization: localStoreToken },
-            }
-          )
-        )
-      );
-    } catch (error) {
-      console.log(error);
-    }
+  const handleOver = (event: any) => {
+    const { over, active } = event;
+    console.log(over, "over");
+    console.log(active, "active");
   };
 
   return (
-    <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCenter}>
-      <div className="flex">
+    <DndContext
+      onDragEnd={handleOver}
+      collisionDetection={closestCenter}
+      sensors={sensors}
+    >
+      <div className="flex bg-purple-800 p-6 ">
+        Board
         <SortableContext
-          strategy={rectSwappingStrategy}
           items={initialColumns.map((column) => ({ id: column._id }))}
         >
           {initialColumns.map((column) => (
@@ -115,24 +111,24 @@ export default function BoardsDetails() {
               boardId={boardId}
             />
           ))}
-          <form onSubmit={handleColumnSubmit}>
-            <div>
-              <label htmlFor="new column">
-                Add New Column
-                <input
-                  className="border-2"
-                  name="new column"
-                  type="text"
-                  value={addColumn}
-                  onChange={(e) => setAddColumn(e.target.value)}
-                />
-              </label>
-            </div>
-            <button className="border-2" type="submit">
-              Add Column
-            </button>
-          </form>
         </SortableContext>
+        <form onSubmit={handleColumnSubmit}>
+          <div>
+            <label htmlFor="new column">
+              Add New Column
+              <input
+                className="border-2"
+                name="new column"
+                type="text"
+                value={addColumn}
+                onChange={(e) => setAddColumn(e.target.value)}
+              />
+            </label>
+          </div>
+          <button className="border-2" type="submit">
+            Add Column
+          </button>
+        </form>
       </div>
     </DndContext>
   );

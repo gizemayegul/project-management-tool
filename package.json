@@ -19,5 +19,8 @@
   "homepage": "https://github.com/gizemayegul/express-vite-fullstack-template#readme",
   "devDependencies": {
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "@dnd-kit/modifiers": "^7.0.0"
   }
 }

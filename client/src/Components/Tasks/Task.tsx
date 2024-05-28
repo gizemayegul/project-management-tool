@@ -10,22 +10,25 @@ type Props = {
 };
 
 export default function Task({ taskName, taskId, taskPriority }: Props) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({
-      id: taskId,
-    });
+  const { attributes, listeners, setNodeRef, transform } = useSortable({
+    id: taskId,
+    data: { taskName },
+  });
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
+  const style = transform
+    ? {
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+      }
+    : undefined;
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className="px-6 border-2 my-2 mx-2 flex justify-between"
+      className="px-6 border-2 my-2 mx-2 flex justify-between bg-purple-300 p-4
+      "
     >
+      Task
       <div>{taskName}</div>
       <div>{taskPriority}</div>
       <img src={sort} {...attributes} {...listeners} />

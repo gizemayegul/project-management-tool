@@ -9,10 +9,27 @@ import {
   useSortable,
   verticalListSortingStrategy,
   arrayMove,
+  horizontalListSortingStrategy,
+  rectSwappingStrategy,
 } from "@dnd-kit/sortable";
+import {
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  DragOverlay,
+} from "@dnd-kit/core";
 
 import { CSS } from "@dnd-kit/utilities";
-import { DndContext, closestCenter, useDroppable } from "@dnd-kit/core";
+import {
+  DndContext,
+  closestCenter,
+  rectIntersection,
+  useDroppable,
+  useDraggable,
+} from "@dnd-kit/core";
+import TaskWrapper from "../TaskWrapper/TaskWrapper";
 
 const API_URL: string = import.meta.env.VITE_SERVER_URL;
 const localStoreToken = localStorage.getItem("token");
@@ -30,25 +47,41 @@ type Props = {
   statusName: string;
   columnId: string;
   boardId: string | undefined;
+  // dragEnd: boolean;
+  // setDragEnd: React.Dispatch<React.SetStateAction<boolean>>;
 };
 export default function Column({ statusName, columnId, boardId }: Props) {
   const [inputTask, setInputTask] = useState<string | string[]>("");
   const [columnTasks, setColumnTasks] = useState<taskType>([]);
+  const sensors = useSensors(
+    useSensor(MouseSensor),
+    useSensor(TouchSensor),
+    useSensor(KeyboardSensor)
+  );
+  const [activeId, setActiveId] = useState(null);
+
+  const { isOver, setNodeRef } = useDroppable({ id: columnId });
+
+  const styleDrop = {
+    backgroundColor: isOver ? "green" : "purple",
+  };
+
   const {
     attributes,
     listeners,
-    setNodeRef: setSortableRef,
+    setNodeRef: SortRef,
     transform,
     transition,
-  } = useSortable({ id: columnId });
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
+  } = useSortable({
+    id: columnId,
+  });
 
-  const { isOver, setNodeRef: DropRef } = useDroppable({ id: columnId });
-
-  const styleDrop = { backgroundColor: isOver ? "red" : "transparent" };
+  const styleSort = transform
+    ? {
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        transition,
+      }
+    : undefined;
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -91,90 +124,102 @@ export default function Column({ statusName, columnId, boardId }: Props) {
       console.log(error);
     }
   };
-
-  const handleTaskEnd = async (event: any) => {
+  const handleEnd = (event: any) => {
+    // const { active, over } = event;
     console.log(event);
-    const { active, over } = event;
-    if (!active || !over) return;
-    if (active.id === over.id) return;
-    const oldIndex = columnTasks.findIndex((task) => task._id === active.id);
-    const newIndex = columnTasks.findIndex((task) => task._id === over.id);
-    console.log(oldIndex, newIndex);
-
-    const newOrder = arrayMove(columnTasks, oldIndex, newIndex);
-    setColumnTasks(newOrder);
-
-    try {
-      const response = await Promise.all(
-        newOrder.map((task, index) =>
-          axios.put(
-            `${API_URL}/task/tasks/${task._id}`,
-            {
-              index: index,
-            },
-            {
-              headers: { Authorization: localStoreToken },
-            }
-          )
-        )
-      );
-      console.log(response.map((response) => response.data));
-    } catch (error) {
-      console.log(error);
-    }
+    // console.log(active, "active");
+    // console.log(over, "over");
+    // console.log(
+    //   active.data.current.sortable.containerId,
+    //   "active-container",
+    //   active.data.current.sortable.index,
+    //   "active-index"
+    // );
+    // console.log(
+    //   over.data.current.sortable.containerId,
+    //   "over-container",
+    //   over.data.current.sortable.index,
+    //   "over-index"
+    // );
+    // console.log(
+    //   "collisions",
+    //   event.collisions[0].data.droppableContainer.data.current.sortable.items
+    // );
   };
-
-  const handleTaskDrop = async (event: any) => {
+  const handleEnd2 = (event: any) => {
     console.log(event);
-
-    try {
-    } catch (error) {
-      console.log(error);
-    }
   };
+  function handleDragStart(event: any) {
+    setActiveId(event.active.id);
+  }
+
+  function handleDragEnd() {
+    setActiveId(null);
+  }
+
   return (
-    <div className="flex flex-col mx-2" ref={setSortableRef} style={style}>
-      <div className="border-2 flex justify-between  bg-slate-700 text-white">
+    <div
+      className="flex flex-col mx-2 bg-purple-600 p-6"
+      ref={SortRef}
+      style={styleSort}
+    >
+      Column
+      <div className="border-2 flex justify-between  bg-red-700 text-white">
         {statusName}
-        <img {...attributes} {...listeners} src={sort} />
+        <img src={sort} {...listeners} {...attributes} />
       </div>
-      <DndContext onDragEnd={handleTaskDrop}>
+      <div ref={setNodeRef} style={styleDrop} className="bg-red-900 p-6">
         <DndContext
-          onDragEnd={handleTaskEnd}
           collisionDetection={closestCenter}
+          sensors={sensors}
+          onDragEnd={handleEnd}
         >
           <SortableContext
-            items={columnTasks.map((task) => ({ id: task._id }))}
             strategy={rectSortingStrategy}
+            items={columnTasks.map((task) => ({
+              id: task._id,
+            }))}
           >
-            <div ref={DropRef} style={styleDrop} className="bg-slate-300">
-              {columnTasks &&
-                columnTasks.map((task) => (
-                  <Task
-                    taskId={task._id}
-                    taskName={task.taskName}
-                    key={task._id}
-                    taskPriority={task.taskPriority}
-                  />
-                ))}
-            </div>
+            {columnTasks &&
+              columnTasks.map((task) => (
+                <DndContext
+                  collisionDetection={closestCenter}
+                  sensors={sensors}
+                  onDragEnd={handleEnd2}
+                >
+                  {/* <TaskWrapper key={task._id} taskId={task._id}> */}
+                  <DragOverlay
+                    onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <Task
+                      taskId={task._id}
+                      taskName={task.taskName}
+                      key={task._id}
+                      taskPriority={task.taskPriority}
+                    />
+                  </DragOverlay>
+                  {/* </TaskWrapper> */}
+                </DndContext>
+              ))}
           </SortableContext>
         </DndContext>
-      </DndContext>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="AddTask">
-          Add New Task
-          <input
-            className="border-2"
-            name="AddTask"
-            value={inputTask}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setInputTask(e.target.value);
-            }}
-          />
-        </label>
-        <button type="submit">+</button>
-      </form>
+
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="AddTask">
+            Add New Task
+            <input
+              className="border-2"
+              name="AddTask"
+              value={inputTask}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setInputTask(e.target.value);
+              }}
+            />
+          </label>
+          <button type="submit">+</button>
+        </form>
+      </div>
     </div>
   );
 }

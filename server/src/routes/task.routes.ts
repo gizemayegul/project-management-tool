@@ -69,13 +69,10 @@ taskRoute.put(
     try {
       const { taskId } = req.params;
       console.log(taskId, "taslw");
-      const { index } = req.body;
 
-      const response = await Tasks.findByIdAndUpdate(
-        taskId,
-        { index: index },
-        { new: true }
-      );
+      const response = await Tasks.findByIdAndUpdate(taskId, req.body, {
+        new: true,
+      });
       console.log(response, "updated");
       res.json(response);
     } catch (error) {
