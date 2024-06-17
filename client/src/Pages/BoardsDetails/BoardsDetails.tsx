@@ -131,35 +131,12 @@ export default function BoardsDetails() {
         >
           {columns.map((column) => (
             <Column
+              activeId={activeId}
               key={column._id}
               statusName={column.columnName}
               columnId={column._id}
               boardId={boardId}
-            >
-              <SortableContext
-                items={column.tasks.map((task: any) => ({
-                  id: task._id,
-                }))}
-              >
-                <div className="flex items-start flex-col gap-y-4">
-                  {column.tasks.map((task) => (
-                    <Task
-                      taskId={task._id}
-                      taskName={task.taskName}
-                      taskPriority={task.taskPriority}
-                    />
-                  ))}
-                </div>
-              </SortableContext>
-              <DragOverlay
-                dropAnimation={{
-                  duration: 500,
-                  easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)",
-                }}
-              >
-                {activeId ? <Task taskId={activeId} /> : null}
-              </DragOverlay>
-            </Column>
+            ></Column>
           ))}
           <form onSubmit={handleColumnSubmit}>
             <div>

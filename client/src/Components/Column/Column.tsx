@@ -1,12 +1,15 @@
-import { useState, useEffect, Children } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import sort from "../../assets/images/sort.png";
 import React from "react";
 import { CSS } from "@dnd-kit/utilities";
-import { useSortable } from "@dnd-kit/sortable";
+import { SortableContext, useSortable } from "@dnd-kit/sortable";
+import Task from "../Tasks/Task";
+import { DragOverlay } from "@dnd-kit/core";
 
-const API_URL: string = import.meta.env.VITE_SERVER_URL;
+const API_URL = import.meta.env.VITE_SERVER_URL;
 const localStoreToken = localStorage.getItem("token");
+
 type taskType = {
   _id: string;
   boardId: string;
@@ -14,23 +17,25 @@ type taskType = {
   index: number;
   length: number;
   columnId: string;
-  // columnName: string;
-  // taskPriority: string;
-}[];
+};
+
 type Props = {
   statusName: string;
   columnId: string;
   boardId: string | undefined;
   children: React.ReactNode;
+  activeId: string | null;
 };
+
 export default function Column({
   statusName,
   columnId,
   boardId,
   children,
+  activeId,
 }: Props) {
   const [inputTask, setInputTask] = useState<string | string[]>("");
-  const [columnTasks, setColumnTasks] = useState<taskType>([]);
+  const [columnTasks, setColumnTasks] = useState<taskType[]>([]);
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({
       id: columnId,
@@ -70,14 +75,12 @@ export default function Column({
           headers: { Authorization: localStoreToken },
         }
       );
-      console.log(response);
       if (response.status === 200) {
         setColumnTasks([...columnTasks, response.data]);
       } else {
         setColumnTasks(response.data);
       }
       setInputTask("");
-      console.log(columnTasks);
     } catch (error) {
       console.log(error);
     }
@@ -90,15 +93,24 @@ export default function Column({
       style={style}
       className="flex flex-col mx-2 bg-purple-500 p-6"
     >
-      Column
-      <div
-        className="border-2 flex justify-between  bg-red-700 text-white p-3
-      "
-      >
+      <div className="border-2 flex justify-between bg-red-700 text-white p-3">
         {statusName}
         <img {...listeners} src={sort} />
       </div>
-      {children}
+      <SortableContext
+        items={columnTasks.map((task: any) => ({ id: task._id }))}
+      >
+        <div className="flex items-start flex-col gap-y-4">
+          {columnTasks.map((task) => (
+            <Task
+              key={task._id}
+              taskId={task._id}
+              taskName={task.taskName}
+              columnId={columnId}
+            />
+          ))}
+        </div>
+      </SortableContext>
       <form onSubmit={handleSubmit}>
         <label htmlFor="AddTask">
           Add New Task
@@ -113,6 +125,16 @@ export default function Column({
         </label>
         <button type="submit">+</button>
       </form>
+      <DragOverlay
+        dropAnimation={{
+          duration: 500,
+          easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)",
+        }}
+      >
+        {activeId ? (
+          <Task taskId={activeId} taskName={activeId} columnId={columnId} />
+        ) : null}
+      </DragOverlay>
     </div>
   );
 }
