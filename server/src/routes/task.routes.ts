@@ -2,7 +2,6 @@ import Tasks from "../models/Tasks.model";
 import { NextFunction, Router } from "express";
 import { CustomRequest, CustomResponse } from "../types/ types";
 import isAuthenticated from "../middleware/isAutenticated";
-import { ObjectId } from "mongodb";
 import Columns from "../models/Columns.model";
 
 const taskRoute = Router();

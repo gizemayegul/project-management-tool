@@ -10,15 +10,17 @@ columnRoute.get(
   isAuthenticated,
   async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
     const { boardId } = req.params;
-    console.log(boardId);
     if (!boardId) {
       res.status(400).json({ message: "An expected error happened" });
       return;
     }
     try {
-      const response = await Columns.find({ boardId: boardId }).sort({
-        index: 1,
-      });
+      const response = await Columns.find({ boardId: boardId })
+        .sort({
+          index: 1,
+        })
+        .populate("tasks");
+
       res.status(200).json(response);
     } catch (error) {
       console.error({
@@ -48,8 +50,7 @@ columnRoute.put(
   async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
     const { columnId } = req.params;
     const { index } = req.body;
-    console.log(index);
-    console.log(columnId);
+
     try {
       const response = await Columns.findByIdAndUpdate(
         columnId,
