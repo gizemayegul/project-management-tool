@@ -1,47 +1,52 @@
-import { UniqueIdentifier, useDraggable } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
-import sort from "../../assets/images/sort.png";
+import { TaskType } from "../../types";
 import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
-type Props = {
-  taskName: string;
-  taskId: string;
-  taskPriority: string;
-  columnId: UniqueIdentifier;
-};
+interface Props {
+  task: TaskType;
+}
 
-export default function Task({ taskName, taskId, taskPriority, task }: Props) {
+export default function Task({ task }: Props) {
   const {
+    isDragging,
     attributes,
     listeners,
     setNodeRef,
     transform,
     transition,
-    isDragging,
   } = useSortable({
-    id: taskId,
+    id: task._id,
     data: {
       type: "task",
+      task: task,
     },
   });
   const style = {
+    transition,
     transform: CSS.Transform.toString(transform),
-    transition: transition || "transform 250ms ease", // Ensuring a smooth transition
-    opacity: isDragging ? 0.8 : undefined, // Optionally reduce opacity while dragging
-    zIndex: isDragging ? 1000 : "auto", // Ensure the dragging item is on top
   };
+  if (isDragging) {
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        className="
+        opacity-30
+      bg-mainBackgroundColor p-2.5 h-[100px] min-h-[100px] items-center flex text-left rounded-xl border-2 border-rose-500  cursor-grab relative
+      "
+      />
+    );
+  }
+
   return (
     <div
-      {...attributes}
+      className="bg-mainBackgroundColor p-2.5 h-[100px] min-h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative task"
       ref={setNodeRef}
       style={style}
-      className="px-6 border-2 my-2 mx-2 flex justify-between bg-purple-300 p-4
-      "
+      {...listeners}
+      {...attributes}
     >
-      <div>{taskName}</div>
-      <div>{taskPriority}</div>
-      <img src={sort} {...listeners} />
-      Task
+      <div>{task.taskName}</div>
     </div>
   );
 }

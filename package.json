@@ -21,6 +21,7 @@
     "concurrently": "^8.2.2"
   },
   "dependencies": {
-    "@dnd-kit/modifiers": "^7.0.0"
+    "@dnd-kit/modifiers": "^7.0.0",
+    "react-dom": "^18.3.1"
   }
 }

@@ -1,58 +1,43 @@
 import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import Column from "../../Components/Column/Column";
+import { ColumnType, TaskType } from "../../types";
+import { createPortal } from "react-dom";
 import Task from "../../Components/Tasks/Task";
-
 import {
   DndContext,
-  KeyboardSensor,
-  MouseSensor,
-  TouchSensor,
   useSensor,
   useSensors,
-  closestCenter,
+  PointerSensor,
   DragStartEvent,
-  UniqueIdentifier,
-  DragMoveEvent,
   DragOverlay,
+  DragEndEvent,
+  DragOverEvent,
 } from "@dnd-kit/core";
-import {
-  SortableContext,
-  arrayMove,
-  horizontalListSortingStrategy,
-  rectSortingStrategy,
-  rectSwappingStrategy,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-
-type ColumnsType = {
-  _id: string;
-  boardId: string;
-  columnName: string;
-  index: number;
-  tasks: string | string[];
-  length: number;
-}[];
+import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 
 const API_URL: string = import.meta.env.VITE_SERVER_URL;
+const localStoreToken = localStorage.getItem("token");
 
 export default function BoardsDetails() {
   const { boardId } = useParams<{ boardId: string }>();
-  const [columns, setColumns] = useState<ColumnsType>([]);
-  const [addColumn, setAddColumn] = useState("");
-  const [activeId, setActiveId] = useState<UniqueIdentifier | null | string>(
-    ""
-  );
-  const localStoreToken = localStorage.getItem("token");
+  const [tasks, setTasks] = useState<TaskType[]>([]);
+
+  const [columns, setColumns] = useState<ColumnType[]>([]);
+  const [activeColumn, setActiveColumn] = useState<ColumnType | null>(null);
+
+  const [activeTask, setActiveTask] = useState<TaskType | null>(null);
   const sensors = useSensors(
-    useSensor(MouseSensor),
-    useSensor(TouchSensor),
-    useSensor(KeyboardSensor)
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 10,
+      },
+    })
   );
 
   useEffect(() => {
-    const fetchBoards = async () => {
+    const fetchColumns = async () => {
       try {
         const response = await axios.get(
           `${API_URL}/column/columns/${boardId}`,
@@ -60,103 +45,164 @@ export default function BoardsDetails() {
             headers: { Authorization: localStoreToken },
           }
         );
+
         setColumns(response.data);
       } catch (error) {
-        console.log(error);
+        console.log("error happened");
       }
     };
-    fetchBoards();
+
+    fetchColumns();
+  }, [boardId, localStoreToken]);
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/task/tasks/${boardId}`, {
+          headers: { Authorization: localStoreToken },
+        });
+        setTasks(response.data);
+      } catch (error) {
+        console.log("task error");
+      }
+    };
+    fetchTasks();
   }, [boardId, localStoreToken]);
 
-  const handleColumnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post(
-        `${API_URL}/column/columns/${boardId}`,
-        {
-          index: columns.length,
-          columnName: addColumn,
-          boardId: boardId,
-        },
-        {
-          headers: { Authorization: localStoreToken },
+  function onDragStart(event: DragStartEvent) {
+    if (event.active.data.current?.type === "column") {
+      setActiveColumn(event.active.data.current.column);
+      return;
+    }
+
+    if (event.active.data.current?.type === "task") {
+      setActiveTask(event.active.data.current.task);
+      return;
+    }
+  }
+
+  function onDragOver(event: DragOverEvent) {
+    const { active, over } = event;
+    console.log(active, over);
+    if (!over) return;
+
+    const activeId = active.id;
+    const overId = over.id;
+
+    if (activeId === overId) return;
+
+    const isActiveATask = active.data.current?.type === "task";
+    const isOverATask = over.data.current?.type === "task";
+
+    if (!isActiveATask) return;
+
+    // Im dropping a Task over another Task
+    if (isActiveATask && isOverATask) {
+      setTasks((tasks) => {
+        const activeIndex = tasks.findIndex((t) => t._id === activeId);
+        const overIndex = tasks.findIndex((t) => t._id === overId);
+
+        if (tasks[activeIndex].columnId != tasks[overIndex].columnId) {
+          // Fix introduced after video recording
+          tasks[activeIndex].columnId = tasks[overIndex].columnId;
+          return arrayMove(tasks, activeIndex, overIndex - 1);
         }
-      );
-      if (response.status === 200) {
-        setColumns((prev) => [...prev, response.data]);
-        setAddColumn("");
-      }
+
+        return arrayMove(tasks, activeIndex, overIndex);
+      });
+    }
+
+    const isOverAColumn = over.data.current?.type === "column";
+
+    // Im dropping a Task over a column
+    if (isActiveATask && isOverAColumn) {
+      setTasks((tasks) => {
+        const activeIndex = tasks.findIndex((t) => t._id === activeId);
+
+        tasks[activeIndex].columnId = String(overId);
+        console.log("DROPPING TASK OVER COLUMN", { activeIndex });
+        return arrayMove(tasks, activeIndex, activeIndex);
+      });
+    }
+  }
+  async function onDragEnd(event: DragEndEvent) {
+    try {
+      setActiveColumn(null);
+      setActiveTask(null);
+
+      const { active, over } = event;
+      if (!over) return;
+
+      const activeId = active.id;
+      const overId = over.id;
+
+      if (activeId === overId) return;
+
+      const isActiveAColumn = active.data.current?.type === "column";
+      if (!isActiveAColumn) return;
+
+      console.log("DRAG END");
+
+      setColumns((columns) => {
+        const activeColumnIndex = columns.findIndex(
+          (col) => col._id === activeId
+        );
+
+        const overColumnIndex = columns.findIndex((col) => col._id === overId);
+
+        return arrayMove(columns, activeColumnIndex, overColumnIndex);
+      });
     } catch (error) {
       console.log(error);
     }
-  };
-  //TODO: Implement any interface
-  //change the column of the task when dragging the task into
-  const handleStart = (event: DragStartEvent) => {
-    const { active } = event;
-    const { id } = active;
-    setActiveId(id);
-  };
-  const handleMove = (event: DragMoveEvent) => {
-    const { over, active } = event;
-
-    if (
-      active.data.current?.type === "task" &&
-      over?.data.current?.type === "task" &&
-      active &&
-      over &&
-      active.id !== over.id
-    ) {
-      const activeColumn = columns.find((column) => column._id === active.id);
-
-      const activeTask = columns.find((column) =>
-        column.tasks.map((task) => task._id).includes(over.id)
-      );
-      console.log(activeTask, "activeTask");
-    }
-  };
+  }
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragStart={handleStart}
-      onDragMove={handleMove}
+    <div
+      className="
+        m-auto
+        flex
+        min-h-screen
+        w-full
+        items-center
+        overflow-x-auto
+        overflow-y-hidden
+        px-[40px]
+    "
     >
-      <div className="flex bg-purple-800 p-6 ">
-        Board
-        <SortableContext
-          strategy={rectSwappingStrategy}
-          items={columns.map((column) => ({ id: column._id }))}
-        >
-          {columns.map((column) => (
-            <Column
-              activeId={activeId}
-              key={column._id}
-              statusName={column.columnName}
-              columnId={column._id}
-              boardId={boardId}
-            ></Column>
-          ))}
-          <form onSubmit={handleColumnSubmit}>
-            <div>
-              <label htmlFor="new column">
-                Add New Column
-                <input
-                  className="border-2"
-                  name="new column"
-                  type="text"
-                  value={addColumn}
-                  onChange={(e) => setAddColumn(e.target.value)}
+      <DndContext
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+        onDragOver={onDragOver}
+        sensors={sensors}
+      >
+        <div className="m-auto flex gap-4">
+          <div className="flex gap-4">
+            <SortableContext items={columns.map((column) => column._id)}>
+              {columns.map((column) => (
+                <Column
+                  key={column._id}
+                  column={column}
+                  tasks={tasks.filter((task) => task.columnId === column._id)}
                 />
-              </label>
-            </div>
-            <button className="border-2" type="submit">
-              Add Column
-            </button>
-          </form>
-        </SortableContext>
-      </div>
-    </DndContext>
+              ))}
+            </SortableContext>
+          </div>
+        </div>
+        {createPortal(
+          <DragOverlay>
+            {activeColumn && (
+              <Column
+                column={activeColumn}
+                tasks={tasks.filter(
+                  (task) => task.columnId === activeColumn._id
+                )}
+              />
+            )}
+            {activeTask && <Task task={activeTask} />}
+          </DragOverlay>,
+          document.body
+        )}
+      </DndContext>
+    </div>
   );
 }

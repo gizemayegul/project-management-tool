@@ -47,13 +47,29 @@ taskRoute.post(
   }
 );
 
+// taskRoute.get(
+//   "/tasks/:columnId",
+//   isAuthenticated,
+//   async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
+//     const { columnId } = req.params;
+//     try {
+//       const response = await Tasks.find({ columnId }).sort({ index: 1 });
+//       res.json(response);
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
+// );
 taskRoute.get(
-  "/tasks/:columnId",
+  "/tasks/:boardId",
   isAuthenticated,
   async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
-    const { columnId } = req.params;
+    const { boardId } = req.params;
+    console.log(boardId, "eminem");
     try {
-      const response = await Tasks.find({ columnId }).sort({ index: 1 });
+      const response = await Tasks.find({ boardId }).sort({
+        index: 1,
+      });
       res.json(response);
     } catch (error) {
       console.log(error);
