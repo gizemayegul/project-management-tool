@@ -151,6 +151,22 @@ export default function BoardsDetails() {
 
         return arrayMove(columns, activeColumnIndex, overColumnIndex);
       });
+      const overColumnIndex = columns.findIndex((col) => col._id === overId);
+      const activeIdIndex = columns.findIndex((col) => col._id === activeId);
+      await axios.put(
+        `${API_URL}/column/columns/${activeId}`,
+        { index: overColumnIndex },
+        {
+          headers: { Authorization: localStoreToken },
+        }
+      );
+      await axios.put(
+        `${API_URL}/column/columns/${overId}`,
+        { index: activeIdIndex },
+        {
+          headers: { Authorization: localStoreToken },
+        }
+      );
     } catch (error) {
       console.log(error);
     }
