@@ -83,11 +83,17 @@ taskRoute.put(
   async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
     try {
       const { taskId } = req.params;
+      const { index } = req.body;
+
       console.log(taskId, "taslw");
 
-      const response = await Tasks.findByIdAndUpdate(taskId, req.body, {
-        new: true,
-      });
+      const response = await Tasks.findByIdAndUpdate(
+        taskId,
+        { index: index },
+        {
+          new: true,
+        }
+      );
       console.log(response, "updated");
       res.json(response);
     } catch (error) {

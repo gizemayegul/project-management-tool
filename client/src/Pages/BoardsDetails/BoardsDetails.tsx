@@ -80,48 +80,66 @@ export default function BoardsDetails() {
     }
   }
 
-  function onDragOver(event: DragOverEvent) {
-    const { active, over } = event;
-    console.log(active, over);
-    if (!over) return;
+  async function onDragOver(event: DragOverEvent) {
+    try {
+      const { active, over } = event;
+      console.log(active, over);
+      if (!over) return;
 
-    const activeId = active.id;
-    const overId = over.id;
+      const activeId = active.id;
+      const overId = over.id;
 
-    if (activeId === overId) return;
+      if (activeId === overId) return;
 
-    const isActiveATask = active.data.current?.type === "task";
-    const isOverATask = over.data.current?.type === "task";
+      const isActiveATask = active.data.current?.type === "task";
+      const isOverATask = over.data.current?.type === "task";
 
-    if (!isActiveATask) return;
+      if (!isActiveATask) return;
 
-    // Im dropping a Task over another Task
-    if (isActiveATask && isOverATask) {
-      setTasks((tasks) => {
+      // Im dropping a Task over another Task
+      if (isActiveATask && isOverATask) {
+        setTasks((tasks) => {
+          const activeIndex = tasks.findIndex((t) => t._id === activeId);
+          const overIndex = tasks.findIndex((t) => t._id === overId);
+
+          if (tasks[activeIndex].columnId != tasks[overIndex].columnId) {
+            // Fix introduced after video recording
+            tasks[activeIndex].columnId = tasks[overIndex].columnId;
+            return arrayMove(tasks, activeIndex, overIndex - 1);
+          }
+
+          return arrayMove(tasks, activeIndex, overIndex);
+        });
         const activeIndex = tasks.findIndex((t) => t._id === activeId);
         const overIndex = tasks.findIndex((t) => t._id === overId);
+        const response = await axios.put(
+          `${API_URL}/task/tasks/${activeId}`,
+          { index: overIndex },
+          { headers: { Authorization: localStoreToken } }
+        );
+        const response2 = await axios.put(
+          `${API_URL}/task/tasks/${overId}`,
+          { index: activeIndex },
+          { headers: { Authorization: localStoreToken } }
+        );
+        console.log(response2.data);
+        console.log(response.data);
+      }
 
-        if (tasks[activeIndex].columnId != tasks[overIndex].columnId) {
-          // Fix introduced after video recording
-          tasks[activeIndex].columnId = tasks[overIndex].columnId;
-          return arrayMove(tasks, activeIndex, overIndex - 1);
-        }
+      const isOverAColumn = over.data.current?.type === "column";
 
-        return arrayMove(tasks, activeIndex, overIndex);
-      });
-    }
+      // Im dropping a Task over a column
+      if (isActiveATask && isOverAColumn) {
+        setTasks((tasks) => {
+          const activeIndex = tasks.findIndex((t) => t._id === activeId);
 
-    const isOverAColumn = over.data.current?.type === "column";
-
-    // Im dropping a Task over a column
-    if (isActiveATask && isOverAColumn) {
-      setTasks((tasks) => {
-        const activeIndex = tasks.findIndex((t) => t._id === activeId);
-
-        tasks[activeIndex].columnId = String(overId);
-        console.log("DROPPING TASK OVER COLUMN", { activeIndex });
-        return arrayMove(tasks, activeIndex, activeIndex);
-      });
+          tasks[activeIndex].columnId = String(overId);
+          console.log("DROPPING TASK OVER COLUMN", { activeIndex });
+          return arrayMove(tasks, activeIndex, activeIndex);
+        });
+      }
+    } catch (error) {
+      console.log("error");
     }
   }
   async function onDragEnd(event: DragEndEvent) {
