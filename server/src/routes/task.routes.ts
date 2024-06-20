@@ -65,7 +65,6 @@ taskRoute.get(
   isAuthenticated,
   async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
     const { boardId } = req.params;
-    console.log(boardId, "eminem");
     try {
       const response = await Tasks.find({ boardId }).sort({
         index: 1,
@@ -83,17 +82,9 @@ taskRoute.put(
   async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
     try {
       const { taskId } = req.params;
-      const { index } = req.body;
-
-      console.log(taskId, "taslw");
-
-      const response = await Tasks.findByIdAndUpdate(
-        taskId,
-        { index: index },
-        {
-          new: true,
-        }
-      );
+      const response = await Tasks.findByIdAndUpdate(taskId, req.body, {
+        new: true,
+      });
       console.log(response, "updated");
       res.json(response);
     } catch (error) {

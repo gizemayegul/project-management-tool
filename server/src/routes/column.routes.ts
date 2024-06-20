@@ -67,4 +67,5 @@ columnRoute.put(
     }
   }
 );
+
 export default columnRoute;

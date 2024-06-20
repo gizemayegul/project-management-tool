@@ -14,6 +14,7 @@ import {
   DragOverlay,
   DragEndEvent,
   DragOverEvent,
+  closestCenter,
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 
@@ -83,7 +84,6 @@ export default function BoardsDetails() {
   async function onDragOver(event: DragOverEvent) {
     try {
       const { active, over } = event;
-      console.log(active, over);
       if (!over) return;
 
       const activeId = active.id;
@@ -93,6 +93,7 @@ export default function BoardsDetails() {
 
       const isActiveATask = active.data.current?.type === "task";
       const isOverATask = over.data.current?.type === "task";
+      const isOverAColumn = over.data.current?.type === "column";
 
       if (!isActiveATask) return;
 
@@ -122,21 +123,26 @@ export default function BoardsDetails() {
           { index: activeIndex },
           { headers: { Authorization: localStoreToken } }
         );
-        console.log(response2.data);
-        console.log(response.data);
       }
-
-      const isOverAColumn = over.data.current?.type === "column";
 
       // Im dropping a Task over a column
       if (isActiveATask && isOverAColumn) {
-        setTasks((tasks) => {
-          const activeIndex = tasks.findIndex((t) => t._id === activeId);
+        const activeIndex = tasks.findIndex((t) => t._id === activeId);
+        const overColumn = columns.find((col) => col._id === overId);
+        console.log(overColumn?.columnName);
 
+        setTasks((tasks) => {
           tasks[activeIndex].columnId = String(overId);
           console.log("DROPPING TASK OVER COLUMN", { activeIndex });
           return arrayMove(tasks, activeIndex, activeIndex);
         });
+
+        const response2 = await axios.put(
+          `${API_URL}/task/tasks/${activeId}`,
+          { columnId: overId, columnName: overColumn?.columnName },
+          { headers: { Authorization: localStoreToken } }
+        );
+        console.log(response2.data, "145");
       }
     } catch (error) {
       console.log("error");
@@ -208,6 +214,7 @@ export default function BoardsDetails() {
         onDragEnd={onDragEnd}
         onDragOver={onDragOver}
         sensors={sensors}
+        collisionDetection={closestCenter}
       >
         <div className="m-auto flex gap-4">
           <div className="flex gap-4">
