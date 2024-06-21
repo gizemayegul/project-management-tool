@@ -203,47 +203,30 @@ export default function BoardsDetails() {
       }
 
       if (isActiveATask && isOverAColumn) {
-        const findTheColumn = columns.find((col) => col._id === overId);
-        const oldColumn = columns.find((col) =>
+        const overColumn = columns.find((col) => col._id === overId);
+        const activeColumn = columns.find((col) =>
           col.tasks.some((t) => t._id === activeId)
         );
-        const activeTask = oldColumn?.tasks.find((t) => t._id === activeId);
-
-        if (!findTheColumn || !activeTask || !oldColumn) return;
-
-        setColumns((prevColumns) =>
-          prevColumns.map((col) => {
-            if (col._id === oldColumn._id) {
-              return {
-                ...col,
-                tasks: col.tasks.filter((t) => t._id !== activeId),
-              };
-            } else if (col._id === findTheColumn._id) {
-              return {
-                ...col,
-                tasks: [
-                  ...col.tasks,
-                  {
-                    ...activeTask,
-                    columnId: findTheColumn._id,
-                    index: col.tasks.length,
-                  },
-                ],
-              };
-            } else {
-              return col;
-            }
-          })
+        const activeTask = activeColumn?.tasks.find((t) => t._id === activeId);
+        const activeColumnIndex = columns.findIndex(
+          (columns) => columns._id === activeColumn?._id
         );
-      }
+        const overColumnIndex = columns.findIndex(
+          (columns) => columns._id === overColumn?._id
+        );
 
-      // Send the updated columns to the backend
-      const response = await axios.put(
-        `${API_URL}/columns/update`,
-        { columns },
-        { headers: { Authorization: localStoreToken } }
-      );
-      console.log(response.data);
+        if (!overColumn || !activeColumn || !activeTask) return;
+        const activeIndex = activeColumn.tasks.findIndex(
+          (task) => task._id === activeId
+        );
+        let newColumns = [...columns];
+        const [removeditem] = newColumns[activeColumnIndex].tasks.splice(
+          activeIndex,
+          1
+        );
+        newColumns[overColumnIndex].tasks.push(removeditem);
+        setColumns(newColumns);
+      }
     } catch (error) {
       console.error("Error during onDragOver:", error);
     }
