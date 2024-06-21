@@ -45,4 +45,105 @@ columnRoute.post(
   }
 );
 
+columnRoute.put(
+  "/columns/:columnId",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
+    const { columnId } = req.params;
+    const { index } = req.body;
+
+    try {
+      const response = await Columns.findByIdAndUpdate(
+        columnId,
+        { index: index },
+        {
+          new: true,
+        }
+      );
+      res.status(200).json(response);
+    } catch (error) {
+      console.error({
+        message: "An error occurred while fetching the boards user",
+      });
+    }
+  }
+);
+columnRoute.post(
+  "/columns/:columnId/createTask",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
+    const { columnId } = req.params;
+    const { task } = req.body;
+
+    try {
+      const response = await Columns.findByIdAndUpdate(
+        columnId,
+        { $push: { tasks: task } },
+        {
+          new: true,
+        }
+      );
+      res.status(200).json(response);
+    } catch (error) {
+      console.error({
+        message: "An error occurred while fetching the boards user",
+      });
+    }
+  }
+);
+columnRoute.put(
+  "/columns/:columnId/tasks/reorder",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
+    const { columnId } = req.params;
+    const { tasks } = req.body;
+
+    try {
+      const response = await Columns.findByIdAndUpdate(
+        columnId,
+        { $set: { tasks } },
+        {
+          new: true,
+        }
+      );
+      res.status(200).json(response);
+      console.log(response);
+    } catch (error) {
+      console.error({
+        message: "An error occurred while fetching the boards user",
+      });
+    }
+  }
+);
+
+columnRoute.put(
+  "/columns/:boardId/updateColumns",
+  isAuthenticated,
+  async (req, res, next) => {
+    try {
+      const { boardId } = req.params;
+      const { updatedColumns } = req.body;
+      console.log(updatedColumns, "selam");
+
+      // // Update each column
+      const updatePromises = updatedColumns.map((column: any) => {
+        return Columns.findByIdAndUpdate(column._id, column, { new: true });
+      });
+
+      const response = await Promise.all(updatePromises);
+
+      res.status(200).json(response);
+    } catch (error) {
+      console.error({
+        message: "An error occurred while updating the columns",
+        error,
+      });
+      res.status(500).json({
+        message: "Failed to update columns",
+        error,
+      });
+    }
+  }
+);
+
 export default columnRoute;

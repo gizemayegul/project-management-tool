@@ -66,91 +66,6 @@ export default function BoardsDetails() {
     }
   }
 
-  // async function onDragOver(event: DragOverEvent) {
-  //   try {
-  //     const { active, over } = event;
-  //     if (!over) return;
-
-  //     const activeId = active.id;
-  //     const overId = over.id;
-
-  //     if (activeId === overId) return;
-
-  //     const isActiveATask = active.data.current?.type === "task";
-  //     const isOverATask = over.data.current?.type === "task";
-  //     const isOverAColumn = over.data.current?.type === "column";
-
-  //     if (!isActiveATask) return;
-
-  //     // Im dropping a Task over another Task
-  //     if (isActiveATask && isOverATask) {
-  //       console.log(activeId);
-  //       console.log(overId);
-
-  //       const findColumnActive = columns.find((col) =>
-  //         col.tasks.find((t) => t._id === activeId)
-  //       );
-  //       const overIndex = findColumnActive?.tasks.findIndex(
-  //         (t) => t._id === overId
-  //       );
-  //       const activeIndex = findColumnActive?.tasks.findIndex(
-  //         (t) => t._id === activeId
-  //       );
-  //       console.log(overIndex, "over");
-  //       console.log(activeIndex, "active");
-
-  //       console.log(findColumnActive?.tasks);
-
-  //       let newOrders = [...findColumnActive?.tasks];
-  //       newOrders = arrayMove(newOrders, activeIndex, overIndex);
-  //       console.log(newOrders);
-  //       console.log(columns);
-  //       setColumns((prev) =>
-  //         prev.map((col) =>
-  //           col._id === findColumnActive._id ? { ...col, tasks: newOrders } : col
-  //         )
-  //       );
-  //     }
-
-  //     // Im dropping a Task over a column
-  //     // if (isActiveATask && isOverAColumn) {
-  //     //   try {
-  //     //     const activeIndex = tasks.findIndex((t) => t._id === activeId);
-  //     //     const overColumn = columns.find((col) => col._id === overId);
-
-  //     //     // Remove the task from its current position and add it to the new column
-  //     //     setTasks((tasks) => {
-  //     //       const updatedTasks = [...tasks];
-  //     //       const [movedTask] = updatedTasks.splice(activeIndex, 1); // Remove the task
-  //     //       movedTask.columnId = String(overId);
-  //     //       // Optionally, you can place the task at the end of the new column or at a specific position
-  //     //       updatedTasks.push(movedTask); // Add to the end of the new column
-  //     //       return updatedTasks;
-  //     //     });
-  //     //     console.log(overId);
-  //     //     // const response = await axios.get(
-  //     //     //   `${API_URL}/columns/boards/${overId}`,
-  //     //     //   { headers: { Authorization: localStoreToken } }
-  //     //     // );
-  //     //     // console.log(response.data.tasks.length);
-  //     //     // const newIndex = response.data.tasks.length;
-  //     //     // const response2 = await axios.put(
-  //     //     //   `${API_URL}/task/tasks/${activeId}`,
-  //     //     //   {
-  //     //     //     columnId: overId,
-  //     //     //     columnName: overColumn?.columnName,
-  //     //     //     index: newIndex,
-  //     //     //   },
-  //     //     //   { headers: { Authorization: localStoreToken } }
-  //     //     // );
-  //     //   } catch (error) {
-  //     //     console.log("error", error);
-  //     //   }
-  //     // }
-  //   } catch (error) {
-  //     console.log("error");
-  //   }
-  // }
   async function onDragOver(event: DragOverEvent) {
     try {
       const { active, over } = event;
@@ -226,6 +141,13 @@ export default function BoardsDetails() {
         );
         newColumns[overColumnIndex].tasks.push(removeditem);
         setColumns(newColumns);
+        await axios.put(
+          `${API_URL}/columns/${boardId}/updateColumns`,
+          { updatedColumns: newColumns },
+          {
+            headers: { Authorization: localStoreToken },
+          }
+        );
       }
     } catch (error) {
       console.error("Error during onDragOver:", error);
