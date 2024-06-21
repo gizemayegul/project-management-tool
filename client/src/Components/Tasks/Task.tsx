@@ -47,6 +47,7 @@ export default function Task({ task }: Props) {
       {...attributes}
     >
       <div>{task.taskName}</div>
+      <div>{task._id}</div>
     </div>
   );
 }

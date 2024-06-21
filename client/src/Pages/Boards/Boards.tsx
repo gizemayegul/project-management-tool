@@ -18,12 +18,9 @@ export default function Boards() {
   useEffect(() => {
     const fetchBoards = async () => {
       try {
-        const response = await axios.get(
-          `${API_URL}/board/${projectId}/boards`,
-          {
-            headers: { Authorization: localStoreToken },
-          }
-        );
+        const response = await axios.get(`${API_URL}/${projectId}/boards`, {
+          headers: { Authorization: localStoreToken },
+        });
         setBoards(response.data.boards);
         console.log(response.data);
       } catch (error) {

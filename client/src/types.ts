@@ -17,7 +17,7 @@ export type ColumnType = {
   columnName: String;
   index: Number;
   boardId: Number;
-  tasks: [TaskType];
+  tasks: TaskType[];
   createdAt: Date;
   updatedAt: Date;
 };

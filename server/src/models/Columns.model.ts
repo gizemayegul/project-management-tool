@@ -10,7 +10,23 @@ const ColumnsSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Boards",
     },
-    tasks: [{ type: Schema.Types.ObjectId, ref: "Tasks" }],
+    tasks: [
+      {
+        taskName: {
+          type: String,
+          default: "Untitled",
+        },
+
+        taskPriority: {
+          type: String,
+          default: "P3",
+          enum: ["P1", "P2", "P3"],
+        },
+      },
+      {
+        timestamps: true,
+      },
+    ],
     index: {
       type: Number,
       default: 0,
