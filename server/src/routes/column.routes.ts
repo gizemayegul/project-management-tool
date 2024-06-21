@@ -29,6 +29,28 @@ columnRoute.get(
     }
   }
 );
+
+columnRoute.get(
+  "/columns/boards/:columnId",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
+    const { columnId } = req.params;
+    console.log(columnId, "columIdasd");
+    if (!columnId) {
+      res.status(400).json({ message: "An expected error happened" });
+      return;
+    }
+    try {
+      const response = await Columns.findById(columnId);
+      console.log(response);
+      res.status(200).json(response);
+    } catch (error) {
+      console.error({
+        message: "An error occurred while fetching the column",
+      });
+    }
+  }
+);
 columnRoute.post(
   "/columns/:boardId",
   isAuthenticated,

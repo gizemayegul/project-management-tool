@@ -4,6 +4,7 @@ import sort from "../../assets/images/sort.png";
 import { CSS } from "@dnd-kit/utilities";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import Task from "../Tasks/Task";
+import { useDroppable } from "@dnd-kit/core";
 
 import { ColumnType, TaskType } from "../../types";
 const API_URL = import.meta.env.VITE_SERVER_URL;
@@ -14,6 +15,9 @@ interface Props {
 }
 
 export default function Column({ column, tasks }: Props) {
+  const { isOver } = useDroppable({
+    id: column._id,
+  });
   const {
     isDragging,
     attributes,
@@ -28,12 +32,15 @@ export default function Column({ column, tasks }: Props) {
       column: column,
     },
   });
-
   const style = {
     transition,
     transform: CSS.Transform.toString(transform),
   };
-
+  const columnStyle = {
+    backgroundColor: isOver ? "#E0E0E0" : "white", // change color when a task is dragged over
+    borderRadius: "10px",
+    padding: "20px",
+  };
   if (isDragging) {
     return (
       <div
@@ -57,16 +64,8 @@ export default function Column({ column, tasks }: Props) {
   return (
     <div
       ref={setNodeRef}
-      style={style}
-      className="
-  bg-columnBackgroundColor
-  w-[350px]
-  h-[500px]
-  max-h-[500px]
-  rounded-md
-  flex
-  flex-col
-  "
+      style={{ ...style, ...columnStyle }}
+      // style={style}
     >
       <div
         className="

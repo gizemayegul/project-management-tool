@@ -17,6 +17,7 @@ import {
   closestCenter,
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
+import { set } from "mongoose";
 
 const API_URL: string = import.meta.env.VITE_SERVER_URL;
 const localStoreToken = localStorage.getItem("token");
@@ -113,12 +114,12 @@ export default function BoardsDetails() {
         });
         const activeIndex = tasks.findIndex((t) => t._id === activeId);
         const overIndex = tasks.findIndex((t) => t._id === overId);
-        const response = await axios.put(
+        await axios.put(
           `${API_URL}/task/tasks/${activeId}`,
           { index: overIndex },
           { headers: { Authorization: localStoreToken } }
         );
-        const response2 = await axios.put(
+        await axios.put(
           `${API_URL}/task/tasks/${overId}`,
           { index: activeIndex },
           { headers: { Authorization: localStoreToken } }
@@ -130,7 +131,6 @@ export default function BoardsDetails() {
         try {
           const activeIndex = tasks.findIndex((t) => t._id === activeId);
           const overColumn = columns.find((col) => col._id === overId);
-          console.log(overColumn?.columnName);
 
           // Remove the task from its current position and add it to the new column
           setTasks((tasks) => {
@@ -139,16 +139,24 @@ export default function BoardsDetails() {
             movedTask.columnId = String(overId);
             // Optionally, you can place the task at the end of the new column or at a specific position
             updatedTasks.push(movedTask); // Add to the end of the new column
-            console.log("DROPPING TASK OVER COLUMN", { activeIndex });
             return updatedTasks;
           });
-
-          const response2 = await axios.put(
-            `${API_URL}/task/tasks/${activeId}`,
-            { columnId: overId, columnName: overColumn?.columnName },
+          console.log(overId);
+          const response = await axios.get(
+            `${API_URL}/column/columns/boards/${overId}`,
             { headers: { Authorization: localStoreToken } }
           );
-          console.log(response2.data, "145");
+          console.log(response.data.tasks.length);
+          const newIndex = response.data.tasks.length;
+          const response2 = await axios.put(
+            `${API_URL}/task/tasks/${activeId}`,
+            {
+              columnId: overId,
+              columnName: overColumn?.columnName,
+              index: newIndex,
+            },
+            { headers: { Authorization: localStoreToken } }
+          );
         } catch (error) {
           console.log("error", error);
         }
