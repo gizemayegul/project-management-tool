@@ -14,11 +14,8 @@ import {
   DragOverlay,
   DragEndEvent,
   DragOverEvent,
-  closestCenter,
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
-import { act } from "react-dom/test-utils";
-import { set } from "mongoose";
 
 const API_URL: string = import.meta.env.VITE_SERVER_URL;
 const localStoreToken = localStorage.getItem("token");
@@ -142,7 +139,7 @@ export default function BoardsDetails() {
         newColumns[overColumnIndex].tasks.push(removeditem);
         setColumns(newColumns);
         await axios.put(
-          `${API_URL}/columns/${boardId}/updateColumns`,
+          `${API_URL}/columns/tasks/updateColumns`,
           { updatedColumns: newColumns },
           {
             headers: { Authorization: localStoreToken },
@@ -171,18 +168,14 @@ export default function BoardsDetails() {
       if (!isActiveAColumn) return;
 
       console.log("DRAG END");
-
-      setColumns((columns) => {
-        const activeColumnIndex = columns.findIndex(
-          (col) => col._id === activeId
-        );
-
-        const overColumnIndex = columns.findIndex((col) => col._id === overId);
-
-        return arrayMove(columns, activeColumnIndex, overColumnIndex);
-      });
+      const activeColumnIndex = columns.findIndex(
+        (col) => col._id === activeId
+      );
       const overColumnIndex = columns.findIndex((col) => col._id === overId);
-      const activeIdIndex = columns.findIndex((col) => col._id === activeId);
+
+      let newColumns = [...columns];
+      newColumns = arrayMove(newColumns, activeColumnIndex, overColumnIndex);
+      setColumns(newColumns);
       await axios.put(
         `${API_URL}/columns/${activeId}`,
         { index: overColumnIndex },
@@ -192,7 +185,7 @@ export default function BoardsDetails() {
       );
       await axios.put(
         `${API_URL}/columns/${overId}`,
-        { index: activeIdIndex },
+        { index: activeColumnIndex },
         {
           headers: { Authorization: localStoreToken },
         }

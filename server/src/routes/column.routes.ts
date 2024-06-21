@@ -117,11 +117,10 @@ columnRoute.put(
 );
 
 columnRoute.put(
-  "/columns/:boardId/updateColumns",
+  "/columns/tasks/updateColumns",
   isAuthenticated,
   async (req, res, next) => {
     try {
-      const { boardId } = req.params;
       const { updatedColumns } = req.body;
       console.log(updatedColumns, "selam");
 
