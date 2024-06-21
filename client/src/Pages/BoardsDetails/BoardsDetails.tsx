@@ -127,22 +127,31 @@ export default function BoardsDetails() {
 
       // Im dropping a Task over a column
       if (isActiveATask && isOverAColumn) {
-        const activeIndex = tasks.findIndex((t) => t._id === activeId);
-        const overColumn = columns.find((col) => col._id === overId);
-        console.log(overColumn?.columnName);
+        try {
+          const activeIndex = tasks.findIndex((t) => t._id === activeId);
+          const overColumn = columns.find((col) => col._id === overId);
+          console.log(overColumn?.columnName);
 
-        setTasks((tasks) => {
-          tasks[activeIndex].columnId = String(overId);
-          console.log("DROPPING TASK OVER COLUMN", { activeIndex });
-          return arrayMove(tasks, activeIndex, activeIndex);
-        });
+          // Remove the task from its current position and add it to the new column
+          setTasks((tasks) => {
+            const updatedTasks = [...tasks];
+            const [movedTask] = updatedTasks.splice(activeIndex, 1); // Remove the task
+            movedTask.columnId = String(overId);
+            // Optionally, you can place the task at the end of the new column or at a specific position
+            updatedTasks.push(movedTask); // Add to the end of the new column
+            console.log("DROPPING TASK OVER COLUMN", { activeIndex });
+            return updatedTasks;
+          });
 
-        const response2 = await axios.put(
-          `${API_URL}/task/tasks/${activeId}`,
-          { columnId: overId, columnName: overColumn?.columnName },
-          { headers: { Authorization: localStoreToken } }
-        );
-        console.log(response2.data, "145");
+          const response2 = await axios.put(
+            `${API_URL}/task/tasks/${activeId}`,
+            { columnId: overId, columnName: overColumn?.columnName },
+            { headers: { Authorization: localStoreToken } }
+          );
+          console.log(response2.data, "145");
+        } catch (error) {
+          console.log("error", error);
+        }
       }
     } catch (error) {
       console.log("error");
@@ -214,7 +223,6 @@ export default function BoardsDetails() {
         onDragEnd={onDragEnd}
         onDragOver={onDragOver}
         sensors={sensors}
-        collisionDetection={closestCenter}
       >
         <div className="m-auto flex gap-4">
           <div className="flex gap-4">
