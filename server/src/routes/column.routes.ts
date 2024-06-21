@@ -124,7 +124,6 @@ columnRoute.put(
       const { updatedColumns } = req.body;
       console.log(updatedColumns, "selam");
 
-      // // Update each column
       const updatePromises = updatedColumns.map((column: any) => {
         return Columns.findByIdAndUpdate(column._id, column, { new: true });
       });

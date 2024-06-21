@@ -83,12 +83,12 @@ export default function Column({ column, tasks }: Props) {
       flex
       items-center
       justify-between
+      width-full
       "
         {...listeners}
         {...attributes}
       >
         {column.columnName}
-        {column._id}
       </div>
       <SortableContext items={tasks.map((task) => task._id)}>
         {tasks.map((task) => (

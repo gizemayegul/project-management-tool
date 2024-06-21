@@ -114,17 +114,20 @@ export default function BoardsDetails() {
         );
       }
 
+      // Dragging a task over a column
+
       if (isActiveATask && isOverAColumn) {
         const overColumn = columns.find((col) => col._id === overId);
         const activeColumn = columns.find((col) =>
           col.tasks.some((t) => t._id === activeId)
         );
-        const activeTask = activeColumn?.tasks.find((t) => t._id === activeId);
+        if (!overColumn || !activeColumn) return;
+        const activeTask = activeColumn.tasks.find((t) => t._id === activeId);
         const activeColumnIndex = columns.findIndex(
-          (columns) => columns._id === activeColumn?._id
+          (columns) => columns._id === activeColumn._id
         );
         const overColumnIndex = columns.findIndex(
-          (columns) => columns._id === overColumn?._id
+          (columns) => columns._id === overColumn._id
         );
 
         if (!overColumn || !activeColumn || !activeTask) return;
@@ -196,18 +199,7 @@ export default function BoardsDetails() {
   }
 
   return (
-    <div
-      className="
-        m-auto
-        flex
-        min-h-screen
-        w-full
-        items-center
-        overflow-x-auto
-        overflow-y-hidden
-        px-[40px]
-    "
-    >
+    <div>
       <DndContext
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
@@ -220,6 +212,26 @@ export default function BoardsDetails() {
               {columns.map((column) => (
                 <Column key={column._id} column={column} tasks={column.tasks} />
               ))}
+              <form
+                className="
+      h-[60px]
+      w-[350px]
+      min-w-[350px]
+      cursor-pointer
+      rounded-lg
+      bg-mainBackgroundColor
+      border-2
+      border-columnBackgroundColor
+      p-4
+      ring-rose-500
+      hover:ring-2
+      flex
+      gap-2
+      "
+              >
+                <input type="text" />
+                <button type="submit">Add Column</button>
+              </form>
             </SortableContext>
           </div>
         </div>
