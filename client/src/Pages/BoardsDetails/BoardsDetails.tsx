@@ -22,11 +22,9 @@ const localStoreToken = localStorage.getItem("token");
 
 export default function BoardsDetails() {
   const { boardId } = useParams<{ boardId: string }>();
-
   const [columns, setColumns] = useState<ColumnType[]>([]);
   const [activeColumn, setActiveColumn] = useState<ColumnType | null>(null);
   const [addNewColumn, setAddNewColumn] = useState<string>("");
-
   const [activeTask, setActiveTask] = useState<TaskType | null>(null);
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -202,13 +200,9 @@ export default function BoardsDetails() {
   const handleSubmitColumn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!addNewColumn) return;
-    // let newColumns = [...columns];
-    // newColumns = [...newColumns, { columnName: addNewColumn }];
-    // setColumns(newColumns);
-
     try {
       const response = await axios.post(
-        `${API_URL}/columns/${boardId}`,
+        `${API_URL}/columns`,
         {
           columnName: addNewColumn,
           tasks: [],
@@ -242,7 +236,12 @@ export default function BoardsDetails() {
           <div className="flex gap-4">
             <SortableContext items={columns.map((column) => column._id)}>
               {columns.map((column) => (
-                <Column key={column._id} column={column} tasks={column.tasks} />
+                <Column
+                  key={column._id}
+                  column={column}
+                  tasks={column.tasks}
+                  setColumns={setColumns}
+                />
               ))}
             </SortableContext>
             <form onSubmit={(e) => handleSubmitColumn(e)}>
@@ -261,7 +260,11 @@ export default function BoardsDetails() {
         {createPortal(
           <DragOverlay>
             {activeColumn && (
-              <Column column={activeColumn} tasks={activeColumn.tasks} />
+              <Column
+                column={activeColumn}
+                tasks={activeColumn.tasks}
+                setColumns={setColumns}
+              />
             )}
             {activeTask && <Task task={activeTask} />}
           </DragOverlay>,
