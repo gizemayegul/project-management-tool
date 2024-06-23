@@ -16,7 +16,12 @@ import {
   DragOverEvent,
   closestCenter,
 } from "@dnd-kit/core";
-import { SortableContext, arrayMove } from "@dnd-kit/sortable";
+import {
+  SortableContext,
+  arrayMove,
+  rectSwappingStrategy,
+  rectSortingStrategy,
+} from "@dnd-kit/sortable";
 
 const API_URL: string = import.meta.env.VITE_SERVER_URL;
 const localStoreToken = localStorage.getItem("token");
@@ -280,7 +285,10 @@ export default function BoardsDetails() {
       >
         <div className="m-auto flex gap-4">
           <div className="flex gap-4">
-            <SortableContext items={columns.map((column) => column._id)}>
+            <SortableContext
+              strategy={rectSwappingStrategy}
+              items={columns.map((column) => column._id)}
+            >
               {columns.map((column) => (
                 <Column
                   key={column._id}
