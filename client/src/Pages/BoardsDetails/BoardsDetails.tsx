@@ -219,7 +219,6 @@ export default function BoardsDetails() {
           headers: { Authorization: localStoreToken },
         }
       );
-      console.log(response.data);
       if (response.status === 200) {
         setColumns((prevColumns) => [...prevColumns, response.data]);
         setAddNewColumn("");
@@ -250,7 +249,6 @@ export default function BoardsDetails() {
               <input
                 onChange={(e) => {
                   setAddNewColumn(e.target.value);
-                  console.log(addNewColumn);
                 }}
                 className="border-4"
                 type="text"
