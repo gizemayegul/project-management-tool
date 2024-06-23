@@ -12,9 +12,12 @@ const localStoreToken = localStorage.getItem("token");
 interface Props {
   column: ColumnType;
   tasks: TaskType[];
+  setColumns: React.Dispatch<React.SetStateAction<ColumnType[]>>;
 }
 
-export default function Column({ column, tasks }: Props) {
+export default function Column({ column, tasks, setColumns }: Props) {
+  const [addNewTask, setAddNewTask] = useState<string>("");
+
   const { isOver } = useDroppable({
     id: column._id,
   });
@@ -32,7 +35,6 @@ export default function Column({ column, tasks }: Props) {
       column: column,
     },
   });
-  console.log(isOver);
   const style = {
     transition,
     transform: CSS.Transform.toString(transform),
@@ -62,6 +64,32 @@ export default function Column({ column, tasks }: Props) {
       ></div>
     );
   }
+
+  const handleAddTask = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        `${API_URL}/columns/${column._id}/createTask`,
+        { taskName: addNewTask },
+        { headers: { Authorization: localStoreToken } }
+      );
+      if (response.status === 200) {
+        setAddNewTask("");
+        setColumns((prevColumns) => {
+          let newColumns = [...prevColumns];
+          const findTheColumn = prevColumns.findIndex(
+            (col) => col._id === column._id
+          );
+          console.log(newColumns, "new");
+          newColumns[findTheColumn].tasks.push(response.data);
+          return newColumns;
+        });
+      }
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div
       ref={setNodeRef}
@@ -94,6 +122,17 @@ export default function Column({ column, tasks }: Props) {
         {tasks.map((task) => (
           <Task key={task._id} task={task} />
         ))}
+        <form onSubmit={(e) => handleAddTask(e)}>
+          <input
+            onChange={(e) => {
+              setAddNewTask(e.target.value);
+            }}
+            className="border-4"
+            type="text"
+            value={addNewTask}
+          />
+          <button type="submit">Add Task</button>
+        </form>
       </SortableContext>
     </div>
   );

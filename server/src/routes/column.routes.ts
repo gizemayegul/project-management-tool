@@ -5,6 +5,7 @@ import Boards from "../models/Boards.model";
 import Columns from "../models/Columns.model";
 const columnRoute = Router();
 
+//!! i keep all columns in differnt database so boardId is needed
 columnRoute.get(
   "/columns/:boardId",
   isAuthenticated,
@@ -15,7 +16,7 @@ columnRoute.get(
       return;
     }
     try {
-      const response = await Columns.find({ boardId: boardId })
+      const response = await Columns.find({ boardId })
         .sort({
           index: 1,
         })
@@ -29,9 +30,10 @@ columnRoute.get(
     }
   }
 );
+//!! this route is for creating the a column, i didnt want to cause new column
 
 columnRoute.post(
-  "/columns/:boardId",
+  "/columns",
   isAuthenticated,
   async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
     try {
@@ -45,45 +47,30 @@ columnRoute.post(
   }
 );
 
-columnRoute.put(
-  "/columns/:columnId",
-  isAuthenticated,
-  async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
-    const { columnId } = req.params;
-    const { index } = req.body;
+//!! this route is for creating the tasks
 
-    try {
-      const response = await Columns.findByIdAndUpdate(
-        columnId,
-        { index: index },
-        {
-          new: true,
-        }
-      );
-      res.status(200).json(response);
-    } catch (error) {
-      console.error({
-        message: "An error occurred while fetching the boards user",
-      });
-    }
-  }
-);
 columnRoute.post(
   "/columns/:columnId/createTask",
   isAuthenticated,
   async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
     const { columnId } = req.params;
-    const { task } = req.body;
+    const { taskName } = req.body;
 
     try {
       const response = await Columns.findByIdAndUpdate(
         columnId,
-        { $push: { tasks: task } },
+        { $push: { tasks: { taskName: taskName || "Untitled" } } },
         {
           new: true,
         }
       );
-      res.status(200).json(response);
+      if (!response) {
+        res.status(400).json({ message: "An expected error happened" });
+        return;
+      }
+      const createdTask = response.tasks[response.tasks.length - 1];
+
+      res.status(200).json(createdTask);
     } catch (error) {
       console.error({
         message: "An error occurred while fetching the boards user",
@@ -91,6 +78,8 @@ columnRoute.post(
     }
   }
 );
+//!! this route is for reordering the tasks
+
 columnRoute.put(
   "/columns/:columnId/tasks/reorder",
   isAuthenticated,
@@ -116,13 +105,16 @@ columnRoute.put(
   }
 );
 
+//!! this route is for Dragging a task over a column here we have sorting and
+//!! latest changes from column, i send eveything to backend from the frontend
+//!! to manipulate drag and drop
+
 columnRoute.put(
   "/columns/tasks/updateColumns",
   isAuthenticated,
   async (req, res, next) => {
     try {
       const { updatedColumns } = req.body;
-      console.log(updatedColumns, "selam");
 
       const updatePromises = updatedColumns.map((column: any) => {
         return Columns.findByIdAndUpdate(column._id, column, { new: true });

@@ -22,10 +22,9 @@ const localStoreToken = localStorage.getItem("token");
 
 export default function BoardsDetails() {
   const { boardId } = useParams<{ boardId: string }>();
-
   const [columns, setColumns] = useState<ColumnType[]>([]);
   const [activeColumn, setActiveColumn] = useState<ColumnType | null>(null);
-
+  const [addNewColumn, setAddNewColumn] = useState<string>("");
   const [activeTask, setActiveTask] = useState<TaskType | null>(null);
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -198,6 +197,33 @@ export default function BoardsDetails() {
     }
   }
 
+  const handleSubmitColumn = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!addNewColumn) return;
+    try {
+      const response = await axios.post(
+        `${API_URL}/columns`,
+        {
+          columnName: addNewColumn,
+          tasks: [],
+          boardId: boardId,
+          index: columns.length,
+        },
+        {
+          headers: { Authorization: localStoreToken },
+        }
+      );
+      if (response.status === 200) {
+        setColumns((prevColumns) => [...prevColumns, response.data]);
+        setAddNewColumn("");
+      } else {
+        console.log("Error");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div>
       <DndContext
@@ -210,35 +236,35 @@ export default function BoardsDetails() {
           <div className="flex gap-4">
             <SortableContext items={columns.map((column) => column._id)}>
               {columns.map((column) => (
-                <Column key={column._id} column={column} tasks={column.tasks} />
+                <Column
+                  key={column._id}
+                  column={column}
+                  tasks={column.tasks}
+                  setColumns={setColumns}
+                />
               ))}
-              <form
-                className="
-      h-[60px]
-      w-[350px]
-      min-w-[350px]
-      cursor-pointer
-      rounded-lg
-      bg-mainBackgroundColor
-      border-2
-      border-columnBackgroundColor
-      p-4
-      ring-rose-500
-      hover:ring-2
-      flex
-      gap-2
-      "
-              >
-                <input type="text" />
-                <button type="submit">Add Column</button>
-              </form>
             </SortableContext>
+            <form onSubmit={(e) => handleSubmitColumn(e)}>
+              <input
+                onChange={(e) => {
+                  setAddNewColumn(e.target.value);
+                }}
+                className="border-4"
+                type="text"
+                value={addNewColumn}
+              />
+              <button type="submit">Add Column</button>
+            </form>
           </div>
         </div>
         {createPortal(
           <DragOverlay>
             {activeColumn && (
-              <Column column={activeColumn} tasks={activeColumn.tasks} />
+              <Column
+                column={activeColumn}
+                tasks={activeColumn.tasks}
+                setColumns={setColumns}
+              />
             )}
             {activeTask && <Task task={activeTask} />}
           </DragOverlay>,
