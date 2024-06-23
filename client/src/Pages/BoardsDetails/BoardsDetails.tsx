@@ -25,6 +25,7 @@ export default function BoardsDetails() {
 
   const [columns, setColumns] = useState<ColumnType[]>([]);
   const [activeColumn, setActiveColumn] = useState<ColumnType | null>(null);
+  const [addNewColumn, setAddNewColumn] = useState<string>("");
 
   const [activeTask, setActiveTask] = useState<TaskType | null>(null);
   const sensors = useSensors(
@@ -198,6 +199,38 @@ export default function BoardsDetails() {
     }
   }
 
+  const handleSubmitColumn = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!addNewColumn) return;
+    // let newColumns = [...columns];
+    // newColumns = [...newColumns, { columnName: addNewColumn }];
+    // setColumns(newColumns);
+
+    try {
+      const response = await axios.post(
+        `${API_URL}/columns/${boardId}`,
+        {
+          columnName: addNewColumn,
+          tasks: [],
+          boardId: boardId,
+          index: columns.length,
+        },
+        {
+          headers: { Authorization: localStoreToken },
+        }
+      );
+      console.log(response.data);
+      if (response.status === 200) {
+        setColumns((prevColumns) => [...prevColumns, response.data]);
+        setAddNewColumn("");
+      } else {
+        console.log("Error");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div>
       <DndContext
@@ -212,27 +245,19 @@ export default function BoardsDetails() {
               {columns.map((column) => (
                 <Column key={column._id} column={column} tasks={column.tasks} />
               ))}
-              <form
-                className="
-      h-[60px]
-      w-[350px]
-      min-w-[350px]
-      cursor-pointer
-      rounded-lg
-      bg-mainBackgroundColor
-      border-2
-      border-columnBackgroundColor
-      p-4
-      ring-rose-500
-      hover:ring-2
-      flex
-      gap-2
-      "
-              >
-                <input type="text" />
-                <button type="submit">Add Column</button>
-              </form>
             </SortableContext>
+            <form onSubmit={(e) => handleSubmitColumn(e)}>
+              <input
+                onChange={(e) => {
+                  setAddNewColumn(e.target.value);
+                  console.log(addNewColumn);
+                }}
+                className="border-4"
+                type="text"
+                value={addNewColumn}
+              />
+              <button type="submit">Add Column</button>
+            </form>
           </div>
         </div>
         {createPortal(

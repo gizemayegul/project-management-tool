@@ -32,7 +32,6 @@ export default function Column({ column, tasks }: Props) {
       column: column,
     },
   });
-  console.log(isOver);
   const style = {
     transition,
     transform: CSS.Transform.toString(transform),
