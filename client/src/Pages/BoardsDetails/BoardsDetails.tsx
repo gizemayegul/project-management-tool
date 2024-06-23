@@ -19,7 +19,6 @@ import {
 import {
   SortableContext,
   arrayMove,
-  rectSwappingStrategy,
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
 
@@ -226,22 +225,21 @@ export default function BoardsDetails() {
       const overColumnIndex = columns.findIndex((col) => col._id === overId);
 
       let newColumns = [...columns];
+
       newColumns = arrayMove(newColumns, activeColumnIndex, overColumnIndex);
-      setColumns(newColumns);
-      await axios.put(
-        `${API_URL}/columns/${activeId}`,
-        { index: overColumnIndex },
-        {
-          headers: { Authorization: localStoreToken },
-        }
+      const updatedColumns = newColumns.map((column, index) => ({
+        ...column,
+        index: index,
+      }));
+      console.log(updatedColumns, "updatedColumns");
+      setColumns(updatedColumns);
+
+      const response = await axios.put(
+        `${API_URL}/columns/reorder`,
+        { updatedColumns: updatedColumns }, // Ensure this is defined correctly
+        { headers: { Authorization: localStoreToken } }
       );
-      await axios.put(
-        `${API_URL}/columns/${overId}`,
-        { index: activeColumnIndex },
-        {
-          headers: { Authorization: localStoreToken },
-        }
-      );
+      console.log(response);
     } catch (error) {
       console.log(error);
     }
@@ -281,12 +279,12 @@ export default function BoardsDetails() {
         onDragEnd={onDragEnd}
         onDragOver={onDragOver}
         sensors={sensors}
-        collisionDetection={closestCenter}
+        // collisionDetection={closestCenter}
       >
         <div className="m-auto flex gap-4">
           <div className="flex gap-4">
             <SortableContext
-              strategy={rectSwappingStrategy}
+              // strategy={rectSortingStrategy}
               items={columns.map((column) => column._id)}
             >
               {columns.map((column) => (

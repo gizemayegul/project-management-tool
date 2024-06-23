@@ -18,9 +18,9 @@ interface Props {
 export default function Column({ column, tasks, setColumns }: Props) {
   const [addNewTask, setAddNewTask] = useState<string>("");
 
-  // const { isOver } = useDroppable({
-  //   id: column._id,
-  // });
+  const { isOver } = useDroppable({
+    id: column._id,
+  });
   const {
     isDragging,
     attributes,
@@ -39,31 +39,11 @@ export default function Column({ column, tasks, setColumns }: Props) {
     transition,
     transform: CSS.Transform.toString(transform),
   };
-  // const columnStyle = {
-  //   backgroundColor: isOver ? "#E0E0E0" : "white", // change color when a task is dragged over
-  //   borderRadius: "10px",
-  //   padding: "20px",
-  // };
-  if (isDragging) {
-    return (
-      <div
-        ref={setNodeRef}
-        style={style}
-        className="
-      bg-columnBackgroundColor
-      opacity-40
-      border-2
-      border-pink-500
-      w-[350px]
-      h-[500px]
-      max-h-[500px]
-      rounded-md
-      flex
-      flex-col
-      "
-      ></div>
-    );
-  }
+  const columnStyle = {
+    backgroundColor: isOver ? "#E0E0E0" : "white", // change color when a task is dragged over
+    borderRadius: "10px",
+    padding: "20px",
+  };
 
   const handleAddTask = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -93,8 +73,8 @@ export default function Column({ column, tasks, setColumns }: Props) {
   return (
     <div
       ref={setNodeRef}
-      // style={{ ...style, ...columnStyle }}
-      style={style}
+      style={{ ...style, ...columnStyle }}
+      // style={style}
     >
       <div
         className="

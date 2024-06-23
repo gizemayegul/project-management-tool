@@ -46,7 +46,31 @@ columnRoute.post(
     }
   }
 );
+//!! reorder the columns
+columnRoute.put("/columns/reorder", isAuthenticated, async (req, res) => {
+  const { updatedColumns } = req.body;
+  console.log(updatedColumns);
 
+  try {
+    // Perform bulk update of column indices
+    const bulkOperations = updatedColumns.map((column: any) => ({
+      updateOne: {
+        filter: { _id: column._id },
+        update: { index: column.index },
+      },
+    }));
+    await Columns.bulkWrite(bulkOperations);
+
+    // Fetch and return all columns sorted by index
+    const sortedColumns = await Columns.find().sort({ index: 1 });
+    res.status(200).json(sortedColumns);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "An error occurred while updating the columns" });
+  }
+});
 //!! this route is for creating the tasks
 
 columnRoute.post(
