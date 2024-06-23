@@ -89,6 +89,7 @@ export default function Column({ column, tasks, setColumns }: Props) {
       border-columnBackgroundColor
       border-4
       flex
+
       items-center
       justify-between
       width-full

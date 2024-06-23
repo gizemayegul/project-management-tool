@@ -312,11 +312,13 @@ export default function BoardsDetails() {
         {createPortal(
           <DragOverlay>
             {activeColumn && (
-              <Column
-                column={activeColumn}
-                tasks={activeColumn.tasks}
-                setColumns={setColumns}
-              />
+              <div className="min-h-screen ">
+                <Column
+                  column={activeColumn}
+                  tasks={activeColumn.tasks}
+                  setColumns={setColumns}
+                />
+              </div>
             )}
             {activeTask && <Task task={activeTask} />}
           </DragOverlay>,
