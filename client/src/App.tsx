@@ -1,31 +1,95 @@
 import "./App.css";
 import "./index.css";
+import { Route, Routes, useNavigate } from "react-router-dom";
+import { AuthContext } from "./Context/AuthContext";
+import { useContext, useEffect } from "react";
 import Signup from "./Pages/Signup/Signup";
-import { Route, Routes } from "react-router-dom";
 import Navbar from "./Components/Navbar/Navbar";
 import Login from "./Pages/Login/Login";
 import Dashboard from "./Pages/Dashboard/Dashboard";
-import { AuthContext } from "./Context/AuthContext";
-import { useContext } from "react";
 import ProtectedRoute from "./utils/ ProtectedRoute";
 import NotFound from "./Pages/NotFound/NotFound";
+import Profile from "./Pages/Profile/Profile";
+import CreateProject from "./Pages/CreateProject/CreateProject";
+import Home from "./Pages/Home/Home";
+import Projects from "./Pages/Projects/Projects";
+import ProjectDetail from "./Pages/ProjectDetail/ProjectDetail";
+import CreateBoard from "./Pages/CreateBoard/CreateBoard";
+import BoardsDetails from "./Pages/BoardsDetails/BoardsDetails";
 function App() {
-  const user = useContext(AuthContext);
+  const { userExpire } = useContext(AuthContext);
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (userExpire) {
+      navigate("/login");
+    }
+  }, [userExpire]);
 
   return (
     <>
       <Navbar />
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route
           path="/dashboard"
           element={
-            <ProtectedRoute user={user}>
+            <ProtectedRoute>
               <Dashboard />
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/createaproject"
+          element={
+            <ProtectedRoute>
+              <CreateProject />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/projects"
+          element={
+            <ProtectedRoute>
+              <Projects />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/projects/:projectId"
+          element={
+            <ProtectedRoute>
+              <ProjectDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/projects/:projectId/boards/createboard"
+          element={
+            <ProtectedRoute>
+              <CreateBoard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/projects/:projectId/boards/:boardId"
+          element={
+            <ProtectedRoute>
+              <BoardsDetails />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>

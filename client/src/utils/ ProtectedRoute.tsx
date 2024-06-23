@@ -1,28 +1,11 @@
+import React from "react";
 import { Navigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import Loading from "../Components/Loading/Loading";
 
 interface userChild {
-  user: boolean | null;
-  children: React.ReactElement;
+  children: React.ReactNode;
 }
-export default function ProtectedRoute({ user, children }: userChild) {
-  const [loading, setLoading] = useState(true);
-  //   console.log(user, "atbegin");
+export default function ProtectedRoute({ children }: userChild) {
+  const isLoggedIn = localStorage.getItem("token");
 
-  useEffect(() => {
-    if (user) {
-      setLoading(false);
-    }
-  }, [user]);
-
-  if (loading) {
-    return (
-      <div>
-        {" "}
-        <Loading />
-      </div>
-    );
-  }
-  return user ? <>{children}</> : <Navigate to="/signup" />;
+  return isLoggedIn ? children : <Navigate to="/login" />;
 }

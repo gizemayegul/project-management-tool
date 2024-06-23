@@ -1,14 +1,39 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
+import Loading from "../Components/Loading/Loading";
+type AuthContextType = {
+  user: any | null;
+  isLoggedIn: boolean;
+  loading: boolean;
+  token: string;
+  setToken: React.Dispatch<React.SetStateAction<string>>;
+  logoutUser: Function; // Add logoutUser property
+  userExpire: boolean;
+};
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  isLoggedIn: false,
+  token: "",
+  setToken: () => {},
+  logoutUser: () => {},
+  loading: true,
+  userExpire: false,
+});
 
-const AuthContext = createContext(null);
 const API_URL = import.meta.env.VITE_SERVER_URL;
 
 function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
-  const localStoreToken = localStorage.getItem("token");
   const [user, setUser] = useState(null);
-  if (localStoreToken) {
-    useEffect(() => {
+  const [token, setToken] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [userExpire, setUserExpire] = useState(false);
+  if (token) {
+    localStorage.setItem("token", token);
+  }
+  useEffect(() => {
+    const localStoreToken = localStorage.getItem("token");
+    if (localStoreToken) {
       const authenticateUser = async () => {
         try {
           const response = await axios.get(`${API_URL}/api/verify`, {
@@ -16,17 +41,48 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
           });
           if (response.data.isAuthenticated) {
             setUser(response.data);
+            setIsLoggedIn(true);
           }
         } catch (err) {
           console.log(err);
+          if (localStoreToken !== token) {
+            localStorage.removeItem("token");
+            setUserExpire(true);
+            setUser(null);
+            setToken("");
+          }
+        } finally {
+          setLoading(false);
         }
       };
       authenticateUser();
-    }, []);
-  }
+    } else {
+      setLoading(false);
+    }
+  }, [token]);
+
+  const logoutUser = () => {
+    localStorage.removeItem("token");
+    setUser(null);
+    setLoading(false);
+    setToken("");
+    setIsLoggedIn(false);
+  };
 
   return (
-    <AuthContext.Provider value={user}>{props.children}</AuthContext.Provider>
+    <AuthContext.Provider
+      value={{
+        user,
+        isLoggedIn,
+        token,
+        setToken,
+        logoutUser,
+        loading,
+        userExpire,
+      }}
+    >
+      {loading ? <Loading /> : props.children}
+    </AuthContext.Provider>
   );
 }
 export { AuthContext, AuthProviderWrapper };

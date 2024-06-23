@@ -7,12 +7,17 @@ const projectsSchema = new Schema(
       default: "My new Project",
       required: [true, "Project name is required"],
     },
+    imageUrl: {
+      default:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-NSEUHWmQsGxt4SfVM3f8VMW7vN8JsHnL-CnVII5E4A&s",
+      type: String,
+    },
 
     userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
     },
-    boardInitialColumns: ["Todo", "Inprogress", "Done"],
+    boards: [{ type: Schema.Types.ObjectId, ref: "Board" }],
   },
   {
     timestamps: true,

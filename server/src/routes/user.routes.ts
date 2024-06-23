@@ -31,7 +31,6 @@ userRoute.post(
         return;
       }
       const salt = await bcrypt.genSalt(10);
-      res.status(200).json({ message: "User created successfully" });
 
       const hashedPassword = await bcrypt.hash(password, salt);
       const createdUser = await User.create({
@@ -41,6 +40,7 @@ userRoute.post(
       });
 
       const { password: _, ...userInfo } = createdUser.toObject();
+      res.status(200).json({ message: "User created successfully" });
     } catch (err) {
       res
         .status(500)
@@ -51,7 +51,7 @@ userRoute.post(
 
 userRoute.post(
   "/login",
-  async (req: Request, res: Response, NextFunction: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body as UserRequestBody;
     if (!email || !password) {
       res.status(400).json({ message: "Please provide email and password" });
@@ -76,7 +76,7 @@ userRoute.post(
 
       const token = jwt.sign(payload, process.env.JWT_SECRET || "", {
         algorithm: "HS256",
-        expiresIn: "3d",
+        expiresIn: "6h",
       });
       res
         .status(201)

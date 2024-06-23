@@ -11,7 +11,14 @@ const boardsSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Projects",
     },
+    imageUrl: {
+      type: String,
+      default:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4WmAlrjjUTOOYs35vGliGHYUdtUkXyQ-t9cyThMmGX0Uh4gtmZ0lkJE8ixZIRSSmgJzI&usqp=CAU",
+    },
+    columns: [{ type: Schema.Types.ObjectId, ref: "Column" }],
   },
+
   {
     timestamps: true,
   }
