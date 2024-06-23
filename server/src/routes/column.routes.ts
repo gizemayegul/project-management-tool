@@ -54,11 +54,12 @@ columnRoute.post(
   isAuthenticated,
   async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
     const { columnId } = req.params;
+    const { taskName } = req.body;
 
     try {
       const response = await Columns.findByIdAndUpdate(
         columnId,
-        { $push: { tasks: req.body } },
+        { $push: { tasks: { taskName: taskName || "Untitled" } } },
         {
           new: true,
         }
