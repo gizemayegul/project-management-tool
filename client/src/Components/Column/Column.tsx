@@ -1,88 +1,100 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import sort from "../../assets/images/sort.png";
+import { CSS } from "@dnd-kit/utilities";
+import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import Task from "../Tasks/Task";
-const API_URL: string = import.meta.env.VITE_SERVER_URL;
+import { useDroppable } from "@dnd-kit/core";
+
+import { ColumnType, TaskType } from "../../types";
+const API_URL = import.meta.env.VITE_SERVER_URL;
 const localStoreToken = localStorage.getItem("token");
-type boardTaskType = {
-  _id: string;
-  taskName: string;
-  boardId: string;
-  taskPriority: string[];
-  taskStatus: string;
-}[];
+interface Props {
+  column: ColumnType;
+  tasks: TaskType[];
+}
 
-type Props = {
-  statusName: string;
-  columnId: string;
-  boardId: string | undefined;
-  boardTasks: boardTaskType | undefined;
-  setBoardTasks: React.Dispatch<React.SetStateAction<boardTaskType>>;
-};
-export default function Column({
-  statusName,
-  columnId,
-  boardId,
-  setBoardTasks,
-  boardTasks,
-}: Props) {
-  const [inputTask, setInputTask] = useState<string | string[]>("");
-  //!Todo any time event change this
-
-  const handleTaskSubmit = async (e: any) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post(
-        `${API_URL}/task/create/${boardId}`,
-        {
-          taskStatus: columnId,
-          taskName: inputTask,
-        },
-        {
-          headers: { Authorization: localStoreToken },
-        }
-      );
-      console.log(response);
-      if (response.status === 200) {
-        if (Array.isArray(boardTasks)) {
-          setBoardTasks((prev) => [...prev, response.data]);
-        } else {
-          setBoardTasks(response.data);
-        }
-      }
-      setInputTask("");
-    } catch (error) {
-      console.log(error);
-    }
+export default function Column({ column, tasks }: Props) {
+  const { isOver } = useDroppable({
+    id: column._id,
+  });
+  const {
+    isDragging,
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({
+    id: column._id,
+    data: {
+      type: "column",
+      column: column,
+    },
+  });
+  console.log(isOver);
+  const style = {
+    transition,
+    transform: CSS.Transform.toString(transform),
   };
-
+  const columnStyle = {
+    backgroundColor: isOver ? "#E0E0E0" : "white", // change color when a task is dragged over
+    borderRadius: "10px",
+    padding: "20px",
+  };
+  if (isDragging) {
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        className="
+      bg-columnBackgroundColor
+      opacity-40
+      border-2
+      border-pink-500
+      w-[350px]
+      h-[500px]
+      max-h-[500px]
+      rounded-md
+      flex
+      flex-col
+      "
+      ></div>
+    );
+  }
   return (
-    <div>
-      <div>{statusName}</div>
-      {Array.isArray(boardTasks) &&
-        boardTasks.map(
-          (task) =>
-            task.taskStatus === columnId && (
-              <div key={task._id} className="border-2">
-                {" "}
-                <Task taskName={task.taskName} taskId={task._id} />
-              </div>
-            )
-        )}
-
-      <form onSubmit={handleTaskSubmit}>
-        <label htmlFor="AddTask">
-          Add New Task
-          <input
-            className="border-2"
-            name="AddTask"
-            value={inputTask}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setInputTask(e.target.value);
-            }}
-          />
-        </label>
-        <button type="submit">+</button>
-      </form>
+    <div
+      ref={setNodeRef}
+      style={{ ...style, ...columnStyle }}
+      // style={style}
+    >
+      <div
+        className="
+      bg-mainBackgroundColor
+      text-md
+      h-[60px]
+      cursor-grab
+      rounded-md
+      rounded-b-none
+      p-3
+      font-bold
+      border-columnBackgroundColor
+      border-4
+      flex
+      items-center
+      justify-between
+      width-full
+      "
+        {...listeners}
+        {...attributes}
+      >
+        {column.columnName}
+      </div>
+      <SortableContext items={tasks.map((task) => task._id)}>
+        {tasks.map((task) => (
+          <Task key={task._id} task={task} />
+        ))}
+      </SortableContext>
     </div>
   );
 }

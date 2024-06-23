@@ -15,7 +15,7 @@ export default function CreateBoard() {
     const createBoard = async () => {
       try {
         const response = await axios.post(
-          `${API_URL}/board/${projectId}/createboard`,
+          `${API_URL}/${projectId}/createboard`,
           { boardName: boardName },
           {
             headers: { Authorization: localStoreToken },

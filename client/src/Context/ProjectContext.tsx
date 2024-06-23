@@ -24,10 +24,9 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
     if (isLoggedIn) {
       const fetchProjects = async () => {
         try {
-          const response = await axios.get(`${API_URL}/projects/projects`, {
+          const response = await axios.get(`${API_URL}/projects`, {
             headers: { Authorization: localStoreToken },
           });
-          console.log(response.data.projects);
           setProjects(response.data.projects);
         } catch (error) {
           console.log(error);

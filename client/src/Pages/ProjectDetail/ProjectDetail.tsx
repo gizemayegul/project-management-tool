@@ -20,12 +20,9 @@ export default function ProjectDetail() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await axios.get(
-          `${API_URL}/projects/projects/${projectId}`,
-          {
-            headers: { Authorization: localStoreToken },
-          }
-        );
+        const response = await axios.get(`${API_URL}/projects/${projectId}`, {
+          headers: { Authorization: localStoreToken },
+        });
         console.log(response.data[0]);
         setprojectDetail(response.data[0]);
       } catch (error) {

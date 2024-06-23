@@ -17,7 +17,7 @@ export default function CreateProject() {
     const createProject = async () => {
       try {
         const response = await axios.post(
-          `${API_URL}/projects/createproject`,
+          `${API_URL}/createproject`,
           { projectName: projectName },
           {
             headers: { Authorization: localStoreToken },
@@ -32,7 +32,7 @@ export default function CreateProject() {
         }
       } finally {
         try {
-          const response = await axios.get(`${API_URL}/projects/projects`, {
+          const response = await axios.get(`${API_URL}/projects`, {
             headers: { Authorization: localStoreToken },
           });
           console.log(response.data.projects);
