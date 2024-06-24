@@ -107,6 +107,7 @@ export default function BoardsDetails() {
             (t) => t._id === activeId
           );
           console.log(activeTask, "activeTask");
+          const overTask = findOverColumn.tasks.find((t) => t._id === overId);
           const activeColumnIndex = columns.findIndex(
             (columns) => columns._id === findColumnActive._id
           );
