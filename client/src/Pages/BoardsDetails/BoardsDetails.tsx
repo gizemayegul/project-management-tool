@@ -107,7 +107,6 @@ export default function BoardsDetails() {
             (t) => t._id === activeId
           );
           console.log(activeTask, "activeTask");
-          const overTask = findOverColumn.tasks.find((t) => t._id === overId);
           const activeColumnIndex = columns.findIndex(
             (columns) => columns._id === findColumnActive._id
           );
@@ -119,8 +118,9 @@ export default function BoardsDetails() {
             activeIndex,
             1
           );
+          newColumns[overColumnIndex].tasks.splice(overIndex, 0, removeditem);
+          // newColumns[overColumnIndex].tasks.unshift(removeditem);
 
-          newColumns[overColumnIndex].tasks.unshift(removeditem);
           setColumns(newColumns);
 
           await axios.put(
