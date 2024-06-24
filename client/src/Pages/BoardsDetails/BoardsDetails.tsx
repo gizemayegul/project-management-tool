@@ -14,8 +14,13 @@ import {
   DragOverlay,
   DragEndEvent,
   DragOverEvent,
+  closestCenter,
 } from "@dnd-kit/core";
-import { SortableContext, arrayMove } from "@dnd-kit/sortable";
+import {
+  SortableContext,
+  arrayMove,
+  rectSortingStrategy,
+} from "@dnd-kit/sortable";
 
 const API_URL: string = import.meta.env.VITE_SERVER_URL;
 const localStoreToken = localStorage.getItem("token");
@@ -69,6 +74,7 @@ export default function BoardsDetails() {
 
       const activeId = active.id;
       const overId = over.id;
+      console.log(over.data.current?.type, "over");
 
       if (activeId === overId) return;
 
@@ -82,6 +88,50 @@ export default function BoardsDetails() {
         const findColumnActive = columns.find((col) =>
           col.tasks.some((t) => t._id === activeId)
         );
+        const findOverColumn = columns.find((col) =>
+          col.tasks.some((t) => t._id === overId)
+        );
+
+        if (!findColumnActive || !findOverColumn) return;
+        if (findColumnActive._id !== findOverColumn._id) {
+          console.log("selam bes");
+          const activeIndex = findColumnActive.tasks.findIndex(
+            (t) => t._id === activeId
+          );
+
+          const overIndex = findOverColumn.tasks.findIndex(
+            (t) => t._id === overId
+          );
+          if (activeIndex === -1 || overIndex === -1) return;
+          const activeTask = findColumnActive.tasks.find(
+            (t) => t._id === activeId
+          );
+          console.log(activeTask, "activeTask");
+          const overTask = findOverColumn.tasks.find((t) => t._id === overId);
+          const activeColumnIndex = columns.findIndex(
+            (columns) => columns._id === findColumnActive._id
+          );
+          const overColumnIndex = columns.findIndex(
+            (columns) => columns._id === findOverColumn._id
+          );
+          let newColumns = [...columns];
+          const [removeditem] = newColumns[activeColumnIndex].tasks.splice(
+            activeIndex,
+            1
+          );
+          newColumns[overColumnIndex].tasks.splice(overIndex, 0, removeditem);
+          // newColumns[overColumnIndex].tasks.unshift(removeditem);
+
+          setColumns(newColumns);
+
+          await axios.put(
+            `${API_URL}/columns/tasks/updateColumns`,
+            { updatedColumns: newColumns },
+            {
+              headers: { Authorization: localStoreToken },
+            }
+          );
+        }
         if (!findColumnActive) return;
 
         const activeIndex = findColumnActive.tasks.findIndex(
@@ -176,22 +226,21 @@ export default function BoardsDetails() {
       const overColumnIndex = columns.findIndex((col) => col._id === overId);
 
       let newColumns = [...columns];
+
       newColumns = arrayMove(newColumns, activeColumnIndex, overColumnIndex);
-      setColumns(newColumns);
-      await axios.put(
-        `${API_URL}/columns/${activeId}`,
-        { index: overColumnIndex },
-        {
-          headers: { Authorization: localStoreToken },
-        }
+      const updatedColumns = newColumns.map((column, index) => ({
+        ...column,
+        index: index,
+      }));
+      console.log(updatedColumns, "updatedColumns");
+      setColumns(updatedColumns);
+
+      const response = await axios.put(
+        `${API_URL}/columns/reorder`,
+        { updatedColumns: updatedColumns }, // Ensure this is defined correctly
+        { headers: { Authorization: localStoreToken } }
       );
-      await axios.put(
-        `${API_URL}/columns/${overId}`,
-        { index: activeColumnIndex },
-        {
-          headers: { Authorization: localStoreToken },
-        }
-      );
+      console.log(response);
     } catch (error) {
       console.log(error);
     }
@@ -231,10 +280,14 @@ export default function BoardsDetails() {
         onDragEnd={onDragEnd}
         onDragOver={onDragOver}
         sensors={sensors}
+        // collisionDetection={closestCenter}
       >
         <div className="m-auto flex gap-4">
           <div className="flex gap-4">
-            <SortableContext items={columns.map((column) => column._id)}>
+            <SortableContext
+              // strategy={rectSortingStrategy}
+              items={columns.map((column) => column._id)}
+            >
               {columns.map((column) => (
                 <Column
                   key={column._id}
@@ -260,11 +313,13 @@ export default function BoardsDetails() {
         {createPortal(
           <DragOverlay>
             {activeColumn && (
-              <Column
-                column={activeColumn}
-                tasks={activeColumn.tasks}
-                setColumns={setColumns}
-              />
+              <div className="min-h-screen ">
+                <Column
+                  column={activeColumn}
+                  tasks={activeColumn.tasks}
+                  setColumns={setColumns}
+                />
+              </div>
             )}
             {activeTask && <Task task={activeTask} />}
           </DragOverlay>,
