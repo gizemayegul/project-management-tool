@@ -1,18 +1,12 @@
 import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { BoardType } from "../../utils/types";
 const API_URL = import.meta.env.VITE_SERVER_URL;
 export default function Boards() {
-  const [boards, setBoards] = useState<any>([]);
+  const [boards, setBoards] = useState<BoardType[]>();
   const { projectId } = useParams();
 
-  interface Board {
-    boardName: string;
-    _id: number;
-    updatedAt: string;
-    createdAt: string;
-    imageUrl: string;
-  }
   const localStoreToken = localStorage.getItem("token");
 
   useEffect(() => {
@@ -34,7 +28,7 @@ export default function Boards() {
     <div>
       <ul role="list" className="divide-y divide-gray-100">
         {boards &&
-          boards.map((board: Board) => (
+          boards.map((board) => (
             <Link
               key={board._id}
               to={`/projects/${projectId}/boards/${board._id}`}
@@ -51,29 +45,14 @@ export default function Boards() {
                       {board.boardName}
                     </p>
                     <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                      {board.updatedAt}{" "}
+                      {board.updatedAt.toString()}
                     </p>
                   </div>
                 </div>
                 <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
                   <p className="text-sm leading-6 text-gray-900">
-                    {board.createdAt}
+                    {board.createdAt.toString()}
                   </p>
-                  {/* {person.lastSeen ? (
-                <p className="mt-1 text-xs leading-5 text-gray-500">
-                  Last seen{" "}
-                  <time dateTime={person.lastSeenDateTime}>
-                    {person.lastSeen}
-                  </time>
-                </p>
-              ) : (
-                <div className="mt-1 flex items-center gap-x-1.5">
-                  <div className="flex-none rounded-full bg-emerald-500/20 p-1">
-                    <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  </div>
-                  <p className="text-xs leading-5 text-gray-500">Online</p>
-                </div>
-              )} */}
                 </div>
               </li>
             </Link>

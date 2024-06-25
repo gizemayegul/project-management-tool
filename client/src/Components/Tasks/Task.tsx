@@ -1,4 +1,4 @@
-import { TaskType } from "../../types";
+import { TaskType } from "../../utils/types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 

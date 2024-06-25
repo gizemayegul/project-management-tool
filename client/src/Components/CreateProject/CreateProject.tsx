@@ -3,8 +3,15 @@ import axios, { AxiosError } from "axios";
 const API_URL = import.meta.env.VITE_SERVER_URL;
 import { useNavigate } from "react-router-dom";
 import { ProjectContext } from "../../Context/ProjectContext";
+import { ChevronLeftIcon } from "@chakra-ui/icons";
 
-export default function CreateProject() {
+interface CreateProjectProps {
+  setCreateProject: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export default function CreateProject({
+  setCreateProject,
+}: CreateProjectProps) {
   const [projectName, setProjectName] = useState<string | undefined>("");
   const [error, setError] = useState<string | undefined>("");
   const localStoreToken = localStorage.getItem("token");
@@ -13,7 +20,6 @@ export default function CreateProject() {
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(projectName);
     const createProject = async () => {
       try {
         const response = await axios.post(
@@ -23,22 +29,13 @@ export default function CreateProject() {
             headers: { Authorization: localStoreToken },
           }
         );
-        console.log(response.data.projects);
-        navigate("/projects");
+        console.log(response.data);
+        navigate(`/projects/${response.data.projectInfo._id}`);
+        setCreateProject(false);
       } catch (err: unknown) {
         if (err instanceof AxiosError) {
           console.log(err, "errorr");
           setError(err.response?.data.message);
-        }
-      } finally {
-        try {
-          const response = await axios.get(`${API_URL}/projects`, {
-            headers: { Authorization: localStoreToken },
-          });
-          console.log(response.data.projects);
-          setProjects(response.data.projects);
-        } catch (error) {
-          console.log(error);
         }
       }
     };
@@ -48,10 +45,10 @@ export default function CreateProject() {
   };
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      <button onClick={() => setCreateProject(false)}>
+        <ChevronLeftIcon />
+      </button>
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-          Create a project
-        </h2>
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form className="space-y-6" onSubmit={submitHandler}>
             <label htmlFor="projectname">

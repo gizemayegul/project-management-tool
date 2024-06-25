@@ -1,15 +1,12 @@
 import { createContext, useState, useEffect } from "react";
 import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
+import { ProjectContextType } from "../utils/types";
 
 import axios from "axios";
 
-type ProjectContextType = {
-  projects: [] | null;
-  setProjects: React.Dispatch<React.SetStateAction<null | any[]>>;
-};
 const ProjectContext = createContext<ProjectContextType>({
-  projects: null,
+  projects: [],
   setProjects: () => {},
 });
 const API_URL = import.meta.env.VITE_SERVER_URL;

@@ -1,15 +1,8 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import Loading from "../Components/Loading/Loading";
-type AuthContextType = {
-  user: any | null;
-  isLoggedIn: boolean;
-  loading: boolean;
-  token: string;
-  setToken: React.Dispatch<React.SetStateAction<string>>;
-  logoutUser: Function; // Add logoutUser property
-  userExpire: boolean;
-};
+import { AuthContextType } from "../utils/types";
+
 const AuthContext = createContext<AuthContextType>({
   user: null,
   isLoggedIn: false,
@@ -24,7 +17,7 @@ const API_URL = import.meta.env.VITE_SERVER_URL;
 
 function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState("");
+  const [token, setToken] = useState(""); // token from login
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [userExpire, setUserExpire] = useState(false);

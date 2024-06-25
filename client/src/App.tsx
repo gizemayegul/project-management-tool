@@ -7,15 +7,17 @@ import Signup from "./Pages/Signup/Signup";
 import Navbar from "./Components/Navbar/Navbar";
 import Login from "./Pages/Login/Login";
 import Dashboard from "./Pages/Dashboard/Dashboard";
-import ProtectedRoute from "./utils/ ProtectedRoute";
 import NotFound from "./Pages/NotFound/NotFound";
 import Profile from "./Pages/Profile/Profile";
-import CreateProject from "./Pages/CreateProject/CreateProject";
+import CreateProject from "./Components/CreateProject/CreateProject";
 import Home from "./Pages/Home/Home";
-import Projects from "./Pages/Projects/Projects";
 import ProjectDetail from "./Pages/ProjectDetail/ProjectDetail";
 import CreateBoard from "./Pages/CreateBoard/CreateBoard";
 import BoardsDetails from "./Pages/BoardsDetails/BoardsDetails";
+import IsPrivate from "./utils/IsPrivate";
+import IsAnon from "./utils/IsAnon";
+import CreateBoardDropDown from "./Components/CreateBoardDropDown/CreateBoardDropDown";
+IsPrivate;
 function App() {
   const { userExpire } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -29,66 +31,67 @@ function App() {
     <>
       <Navbar />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route
+          path="/"
+          element={
+            <IsAnon>
+              <Home />
+            </IsAnon>
+          }
+        />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route
           path="/dashboard"
           element={
-            <ProtectedRoute>
+            <IsPrivate>
               <Dashboard />
-            </ProtectedRoute>
+            </IsPrivate>
           }
         />
         <Route
           path="/profile"
           element={
-            <ProtectedRoute>
+            <IsPrivate>
               <Profile />
-            </ProtectedRoute>
+            </IsPrivate>
           }
         />
         <Route
           path="/createaproject"
           element={
-            <ProtectedRoute>
+            <IsPrivate>
               <CreateProject />
-            </ProtectedRoute>
+            </IsPrivate>
           }
         />
-        <Route
-          path="/projects"
-          element={
-            <ProtectedRoute>
-              <Projects />
-            </ProtectedRoute>
-          }
-        />
+
         <Route
           path="/projects/:projectId"
           element={
-            <ProtectedRoute>
+            <IsPrivate>
               <ProjectDetail />
-            </ProtectedRoute>
+            </IsPrivate>
           }
         />
         <Route
           path="/projects/:projectId/boards/createboard"
           element={
-            <ProtectedRoute>
+            <IsPrivate>
               <CreateBoard />
-            </ProtectedRoute>
+            </IsPrivate>
           }
         />
 
         <Route
           path="/projects/:projectId/boards/:boardId"
           element={
-            <ProtectedRoute>
+            <IsPrivate>
               <BoardsDetails />
-            </ProtectedRoute>
+            </IsPrivate>
           }
         />
+        {/* <Route path="/createboarddropdown" element={<CreateBoardDropDown />} /> */}
 
         <Route path="*" element={<NotFound />} />
       </Routes>

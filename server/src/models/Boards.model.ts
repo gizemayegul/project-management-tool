@@ -11,6 +11,10 @@ const boardsSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Projects",
     },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
     imageUrl: {
       type: String,
       default:

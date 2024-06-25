@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import Column from "../../Components/Column/Column";
-import { ColumnType, TaskType } from "../../types";
+import { ColumnType, TaskType } from "../../utils/types";
 import { createPortal } from "react-dom";
 import Task from "../../Components/Tasks/Task";
 import {
@@ -275,6 +275,7 @@ export default function BoardsDetails() {
 
   return (
     <div>
+      <div>{boardId}</div>
       <DndContext
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}

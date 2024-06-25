@@ -2,7 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Boards from "../Boards/Boards";
+import Boards from "../../Components/Boards/Boards";
 import CreateButton from "../../Components/CreateButton/CreateButton";
 
 const API_URL = import.meta.env.VITE_SERVER_URL;

@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import sort from "../../assets/images/sort.png";
 import { CSS } from "@dnd-kit/utilities";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import Task from "../Tasks/Task";
 import { useDroppable } from "@dnd-kit/core";
 
-import { ColumnType, TaskType } from "../../types";
+import { ColumnType, TaskType } from "../../utils/types";
 const API_URL = import.meta.env.VITE_SERVER_URL;
 const localStoreToken = localStorage.getItem("token");
 interface Props {
