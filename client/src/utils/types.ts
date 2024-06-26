@@ -8,11 +8,9 @@ export type TaskType = {
   index: Number;
   description: String;
   status: String;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 };
-
-//TODO datelari string yap
 
 export type ColumnType = {
   _id: Id;
@@ -20,8 +18,9 @@ export type ColumnType = {
   index: Number;
   boardId: Number;
   tasks: TaskType[];
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
+  setColumns: React.Dispatch<React.SetStateAction<ColumnType[]>>;
 };
 
 export type BoardType = {
@@ -31,8 +30,8 @@ export type BoardType = {
   userId: Id;
   imageUrl: string;
   columns: string[];
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 };
 export type Project = {
   projectName: string;
@@ -44,11 +43,11 @@ export type Project = {
 export type AuthContextType = {
   user: any | null;
   isLoggedIn: boolean;
-  loading: boolean;
-  token: string;
-  setToken: React.Dispatch<React.SetStateAction<string>>;
-  logoutUser: Function; // Add logoutUser property
-  userExpire: boolean;
+  isLoading: boolean;
+  logOutUser: Function; // Add logOutUser property
+  storeToken: (token: string) => void;
+  authenticateUser: () => void;
+  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export type ProjectContextType = {
@@ -64,4 +63,19 @@ export type ProjectType = {
   imageUrl: string;
   boards: string[];
   userId: Id;
+  setCreateProject: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export type Create = {
+  name: string;
+  toNavigate: string;
+};
+
+export type ProjectsDetails = {
+  projectDetail: object | string;
+  projectName: string;
+};
+
+export type CreateBoardDropDownProps = {
+  setCreateBoard: React.Dispatch<React.SetStateAction<boolean>>;
 };

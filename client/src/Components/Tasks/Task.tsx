@@ -2,11 +2,7 @@ import { TaskType } from "../../utils/types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-interface Props {
-  task: TaskType;
-}
-
-export default function Task({ task }: Props) {
+export default function Task({ ...task }: TaskType) {
   const {
     isDragging,
     attributes,

@@ -3,14 +3,8 @@ import { ChevronLeftIcon } from "@chakra-ui/icons";
 import axios from "axios";
 import { apiUrl, headers } from "../../utils/config";
 import { useNavigate } from "react-router-dom";
-
+import { CreateBoardDropDownProps } from "../../utils/types";
 import { ProjectContext } from "../../Context/ProjectContext";
-
-type CreateBoardDropDownProps = {
-  setCreateBoard: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-//TODO proplar icin interface iyi mi
 
 export default function CreateBoardDropDown({
   setCreateBoard,
@@ -32,7 +26,6 @@ export default function CreateBoardDropDown({
         },
         { headers }
       );
-      console.log(response.data);
       if (response.status === 200) {
         setCreateBoard(false);
         navigate(
@@ -45,14 +38,17 @@ export default function CreateBoardDropDown({
   };
 
   return (
-    <div className="flex flex-col bg-zinc-400 py-10">
-      <button onClick={() => setCreateBoard(false)}>
+    <div className="flex flex-col">
+      <button
+        className=" hover:round-sm h-5 w-6 self-start  hover:text-white"
+        onClick={() => setCreateBoard(false)}
+      >
         <ChevronLeftIcon />
       </button>
       <form onSubmit={(e) => handleSubmit(e)}>
-        <label htmlFor="boardName">Board name</label>
+        <label htmlFor="boardName"></label>
         <input
-          className="input input-bordered w-full max-w-xs"
+          className="input input-bordered input-sm w-full max-w-xs"
           required
           type="text"
           name="boardName"
@@ -61,9 +57,10 @@ export default function CreateBoardDropDown({
           value={boardName}
           onChange={(e) => setBoardName(e.target.value)}
         />
-        <label htmlFor="projectSelect">Select a project:</label>
+        <label htmlFor="projectSelect"></label>
 
         <select
+          className="input input-bordered input-sm w-full max-w-xs mt-2"
           required
           onChange={(e) => {
             setSelectedProject(e.target.value);
@@ -74,12 +71,13 @@ export default function CreateBoardDropDown({
           value={selectedProject}
         >
           Select a project
-          <option className=" w-full max-w-xs" value="" disabled>
+          <option className=" w-full max-w-xs py-2" value="" disabled>
             Select a project
           </option>
           {projects &&
             projects.map((project) => (
               <option
+                className="w-full max-w-xs py-2"
                 value={project.projectName}
                 key={project._id}
                 data-id={project._id}
@@ -88,8 +86,9 @@ export default function CreateBoardDropDown({
               </option>
             ))}
         </select>
+
         <div>
-          <button className="btn" type="submit">
+          <button className="btn btn-sm mt-2 w-full" type="submit">
             Create Board
           </button>
         </div>

@@ -4,35 +4,32 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../Context/AuthContext";
-const API_URL = import.meta.env.VITE_SERVER_URL;
+import { apiUrl } from "../../utils/config";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { setToken, isLoggedIn } = useContext(AuthContext);
+  const { authenticateUser, storeToken } = useContext(AuthContext);
 
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`${API_URL}/api/login`, {
+      const response = await axios.post(`${apiUrl}/api/login`, {
         email: email,
         password: password,
       });
       setError("");
-      setToken(response.data.token);
-      if (isLoggedIn) {
-        navigate("/dashboard");
-      }
-      console.log(response.data);
+      storeToken(response.data.token);
+      authenticateUser();
+      navigate("/");
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         setError(err.response?.data.message);
       }
     }
-
     setEmail("");
     setPassword("");
   };

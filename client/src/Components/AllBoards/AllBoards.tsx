@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { apiUrl, headers } from "../../utils/config";
 import { Link } from "react-router-dom";
-export default function BoardsAll() {
+export default function AllBoards() {
   const [boards, setBoards] = useState<BoardType[]>([]);
   useEffect(() => {
     const fetchAllBoards = async () => {
@@ -12,7 +12,6 @@ export default function BoardsAll() {
           headers: headers,
         });
         setBoards(response.data);
-        console.log(response.data);
       } catch (error) {
         console.log(error);
       }
@@ -21,24 +20,23 @@ export default function BoardsAll() {
   }, [headers]);
   //TODO create board button
   return (
-    <div className="flex">
-      <h1>Boards</h1>
-
+    <div className="flex flex-wrap">
       {Array.isArray(boards) &&
         boards.map((board) => (
           <div
             key={board._id}
-            className="card card-compact bg-base-100 w-96 shadow-xl m-3 mt-10"
+            className="card bg-base-100 image-full w-60 shadow-xl mx-3 my-3"
           >
-            <Link to={`/projects/${board.projectId}/boards/${board._id}`}>
-              <figure>
-                <img src={board.imageUrl} alt="board-img" className="w-fit" />
-              </figure>
-              <div className="card-body">
-                <h2 className="card-title">{board.boardName}</h2>
-                <p>If a dog chews shoes whose shoes does he choose?</p>
-              </div>
-            </Link>
+            <figure>
+              <img src={board.imageUrl} alt="Shoes" />
+            </figure>
+            <div className="card-body">
+              <Link to={`/projects/${board.projectId}/boards/${board._id}`}>
+                <div className="card-actions justify-start">
+                  <button className="btn btn-sm">{board.boardName}</button>
+                </div>
+              </Link>
+            </div>
           </div>
         ))}
     </div>

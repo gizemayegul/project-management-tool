@@ -1,9 +1,5 @@
 import { useNavigate } from "react-router-dom";
-
-type Create = {
-  name: string;
-  toNavigate: string;
-};
+import { Create } from "../../utils/types";
 
 export default function CreateButton({
   name,

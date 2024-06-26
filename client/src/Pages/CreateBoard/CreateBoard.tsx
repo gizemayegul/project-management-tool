@@ -1,7 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
-const API_URL = import.meta.env.VITE_SERVER_URL;
+import { headers, apiUrl } from "../../utils/config";
+
 import { useNavigate } from "react-router-dom";
 export default function CreateBoard() {
   const [boardName, setBoardName] = useState<string | undefined>("");
@@ -11,17 +12,15 @@ export default function CreateBoard() {
   const { projectId } = useParams();
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(boardName);
     const createBoard = async () => {
       try {
         const response = await axios.post(
-          `${API_URL}/${projectId}/createboard`,
+          `${apiUrl}/${projectId}/createboard`,
           { boardName: boardName },
           {
-            headers: { Authorization: localStoreToken },
+            headers: headers,
           }
         );
-        console.log(response.data.projects);
         navigate(`/projects/${projectId}`);
       } catch (err: unknown) {
         if (err instanceof AxiosError) {

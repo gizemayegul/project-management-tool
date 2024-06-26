@@ -4,26 +4,20 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Boards from "../../Components/Boards/Boards";
 import CreateButton from "../../Components/CreateButton/CreateButton";
-
-const API_URL = import.meta.env.VITE_SERVER_URL;
-type ProjectsDetails = {
-  projectDetail: object | string;
-  projectName: string;
-};
+import { headers, apiUrl } from "../../utils/config";
+import { ProjectsDetails } from "../../utils/types";
 
 export default function ProjectDetail() {
   const { projectId } = useParams();
   const [projectDetail, setprojectDetail] = useState<ProjectsDetails | null>();
-  const localStoreToken = localStorage.getItem("token");
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await axios.get(`${API_URL}/projects/${projectId}`, {
-          headers: { Authorization: localStoreToken },
+        const response = await axios.get(`${apiUrl}/projects/${projectId}`, {
+          headers: headers,
         });
-        console.log(response.data[0]);
         setprojectDetail(response.data[0]);
       } catch (error) {
         console.log(error);

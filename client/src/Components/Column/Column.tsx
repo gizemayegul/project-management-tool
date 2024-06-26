@@ -4,17 +4,10 @@ import { CSS } from "@dnd-kit/utilities";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import Task from "../Tasks/Task";
 import { useDroppable } from "@dnd-kit/core";
+import { headers, apiUrl } from "../../utils/config";
+import { ColumnType } from "../../utils/types";
 
-import { ColumnType, TaskType } from "../../utils/types";
-const API_URL = import.meta.env.VITE_SERVER_URL;
-const localStoreToken = localStorage.getItem("token");
-interface Props {
-  column: ColumnType;
-  tasks: TaskType[];
-  setColumns: React.Dispatch<React.SetStateAction<ColumnType[]>>;
-}
-
-export default function Column({ column, tasks, setColumns }: Props) {
+export default function Column({ tasks, setColumns, ...column }: ColumnType) {
   const [addNewTask, setAddNewTask] = useState<string>("");
 
   const { isOver } = useDroppable({
@@ -48,9 +41,9 @@ export default function Column({ column, tasks, setColumns }: Props) {
     e.preventDefault();
     try {
       const response = await axios.post(
-        `${API_URL}/columns/${column._id}/createTask`,
+        `${apiUrl}/columns/${column._id}/createTask`,
         { taskName: addNewTask },
-        { headers: { Authorization: localStoreToken } }
+        { headers: headers }
       );
       if (response.status === 200) {
         setAddNewTask("");
@@ -59,12 +52,10 @@ export default function Column({ column, tasks, setColumns }: Props) {
           const findTheColumn = prevColumns.findIndex(
             (col) => col._id === column._id
           );
-          console.log(newColumns, "new");
           newColumns[findTheColumn].tasks.push(response.data);
           return newColumns;
         });
       }
-      console.log(response.data);
     } catch (error) {
       console.log(error);
     }

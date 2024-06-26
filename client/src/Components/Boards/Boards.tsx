@@ -2,21 +2,18 @@ import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { BoardType } from "../../utils/types";
-const API_URL = import.meta.env.VITE_SERVER_URL;
+import { headers, apiUrl } from "../../utils/config";
 export default function Boards() {
   const [boards, setBoards] = useState<BoardType[]>();
   const { projectId } = useParams();
 
-  const localStoreToken = localStorage.getItem("token");
-
   useEffect(() => {
     const fetchBoards = async () => {
       try {
-        const response = await axios.get(`${API_URL}/${projectId}/boards`, {
-          headers: { Authorization: localStoreToken },
+        const response = await axios.get(`${apiUrl}/${projectId}/boards`, {
+          headers: headers,
         });
         setBoards(response.data.boards);
-        console.log(response.data);
       } catch (error) {
         console.error("Error fetching boards:", error);
       }

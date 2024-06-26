@@ -4,13 +4,9 @@ import { useContext } from "react";
 import { AuthContext } from "../Context/AuthContext";
 import Loading from "../Components/Loading/Loading";
 
-interface userChild {
-  children: React.ReactNode;
-}
-
-export default function isAnon({ children }: userChild) {
-  const { isLoggedIn, loading } = useContext(AuthContext);
-  if (loading) return <Loading />;
+export default function isAnon({ children }: { children: React.ReactNode }) {
+  const { isLoggedIn, isLoading } = useContext(AuthContext);
+  if (isLoading) return <Loading />;
   if (isLoggedIn) {
     return <Navigate to="/dashboard" />;
   } else {
