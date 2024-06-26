@@ -11,6 +11,7 @@ boardRoute.post(
   async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
     const { projectId } = req.params;
     const { boardName } = req.body;
+    const { _id: userId } = req.user;
     if (!boardName) {
       res.status(400).json({ message: "Please provide a board name" });
       return;
@@ -19,6 +20,7 @@ boardRoute.post(
       const createBoard = await Boards.create({
         projectId: projectId,
         boardName: boardName,
+        userId: userId,
       });
       const defaultColumns = ["To Do", "In Progress", "Done"];
       for (const columnName of defaultColumns) {
@@ -114,6 +116,27 @@ boardRoute.put(
       res.json(response);
     } catch (error) {
       res.json(error);
+    }
+  }
+);
+
+//!!get all boards from the specific users
+
+boardRoute.get(
+  "/boards",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse) => {
+    console.log(req.user);
+    const { _id } = req.user;
+
+    try {
+      const response = await Boards.find({ userId: _id });
+      res.json(response);
+    } catch (error) {
+      console.error("An error occurred:", error);
+      res.status(500).json({
+        message: "An error occurred while fetching the boards user",
+      });
     }
   }
 );

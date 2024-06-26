@@ -2,9 +2,11 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import Column from "../../Components/Column/Column";
-import { ColumnType, TaskType } from "../../types";
+import { ColumnType, TaskType } from "../../utils/types";
 import { createPortal } from "react-dom";
 import Task from "../../Components/Tasks/Task";
+import { headers, apiUrl } from "../../utils/config";
+
 import {
   DndContext,
   useSensor,
@@ -21,9 +23,6 @@ import {
   arrayMove,
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
-
-const API_URL: string = import.meta.env.VITE_SERVER_URL;
-const localStoreToken = localStorage.getItem("token");
 
 export default function BoardsDetails() {
   const { boardId } = useParams<{ boardId: string }>();
@@ -42,8 +41,8 @@ export default function BoardsDetails() {
   useEffect(() => {
     const fetchColumns = async () => {
       try {
-        const response = await axios.get(`${API_URL}/columns/${boardId}`, {
-          headers: { Authorization: localStoreToken },
+        const response = await axios.get(`${apiUrl}/columns/${boardId}`, {
+          headers: headers,
         });
 
         setColumns(response.data);
@@ -53,7 +52,7 @@ export default function BoardsDetails() {
     };
 
     fetchColumns();
-  }, [boardId, localStoreToken]);
+  }, [boardId]);
 
   function onDragStart(event: DragStartEvent) {
     if (event.active.data.current?.type === "column") {
@@ -74,7 +73,6 @@ export default function BoardsDetails() {
 
       const activeId = active.id;
       const overId = over.id;
-      console.log(over.data.current?.type, "over");
 
       if (activeId === overId) return;
 
@@ -94,7 +92,6 @@ export default function BoardsDetails() {
 
         if (!findColumnActive || !findOverColumn) return;
         if (findColumnActive._id !== findOverColumn._id) {
-          console.log("selam bes");
           const activeIndex = findColumnActive.tasks.findIndex(
             (t) => t._id === activeId
           );
@@ -106,7 +103,6 @@ export default function BoardsDetails() {
           const activeTask = findColumnActive.tasks.find(
             (t) => t._id === activeId
           );
-          console.log(activeTask, "activeTask");
           const overTask = findOverColumn.tasks.find((t) => t._id === overId);
           const activeColumnIndex = columns.findIndex(
             (columns) => columns._id === findColumnActive._id
@@ -125,10 +121,10 @@ export default function BoardsDetails() {
           setColumns(newColumns);
 
           await axios.put(
-            `${API_URL}/columns/tasks/updateColumns`,
+            `${apiUrl}/columns/tasks/updateColumns`,
             { updatedColumns: newColumns },
             {
-              headers: { Authorization: localStoreToken },
+              headers: headers,
             }
           );
         }
@@ -153,12 +149,12 @@ export default function BoardsDetails() {
           )
         );
         await axios.put(
-          `${API_URL}/columns/${findColumnActive._id}/tasks/reorder`,
+          `${apiUrl}/columns/${findColumnActive._id}/tasks/reorder`,
           {
             tasks: newOrders,
           },
           {
-            headers: { Authorization: localStoreToken },
+            headers: headers,
           }
         );
       }
@@ -191,10 +187,10 @@ export default function BoardsDetails() {
         newColumns[overColumnIndex].tasks.push(removeditem);
         setColumns(newColumns);
         await axios.put(
-          `${API_URL}/columns/tasks/updateColumns`,
+          `${apiUrl}/columns/tasks/updateColumns`,
           { updatedColumns: newColumns },
           {
-            headers: { Authorization: localStoreToken },
+            headers: headers,
           }
         );
       }
@@ -219,7 +215,6 @@ export default function BoardsDetails() {
       const isActiveAColumn = active.data.current?.type === "column";
       if (!isActiveAColumn) return;
 
-      console.log("DRAG END");
       const activeColumnIndex = columns.findIndex(
         (col) => col._id === activeId
       );
@@ -232,15 +227,13 @@ export default function BoardsDetails() {
         ...column,
         index: index,
       }));
-      console.log(updatedColumns, "updatedColumns");
       setColumns(updatedColumns);
 
-      const response = await axios.put(
-        `${API_URL}/columns/reorder`,
-        { updatedColumns: updatedColumns }, // Ensure this is defined correctly
-        { headers: { Authorization: localStoreToken } }
+      await axios.put(
+        `${apiUrl}/columns/reorder`,
+        { updatedColumns: updatedColumns },
+        { headers: headers }
       );
-      console.log(response);
     } catch (error) {
       console.log(error);
     }
@@ -251,7 +244,7 @@ export default function BoardsDetails() {
     if (!addNewColumn) return;
     try {
       const response = await axios.post(
-        `${API_URL}/columns`,
+        `${apiUrl}/columns`,
         {
           columnName: addNewColumn,
           tasks: [],
@@ -259,7 +252,7 @@ export default function BoardsDetails() {
           index: columns.length,
         },
         {
-          headers: { Authorization: localStoreToken },
+          headers: headers,
         }
       );
       if (response.status === 200) {
@@ -275,6 +268,7 @@ export default function BoardsDetails() {
 
   return (
     <div>
+      <div>{boardId}</div>
       <DndContext
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
@@ -321,7 +315,7 @@ export default function BoardsDetails() {
                 />
               </div>
             )}
-            {activeTask && <Task task={activeTask} />}
+            {activeTask && <Task {...activeTask} />}
           </DragOverlay>,
           document.body
         )}

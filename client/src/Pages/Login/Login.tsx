@@ -4,53 +4,40 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../Context/AuthContext";
-const API_URL = import.meta.env.VITE_SERVER_URL;
+import { apiUrl } from "../../utils/config";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { setToken } = useContext(AuthContext);
+  const { authenticateUser, storeToken } = useContext(AuthContext);
 
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`${API_URL}/api/login`, {
+      const response = await axios.post(`${apiUrl}/api/login`, {
         email: email,
         password: password,
       });
       setError("");
-      setToken(response.data.token);
-      navigate("/dashboard");
+      storeToken(response.data.token);
+      authenticateUser();
+      navigate("/");
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         setError(err.response?.data.message);
       }
     }
-
     setEmail("");
     setPassword("");
   };
 
   return (
     <>
-      {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-white">
-        <body class="h-full">
-        ```
-      */}
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          {/* <img
-            className="mx-auto h-10 w-auto"
-            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-            alt="Your Company"
-          /> */}
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Sign in to your account
           </h2>
@@ -94,14 +81,14 @@ export default function Login() {
                 >
                   Password
                 </label>
-                {/* <div className="text-sm">
+                <div className="text-sm">
                   <a
                     href="#"
                     className="font-semibold text-indigo-600 hover:text-indigo-500"
                   >
                     Forgot password?
                   </a>
-                </div> */}
+                </div>
               </div>
               <div>
                 <input
@@ -148,18 +135,3 @@ export default function Login() {
     </>
   );
 }
-
-/*
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/

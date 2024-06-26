@@ -1,77 +1,131 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../../Context/AuthContext";
-export default function Navbar() {
-  const { logoutUser, isLoggedIn } = useContext(AuthContext);
-  const navigate = useNavigate();
-  return (
-    <div data-testid="navbar">
-      <nav className="bg-gray-800">
-        <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-          <div className="relative flex h-16 items-center justify-between">
-            <Link
-              className="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"
-              to="/"
-            >
-              Home
-            </Link>
 
-            <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-end">
-              <div className="flex space-x-4">
-                {!isLoggedIn ? (
-                  <>
-                    <Link
-                      to="/signup"
-                      className="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"
-                      aria-current="page"
-                    >
-                      Signup
-                    </Link>
-                    <Link
-                      to="/login"
-                      className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-                    >
-                      Login
-                    </Link>{" "}
-                  </>
-                ) : (
-                  <>
-                    <Link
-                      className="bg-gray-900 text-white rounded-md px-3 py-2 ml-3 text-sm font-medium"
-                      to="/dashboard"
-                    >
-                      Dashboard
-                    </Link>
-                    <Link
-                      className="bg-gray-900 text-white rounded-md px-3 py-2 ml-3 text-sm font-medium"
-                      to="/projects"
-                    >
-                      Projects
-                    </Link>
-                    <Link
-                      to="/profile"
-                      className="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"
-                      aria-current="page"
-                    >
-                      Profile
-                    </Link>
-                    <button
-                      onClick={() => {
-                        logoutUser();
-                        navigate("/login");
-                      }}
-                      className="text-gray-300 hover:bg-red-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-                    >
-                      Logout
-                    </button>{" "}
-                  </>
-                )}
-              </div>
+import CreateProject from "../CreateProject/CreateProject";
+import CreateBoardDropDown from "../CreateBoardDropDown/CreateBoardDropDown";
+export default function Navbar() {
+  const { logOutUser, isLoggedIn } = useContext(AuthContext);
+  const [createProject, setCreateProject] = useState<boolean>(false);
+  const [createBoard, setCreateBoard] = useState<boolean>(false);
+  const navigate = useNavigate();
+
+  return (
+    <div>
+      <div className="navbar bg-base-100">
+        {isLoggedIn ? (
+          <>
+            <div className="navbar-start">
+              <Link to="/dashboard">
+                <h1 className="text-xl">TaskFlow</h1>
+              </Link>
             </div>
-            <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"></div>
-          </div>
-        </div>
-      </nav>
+            <div className="navbar-center">
+              <ul className="menu menu-horizontal px-1 ">
+                <li className="m-2">
+                  <details
+                    className="dropdown"
+                    tabIndex={0}
+                    role="button"
+                    {...(createProject || createBoard ? { open: true } : {})}
+                  >
+                    <summary className="bg-zinc-300">
+                      <div>Create</div>
+                    </summary>
+                    <ul className="menu dropdown-content bg-base-100 rounded-box z-30 w-80 p-2 shadow flex justify-between">
+                      <li>
+                        {createProject ? (
+                          <CreateProject setCreateProject={setCreateProject} />
+                        ) : (
+                          <button
+                            onClick={() => {
+                              setCreateProject((prev) => !prev);
+                              setCreateBoard(false);
+                            }}
+                          >
+                            Create Project
+                          </button>
+                        )}
+                      </li>
+                      <li>
+                        {createBoard ? (
+                          <CreateBoardDropDown
+                            setCreateBoard={setCreateBoard}
+                          />
+                        ) : (
+                          <button
+                            onClick={() => {
+                              setCreateBoard((prev) => !prev);
+                              setCreateProject(false);
+                            }}
+                          >
+                            Create Board
+                          </button>
+                        )}
+                      </li>
+                    </ul>
+                  </details>
+                </li>
+                <li className="m-2">
+                  <details className="dropdown" tabIndex={0} role="button">
+                    <summary className="bg-zinc-300">
+                      <div>Projects</div>
+                    </summary>
+                    <ul className="menu dropdown-content bg-base-100 rounded-box z-30 w-52 p-2 shadow">
+                      <li> pro1</li>
+                      <li>pro2</li>
+                    </ul>
+                  </details>
+                </li>
+                <li className="m-2">
+                  <details className="dropdown" tabIndex={0} role="button">
+                    <summary className="bg-zinc-300">
+                      <div>Favs</div>
+                    </summary>
+                    <ul className="menu dropdown-content bg-base-100 rounded-box z-30 w-52 p-2 shadow">
+                      <li> fav1</li>
+                      <li>fav2</li>
+                    </ul>
+                  </details>
+                </li>
+              </ul>
+            </div>
+
+            <div className="navbar-end">
+              <Link to="/profile">
+                <button className="btn">Profile</button>
+              </Link>
+              <button
+                className="btn hover:bg-red-600 hover:text-white"
+                onClick={() => {
+                  logOutUser();
+                  navigate("/login");
+                }}
+              >
+                Logout
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="navbar-start">
+              <Link to="/">
+                <button className="btn">Project Management Tool</button>
+              </Link>
+            </div>
+            <div className="navbar-end">
+              <Link to="/login">
+                <button className="btn btn-active btn-primary mx-3">
+                  Login
+                </button>
+              </Link>
+              <Link to="/signup">
+                <button className="btn mx-3">Signup </button>
+              </Link>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }

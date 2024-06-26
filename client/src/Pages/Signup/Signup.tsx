@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
 
-const API_URL = import.meta.env.VITE_SERVER_URL;
+import { apiUrl } from "../../utils/config";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
@@ -17,12 +17,11 @@ export default function Signup() {
     e.preventDefault();
 
     try {
-      const response: any = await axios.post(`${API_URL}/api/signup`, {
+      const response: any = await axios.post(`${apiUrl}/api/signup`, {
         email: email,
         password: password,
         name: name,
       });
-      console.log(response);
       setError("");
       setSuccess(response.data.message);
       navigate("/login");
@@ -43,8 +42,6 @@ export default function Signup() {
     setName("");
     setPassword("");
     setEmail("");
-    // setError("");
-    // setSuccess("");
   };
 
   return (

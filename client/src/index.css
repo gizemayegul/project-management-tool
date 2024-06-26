@@ -22,3 +22,7 @@ body,
 .task > ::-webkit-scrollbar-thumb {
   @apply bg-sky-500 rounded-xl;
 } */
+
+body {
+  margin: 0 20rem 0 20rem;
+}
