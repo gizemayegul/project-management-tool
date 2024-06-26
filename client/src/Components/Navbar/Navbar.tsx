@@ -11,7 +11,7 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   return (
-    <div className="mx-20">
+    <div>
       <div className="navbar bg-base-100">
         {isLoggedIn ? (
           <>
@@ -32,7 +32,7 @@ export default function Navbar() {
                     <summary className="bg-zinc-300">
                       <div>Create</div>
                     </summary>
-                    <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-80 p-2 shadow flex justify-between">
+                    <ul className="menu dropdown-content bg-base-100 rounded-box z-30 w-80 p-2 shadow flex justify-between">
                       <li>
                         {createProject ? (
                           <CreateProject setCreateProject={setCreateProject} />
@@ -71,7 +71,7 @@ export default function Navbar() {
                     <summary className="bg-zinc-300">
                       <div>Projects</div>
                     </summary>
-                    <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                    <ul className="menu dropdown-content bg-base-100 rounded-box z-30 w-52 p-2 shadow">
                       <li> pro1</li>
                       <li>pro2</li>
                     </ul>
@@ -82,7 +82,7 @@ export default function Navbar() {
                     <summary className="bg-zinc-300">
                       <div>Favs</div>
                     </summary>
-                    <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                    <ul className="menu dropdown-content bg-base-100 rounded-box z-30 w-52 p-2 shadow">
                       <li> fav1</li>
                       <li>fav2</li>
                     </ul>

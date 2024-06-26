@@ -315,7 +315,7 @@ export default function BoardsDetails() {
                 />
               </div>
             )}
-            {activeTask && <Task task={activeTask} />}
+            {activeTask && <Task {...activeTask} />}
           </DragOverlay>,
           document.body
         )}

@@ -10,7 +10,7 @@ export default function Dashboard() {
   const { projects } = useContext(ProjectContext);
 
   return (
-    <div className="flexflex-col divide-y m-20">
+    <div className="flexflex-col divide-y">
       <h1>
         Welcome {user && user.name}{" "}
         {!projects?.length && "you haven't created a new project yet,"}

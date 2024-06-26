@@ -20,6 +20,11 @@ export type ColumnType = {
   tasks: TaskType[];
   createdAt: string;
   updatedAt: string;
+};
+
+export type ColumnProps = {
+  column: ColumnType;
+  tasks: TaskType[];
   setColumns: React.Dispatch<React.SetStateAction<ColumnType[]>>;
 };
 

@@ -5,9 +5,9 @@ import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import Task from "../Tasks/Task";
 import { useDroppable } from "@dnd-kit/core";
 import { headers, apiUrl } from "../../utils/config";
-import { ColumnType } from "../../utils/types";
+import { ColumnProps } from "../../utils/types";
 
-export default function Column({ tasks, setColumns, ...column }: ColumnType) {
+export default function Column({ column, tasks, setColumns }: ColumnProps) {
   const [addNewTask, setAddNewTask] = useState<string>("");
 
   const { isOver } = useDroppable({
@@ -30,6 +30,7 @@ export default function Column({ tasks, setColumns, ...column }: ColumnType) {
   const style = {
     transition,
     transform: CSS.Transform.toString(transform),
+    border: "2px solid #E0E0E0",
   };
   const columnStyle = {
     backgroundColor: isOver ? "#E0E0E0" : "white", // change color when a task is dragged over
@@ -77,9 +78,7 @@ export default function Column({ tasks, setColumns, ...column }: ColumnType) {
       p-3
       font-bold
       border-columnBackgroundColor
-      border-4
       flex
-
       items-center
       justify-between
       width-full
@@ -91,9 +90,13 @@ export default function Column({ tasks, setColumns, ...column }: ColumnType) {
       </div>
       <SortableContext items={tasks.map((task) => task._id)}>
         {tasks.map((task) => (
-          <Task key={task._id} task={task} />
+          <Task key={task._id} {...task} />
         ))}
-        <form onSubmit={(e) => handleAddTask(e)}>
+        <form
+          onSubmit={(e) => {
+            handleAddTask(e);
+          }}
+        >
           <input
             onChange={(e) => {
               setAddNewTask(e.target.value);
