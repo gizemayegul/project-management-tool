@@ -3,7 +3,7 @@ import { ProjectContext } from "../../Context/ProjectContext";
 import { Link } from "react-router-dom";
 
 export default function Projects() {
-  const { projects } = useContext(ProjectContext);
+  const { projects, handleDeleteProject } = useContext(ProjectContext);
 
   return (
     <div className="flex">
@@ -22,13 +22,19 @@ export default function Projects() {
                 <img src={project.imageUrl} alt="Shoes" />
               </figure>
               <div className="card-body">
-                <Link to={`/projects/${project._id}`}>
-                  <div className="card-actions justify-start">
+                <div className="card-actions justify-between w-full">
+                  <Link to={`/projects/${project._id}`}>
                     <button className="btn btn-sm">
                       {project.projectName}
                     </button>
-                  </div>
-                </Link>
+                  </Link>
+                  <button
+                    onClick={() => handleDeleteProject(project._id)}
+                    className="btn btn-sm"
+                  >
+                    delete me
+                  </button>
+                </div>
               </div>
             </div>
           ))}

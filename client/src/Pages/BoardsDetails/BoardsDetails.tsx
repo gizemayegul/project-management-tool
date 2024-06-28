@@ -26,13 +26,15 @@ import {
 } from "@dnd-kit/sortable";
 
 export default function BoardsDetails() {
-  const { boardId } = useParams<{ boardId: string }>();
+  const { boardId, projectId } = useParams<{
+    boardId: string;
+    projectId: string;
+  }>();
   const [columns, setColumns] = useState<ColumnType[]>([]);
   const [activeColumn, setActiveColumn] = useState<ColumnType | null>(null);
   const [addNewColumn, setAddNewColumn] = useState<string>("");
   const [activeTask, setActiveTask] = useState<TaskType | null>(null);
   const { token } = useContext(AuthContext);
-
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -105,10 +107,10 @@ export default function BoardsDetails() {
             (t) => t._id === overId
           );
           if (activeIndex === -1 || overIndex === -1) return;
-          const activeTask = findColumnActive.tasks.find(
-            (t) => t._id === activeId
-          );
-          const overTask = findOverColumn.tasks.find((t) => t._id === overId);
+          // const activeTask = findColumnActive.tasks.find(
+          //   (t) => t._id === activeId
+          // );
+          // const overTask = findOverColumn.tasks.find((t) => t._id === overId);
           const activeColumnIndex = columns.findIndex(
             (columns) => columns._id === findColumnActive._id
           );
@@ -255,6 +257,7 @@ export default function BoardsDetails() {
           tasks: [],
           boardId: boardId,
           index: columns.length,
+          projectId: projectId,
         },
         { headers: { Authorization: token } }
       );

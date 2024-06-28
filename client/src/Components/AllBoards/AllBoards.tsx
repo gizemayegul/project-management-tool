@@ -1,13 +1,16 @@
 import { BoardType } from "../../utils/types";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { apiUrl, headers } from "../../utils/config";
+import { apiUrl } from "../../utils/config";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../Context/AuthContext";
+import { ProjectContext } from "../../Context/ProjectContext";
+
 export default function AllBoards() {
   const [boards, setBoards] = useState<BoardType[]>([]);
   const { token } = useContext(AuthContext);
+  const { projects } = useContext(ProjectContext);
   useEffect(() => {
     const fetchAllBoards = async () => {
       try {
@@ -20,7 +23,7 @@ export default function AllBoards() {
       }
     };
     fetchAllBoards();
-  }, [token]);
+  }, [token, projects]);
   //TODO create board button
   return (
     <div className="flex flex-wrap">

@@ -10,6 +10,7 @@ boardRoute.post(
   isAuthenticated,
   async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
     const { projectId } = req.params;
+    console.log(projectId, "MAMMMMMM");
     const { boardName } = req.body;
     const { _id: userId } = req.user;
     if (!boardName) {
@@ -24,12 +25,12 @@ boardRoute.post(
       });
       const defaultColumns = ["To Do", "In Progress", "Done"];
       for (const columnName of defaultColumns) {
-        console.log(columnName);
         const column = await Columns.create({
           boardId: createBoard._id,
           columnName: columnName,
           tasks: [],
           index: defaultColumns.indexOf(columnName),
+          projectId: projectId,
         });
         createBoard.columns.push(column._id);
       }
@@ -58,7 +59,6 @@ boardRoute.get(
   isAuthenticated,
   async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
     const { projectId } = req.params;
-    console.log(projectId);
     if (!projectId) {
       res.status(400).json({ message: "An expected error happened" });
       return;
@@ -78,7 +78,6 @@ boardRoute.get(
   isAuthenticated,
   async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
     const { projectId, boardId } = req.params;
-    console.log(projectId);
     if (!projectId || !boardId) {
       res.status(400).json({ message: "An expected error happened" });
       return;
@@ -129,7 +128,6 @@ boardRoute.get(
     if (!req.user) {
       return res.status(400).json({ message: "User not found" });
     }
-    console.log(req.user);
     const { _id } = req.user;
 
     try {

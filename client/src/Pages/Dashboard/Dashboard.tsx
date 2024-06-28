@@ -12,19 +12,19 @@ export default function Dashboard() {
   return (
     <div className="flexflex-col divide-y">
       <h1>
-        Welcome {user && user.name}{" "}
-        {!projects?.length && "you haven't created a new project yet,"}
+        Welcome {user && user.name}
+        {!projects.length && "you haven't created a new project yet"}
       </h1>
+      {projects.length && (
+        <div>
+          <h2>Projects</h2>
+          <Projects />
+          <h2>Boards</h2>
+          <AllBoards />
+        </div>
+      )}
 
       {!projects?.length && <Empty />}
-      <div>
-        <h2>Projects</h2>
-        <Projects />
-      </div>
-      <div>
-        <h2>Boards</h2>
-        <AllBoards />
-      </div>
     </div>
   );
 }

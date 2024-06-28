@@ -49,7 +49,6 @@ columnRoute.post(
 //!! reorder the columns
 columnRoute.put("/columns/reorder", isAuthenticated, async (req, res) => {
   const { updatedColumns } = req.body;
-  console.log(updatedColumns);
 
   try {
     // Perform bulk update of column indices
@@ -120,7 +119,6 @@ columnRoute.put(
         }
       );
       res.status(200).json(response);
-      console.log(response);
     } catch (error) {
       console.error({
         message: "An error occurred while fetching the boards user",

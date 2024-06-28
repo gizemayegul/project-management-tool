@@ -58,8 +58,9 @@ export type AuthContextType = {
 };
 
 export type ProjectContextType = {
-  projects: ProjectType[] | null;
-  setProjects: React.Dispatch<React.SetStateAction<null | any[]>>;
+  projects: ProjectType[];
+  setProjects: React.Dispatch<React.SetStateAction<ProjectType[]>>;
+  handleDeleteProject: (projectId: Id) => void;
 };
 
 export type ProjectType = {
