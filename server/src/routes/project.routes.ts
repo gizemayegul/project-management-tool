@@ -7,7 +7,7 @@ import Columns from "../models/Columns.model";
 
 const projectRoute = Router();
 projectRoute.post(
-  "/createproject",
+  "/projects/createproject",
   isAuthenticated,
   async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
     const { projectName } = req.body;
@@ -18,17 +18,12 @@ projectRoute.post(
       return;
     }
     try {
-      const createProject = await Projects.create({
+      const response = await Projects.create({
         projectName: projectName,
         userId: userId,
       });
 
-      const { ...projectInfo } = createProject.toObject();
-      res.status(200).json({
-        success: true,
-        message: "Project created successfully",
-        projectInfo: projectInfo,
-      });
+      res.status(200).json(response);
     } catch (error) {
       if (error && (error as any).code === 11000) {
         res.status(400).json({ message: "The project already exists" });

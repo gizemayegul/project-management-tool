@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../Context/AuthContext";
 
-import CreateProject from "../CreateProject/CreateProject";
+import CreateProjectDropDown from "../CreateProjectDropDown/CreateProjectDropDown";
 import CreateBoardDropDown from "../CreateBoardDropDown/CreateBoardDropDown";
 export default function Navbar() {
   const { logOutUser, isLoggedIn } = useContext(AuthContext);
@@ -29,13 +29,15 @@ export default function Navbar() {
                     role="button"
                     {...(createProject || createBoard ? { open: true } : {})}
                   >
-                    <summary className="bg-zinc-300">
+                    <summary>
                       <div>Create</div>
                     </summary>
                     <ul className="menu dropdown-content bg-base-100 rounded-box z-30 w-80 p-2 shadow flex justify-between">
                       <li>
-                        {createProject ? (
-                          <CreateProject setCreateProject={setCreateProject} />
+                        {CreateProjectDropDown ? (
+                          <CreateProjectDropDown
+                            setCreateProject={setCreateProject}
+                          />
                         ) : (
                           <button
                             onClick={() => {
@@ -68,7 +70,7 @@ export default function Navbar() {
                 </li>
                 <li className="m-2">
                   <details className="dropdown" tabIndex={0} role="button">
-                    <summary className="bg-zinc-300">
+                    <summary>
                       <div>Projects</div>
                     </summary>
                     <ul className="menu dropdown-content bg-base-100 rounded-box z-30 w-52 p-2 shadow">
@@ -79,7 +81,7 @@ export default function Navbar() {
                 </li>
                 <li className="m-2">
                   <details className="dropdown" tabIndex={0} role="button">
-                    <summary className="bg-zinc-300">
+                    <summary>
                       <div>Favs</div>
                     </summary>
                     <ul className="menu dropdown-content bg-base-100 rounded-box z-30 w-52 p-2 shadow">
@@ -91,9 +93,9 @@ export default function Navbar() {
               </ul>
             </div>
 
-            <div className="navbar-end">
+            <div className="navbar-end ">
               <Link to="/profile">
-                <button className="btn">Profile</button>
+                <button className="btn mx-2">Profile</button>
               </Link>
               <button
                 className="btn hover:bg-red-600 hover:text-white"
@@ -110,7 +112,7 @@ export default function Navbar() {
           <>
             <div className="navbar-start">
               <Link to="/">
-                <button className="btn">Project Management Tool</button>
+                <button className="btn">TaskFlow</button>
               </Link>
             </div>
             <div className="navbar-end">

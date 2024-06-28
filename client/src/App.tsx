@@ -1,32 +1,22 @@
 import "./App.css";
 import "./index.css";
-import { Route, Routes, useNavigate } from "react-router-dom";
-import { AuthContext } from "./Context/AuthContext";
-import { useContext, useEffect } from "react";
+import { Route, Routes } from "react-router-dom";
+
 import Signup from "./Pages/Signup/Signup";
 import Navbar from "./Components/Navbar/Navbar";
 import Login from "./Pages/Login/Login";
 import Dashboard from "./Pages/Dashboard/Dashboard";
 import NotFound from "./Pages/NotFound/NotFound";
 import Profile from "./Pages/Profile/Profile";
-import CreateProject from "./Components/CreateProject/CreateProject";
 import Home from "./Pages/Home/Home";
 import ProjectDetail from "./Pages/ProjectDetail/ProjectDetail";
 import CreateBoard from "./Pages/CreateBoard/CreateBoard";
 import BoardsDetails from "./Pages/BoardsDetails/BoardsDetails";
 import IsPrivate from "./utils/IsPrivate";
 import IsAnon from "./utils/IsAnon";
-import CreateBoardDropDown from "./Components/CreateBoardDropDown/CreateBoardDropDown";
+import CreateProject from "./Pages/CreateProject/CreateProject";
 IsPrivate;
 function App() {
-  const { userExpire } = useContext(AuthContext);
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (userExpire) {
-      navigate("/login");
-    }
-  }, [userExpire]);
-
   return (
     <>
       <Navbar />
