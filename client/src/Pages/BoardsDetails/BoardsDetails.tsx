@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect, useMemo, useContext } from "react";
 import axios from "axios";
 import Column from "../../Components/Column/Column";
-import { ColumnType, TaskType } from "../../utils/types";
+import { ColumnType, TaskType, Id } from "../../utils/types";
 import { createPortal } from "react-dom";
 import Task from "../../Components/Tasks/Task";
 import { apiUrl } from "../../utils/config";
@@ -64,7 +64,9 @@ export default function BoardsDetails() {
     }
 
     if (event.active.data.current?.type === "task") {
-      setActiveTask(event.active.data.current.task);
+      const task = event.active.data.current.task;
+      const columnId = event.active.data.current.column;
+      setActiveTask({ ...task, columnId });
       return;
     }
   }
@@ -267,6 +269,44 @@ export default function BoardsDetails() {
     }
   };
 
+  const handleDeleteTask = async (taskId: Id, columnId: Id) => {
+    try {
+      const response = await axios.delete(
+        `${apiUrl}/columns/${columnId}/deleteTask/${taskId}`,
+        { headers: { Authorization: token } }
+      );
+      if (response.status === 200) {
+        setColumns((prevColumns) => {
+          let newColumns = [...prevColumns];
+          const findTheColumn = prevColumns.findIndex(
+            (col) => col._id === columnId
+          );
+          newColumns[findTheColumn].tasks = newColumns[
+            findTheColumn
+          ].tasks.filter((task) => task._id !== taskId);
+          return newColumns;
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleColumnDelete = async (columnId: Id) => {
+    try {
+      const response = await axios.delete(`${apiUrl}/columns/${columnId}`, {
+        headers: { Authorization: token },
+      });
+      if (response.status === 200) {
+        setColumns((prevColumns) => {
+          return prevColumns.filter((col) => col._id !== columnId);
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div>
       <div>{boardId}</div>
@@ -289,6 +329,8 @@ export default function BoardsDetails() {
                   column={column}
                   tasks={column.tasks}
                   setColumns={setColumns}
+                  handleDeleteTask={handleDeleteTask}
+                  handleColumnDelete={handleColumnDelete}
                 />
               ))}
             </SortableContext>
@@ -313,10 +355,18 @@ export default function BoardsDetails() {
                   column={activeColumn}
                   tasks={activeColumn.tasks}
                   setColumns={setColumns}
+                  handleDeleteTask={handleDeleteTask}
+                  handleColumnDelete={handleColumnDelete}
                 />
               </div>
             )}
-            {activeTask && <Task {...activeTask} />}
+            {activeTask && (
+              <Task
+                task={activeTask}
+                columnId={activeTask.columnId}
+                handleDeleteTask={handleDeleteTask}
+              />
+            )}
           </DragOverlay>,
           document.body
         )}

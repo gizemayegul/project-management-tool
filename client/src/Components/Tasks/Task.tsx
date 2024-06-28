@@ -1,8 +1,8 @@
-import { TaskType } from "../../utils/types";
+import { TaskProps, Id } from "../../utils/types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-export default function Task({ ...task }: TaskType) {
+export default function Task({ task, columnId, handleDeleteTask }: TaskProps) {
   const {
     isDragging,
     attributes,
@@ -15,6 +15,7 @@ export default function Task({ ...task }: TaskType) {
     data: {
       type: "task",
       task: task,
+      column: columnId,
     },
   });
   const style = {
@@ -42,7 +43,17 @@ export default function Task({ ...task }: TaskType) {
       {...listeners}
       {...attributes}
     >
-      <div>{task.taskName}</div>
+      <div className="flex justify-between w-full">
+        <div>{task.taskName}</div>
+        <button
+          onClick={() => {
+            handleDeleteTask(task._id, columnId);
+          }}
+          className="hover:text-red-500"
+        >
+          delete
+        </button>
+      </div>
     </div>
   );
 }

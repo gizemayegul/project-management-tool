@@ -5,7 +5,6 @@ export type TaskType = {
   taskName: string;
   taskPriority: string;
   columnId: string;
-  index: Number;
   description: string;
   status: string;
   createdAt: string;
@@ -26,6 +25,14 @@ export type ColumnProps = {
   column: ColumnType;
   tasks: TaskType[];
   setColumns: React.Dispatch<React.SetStateAction<ColumnType[]>>;
+  handleDeleteTask: (columnId: Id, taskId: Id) => void;
+  handleColumnDelete: (columnId: Id) => void;
+};
+
+export type TaskProps = {
+  task: TaskType;
+  columnId: Id;
+  handleDeleteTask: (columnId: Id, taskId: Id) => void;
 };
 
 export type BoardType = {
@@ -38,13 +45,7 @@ export type BoardType = {
   createdAt: string;
   updatedAt: string;
 };
-// export type Project = {
-//   projectName: string;
-//   _id: number;
-//   updatedAt: string;
-//   createdAt: string;
-//   imageUrl: string;
-// };
+
 export type AuthContextType = {
   user: any | null;
   isLoggedIn: boolean;

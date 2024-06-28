@@ -161,3 +161,37 @@ columnRoute.put(
 );
 
 export default columnRoute;
+
+//!! this foute for deleting a task
+
+columnRoute.delete(
+  "/columns/:columnId/deleteTask/:taskId",
+  isAuthenticated,
+  async (req, res) => {
+    const { columnId, taskId } = req.params;
+
+    try {
+      const response = await Columns.findByIdAndUpdate(
+        { _id: columnId },
+        { $pull: { tasks: { _id: taskId } } },
+        { new: true }
+      );
+      res.json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+//!!this route for deleting column
+
+columnRoute.delete("/columns/:columnId", isAuthenticated, async (req, res) => {
+  const { columnId } = req.params;
+
+  try {
+    const response = await Columns.findByIdAndDelete(columnId);
+    res.json(response);
+  } catch (error) {
+    console.log(error);
+  }
+});

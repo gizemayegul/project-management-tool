@@ -3,16 +3,22 @@ import axios from "axios";
 import { CSS } from "@dnd-kit/utilities";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import Task from "../Tasks/Task";
-import { useDroppable } from "@dnd-kit/core";
+import { DragOverlay, useDroppable } from "@dnd-kit/core";
 import { apiUrl } from "../../utils/config";
 import { ColumnProps } from "../../utils/types";
 import { useContext } from "react";
 import { AuthContext } from "../../Context/AuthContext";
+import { createPortal } from "react-dom";
 
-export default function Column({ column, tasks, setColumns }: ColumnProps) {
+export default function Column({
+  column,
+  tasks,
+  setColumns,
+  handleDeleteTask,
+  handleColumnDelete,
+}: ColumnProps) {
   const [addNewTask, setAddNewTask] = useState<string>("");
   const { token } = useContext(AuthContext);
-
   const { isOver } = useDroppable({
     id: column._id,
   });
@@ -64,6 +70,7 @@ export default function Column({ column, tasks, setColumns }: ColumnProps) {
       console.log(error);
     }
   };
+
   return (
     <div
       ref={setNodeRef}
@@ -72,7 +79,6 @@ export default function Column({ column, tasks, setColumns }: ColumnProps) {
     >
       <div
         className="
-      bg-mainBackgroundColor
       text-md
       h-[60px]
       cursor-grab
@@ -80,7 +86,6 @@ export default function Column({ column, tasks, setColumns }: ColumnProps) {
       rounded-b-none
       p-3
       font-bold
-      border-columnBackgroundColor
       flex
       items-center
       justify-between
@@ -89,11 +94,26 @@ export default function Column({ column, tasks, setColumns }: ColumnProps) {
         {...listeners}
         {...attributes}
       >
-        {column.columnName}
+        <div className="flex justify-between w-full">
+          {column.columnName}
+          <button
+            onClick={() => {
+              handleColumnDelete(column._id);
+            }}
+            className="hover:text-red-500"
+          >
+            delete
+          </button>
+        </div>
       </div>
       <SortableContext items={tasks.map((task) => task._id)}>
         {tasks.map((task) => (
-          <Task key={task._id} {...task} />
+          <Task
+            key={task._id}
+            task={task}
+            columnId={column._id}
+            handleDeleteTask={handleDeleteTask}
+          />
         ))}
         <form
           onSubmit={(e) => {
