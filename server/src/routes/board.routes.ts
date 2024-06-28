@@ -126,6 +126,9 @@ boardRoute.get(
   "/boards",
   isAuthenticated,
   async (req: CustomRequest, res: CustomResponse) => {
+    if (!req.user) {
+      return res.status(400).json({ message: "User not found" });
+    }
     console.log(req.user);
     const { _id } = req.user;
 

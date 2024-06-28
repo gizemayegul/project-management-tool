@@ -1,17 +1,19 @@
 import { useParams, Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import { AuthContext } from "../../Context/AuthContext";
 import { BoardType } from "../../utils/types";
-import { headers, apiUrl } from "../../utils/config";
+import { apiUrl } from "../../utils/config";
 export default function Boards() {
   const [boards, setBoards] = useState<BoardType[]>();
   const { projectId } = useParams();
+  const { token } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchBoards = async () => {
       try {
         const response = await axios.get(`${apiUrl}/${projectId}/boards`, {
-          headers: headers,
+          headers: { Authorization: token },
         });
         setBoards(response.data.boards);
       } catch (error) {

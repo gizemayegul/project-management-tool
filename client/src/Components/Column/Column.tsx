@@ -4,11 +4,14 @@ import { CSS } from "@dnd-kit/utilities";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import Task from "../Tasks/Task";
 import { useDroppable } from "@dnd-kit/core";
-import { headers, apiUrl } from "../../utils/config";
+import { apiUrl } from "../../utils/config";
 import { ColumnProps } from "../../utils/types";
+import { useContext } from "react";
+import { AuthContext } from "../../Context/AuthContext";
 
 export default function Column({ column, tasks, setColumns }: ColumnProps) {
   const [addNewTask, setAddNewTask] = useState<string>("");
+  const { token } = useContext(AuthContext);
 
   const { isOver } = useDroppable({
     id: column._id,
@@ -44,7 +47,7 @@ export default function Column({ column, tasks, setColumns }: ColumnProps) {
       const response = await axios.post(
         `${apiUrl}/columns/${column._id}/createTask`,
         { taskName: addNewTask },
-        { headers: headers }
+        { headers: { Authorization: token } }
       );
       if (response.status === 200) {
         setAddNewTask("");

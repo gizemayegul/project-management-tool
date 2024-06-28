@@ -1,11 +1,12 @@
 import { useParams } from "react-router-dom";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useContext } from "react";
 import axios from "axios";
 import Column from "../../Components/Column/Column";
 import { ColumnType, TaskType } from "../../utils/types";
 import { createPortal } from "react-dom";
 import Task from "../../Components/Tasks/Task";
-import { headers, apiUrl } from "../../utils/config";
+import { apiUrl } from "../../utils/config";
+import { AuthContext } from "../../Context/AuthContext";
 
 import {
   DndContext,
@@ -30,6 +31,8 @@ export default function BoardsDetails() {
   const [activeColumn, setActiveColumn] = useState<ColumnType | null>(null);
   const [addNewColumn, setAddNewColumn] = useState<string>("");
   const [activeTask, setActiveTask] = useState<TaskType | null>(null);
+  const { token } = useContext(AuthContext);
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -42,7 +45,7 @@ export default function BoardsDetails() {
     const fetchColumns = async () => {
       try {
         const response = await axios.get(`${apiUrl}/columns/${boardId}`, {
-          headers: headers,
+          headers: { Authorization: token },
         });
 
         setColumns(response.data);

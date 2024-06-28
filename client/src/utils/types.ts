@@ -53,6 +53,7 @@ export type AuthContextType = {
   storeToken: (token: string) => void;
   authenticateUser: () => void;
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+  token: string | null;
 };
 
 export type ProjectContextType = {

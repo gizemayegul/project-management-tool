@@ -11,6 +11,7 @@ const AuthContext = createContext<AuthContextType>({
   storeToken: (token: string) => {},
   authenticateUser: () => {},
   setIsLoggedIn: () => {},
+  token: null,
 });
 
 const API_URL = import.meta.env.VITE_SERVER_URL;
@@ -19,9 +20,13 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [token, setToken] = useState<string | null>(
+    localStorage.getItem("token")
+  );
 
   const storeToken = (token: string): void => {
     localStorage.setItem("token", token);
+    setToken(token);
   };
 
   const authenticateUser = async () => {
@@ -72,6 +77,7 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
         setIsLoggedIn,
         isLoading,
         authenticateUser,
+        token,
       }}
     >
       {isLoading ? <Loading /> : props.children}

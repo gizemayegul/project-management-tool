@@ -3,13 +3,16 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { apiUrl, headers } from "../../utils/config";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../../Context/AuthContext";
 export default function AllBoards() {
   const [boards, setBoards] = useState<BoardType[]>([]);
+  const { token } = useContext(AuthContext);
   useEffect(() => {
     const fetchAllBoards = async () => {
       try {
         const response = await axios.get(`${apiUrl}/boards`, {
-          headers: headers,
+          headers: { Authorization: token },
         });
         setBoards(response.data);
       } catch (error) {
@@ -17,7 +20,7 @@ export default function AllBoards() {
       }
     };
     fetchAllBoards();
-  }, [headers]);
+  }, [token]);
   //TODO create board button
   return (
     <div className="flex flex-wrap">

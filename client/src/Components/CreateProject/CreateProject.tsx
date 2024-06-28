@@ -2,12 +2,14 @@ import { useState, useEffect, useContext } from "react";
 import axios, { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
-import { headers, apiUrl } from "../../utils/config";
+import { apiUrl } from "../../utils/config";
 import { ProjectType } from "../../utils/types";
+import { AuthContext } from "../../Context/AuthContext";
 
 export default function CreateProject({ setCreateProject }: ProjectType) {
   const [projectName, setProjectName] = useState<string | undefined>("");
   const [error, setError] = useState<string | undefined>("");
+  const { token } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -18,7 +20,7 @@ export default function CreateProject({ setCreateProject }: ProjectType) {
           `${apiUrl}/createproject`,
           { projectName: projectName },
           {
-            headers: headers,
+            headers: { Authorization: token },
           }
         );
         navigate(`/projects/${response.data.projectInfo._id}`);

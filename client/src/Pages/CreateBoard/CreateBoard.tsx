@@ -1,15 +1,18 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
-import { headers, apiUrl } from "../../utils/config";
+import { apiUrl } from "../../utils/config";
+import { useContext } from "react";
+import { AuthContext } from "../../Context/AuthContext";
 
 import { useNavigate } from "react-router-dom";
 export default function CreateBoard() {
   const [boardName, setBoardName] = useState<string | undefined>("");
   const [error, setError] = useState<string | undefined>("");
-  const localStoreToken = localStorage.getItem("token");
   const navigate = useNavigate();
   const { projectId } = useParams();
+  const { token } = useContext(AuthContext);
+
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const createBoard = async () => {
@@ -18,7 +21,7 @@ export default function CreateBoard() {
           `${apiUrl}/${projectId}/createboard`,
           { boardName: boardName },
           {
-            headers: headers,
+            headers: { Authorization: token },
           }
         );
         navigate(`/projects/${projectId}`);
