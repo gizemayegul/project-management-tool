@@ -44,6 +44,7 @@ export type BoardType = {
   columns: string[];
   createdAt: string;
   updatedAt: string;
+  projectName: string;
 };
 
 export type AuthContextType = {
@@ -61,6 +62,12 @@ export type ProjectContextType = {
   projects: ProjectType[];
   setProjects: React.Dispatch<React.SetStateAction<ProjectType[]>>;
   handleDeleteProject: (projectId: Id) => void;
+  submitHandler: (
+    e: React.FormEvent<HTMLFormElement>,
+    setCreateProject?: (createProject: boolean) => void
+  ) => void;
+  projectName: string;
+  setProjectName: React.Dispatch<React.SetStateAction<string>>;
 };
 
 export type ProjectType = {

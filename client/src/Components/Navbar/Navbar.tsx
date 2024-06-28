@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../Context/AuthContext";
+import taskFlow from "../../assets/images/taskFlow.webp";
 
 import CreateProjectDropDown from "../CreateProjectDropDown/CreateProjectDropDown";
 import CreateBoardDropDown from "../CreateBoardDropDown/CreateBoardDropDown";
@@ -17,7 +18,8 @@ export default function Navbar() {
           <>
             <div className="navbar-start">
               <Link to="/dashboard">
-                <h1 className="text-xl">TaskFlow</h1>
+                <h1 className="text-xl">{}</h1>
+                <img src={taskFlow} alt="taskFlow" className="w-20" />
               </Link>
             </div>
             <div className="navbar-center">
@@ -27,7 +29,7 @@ export default function Navbar() {
                     className="dropdown"
                     tabIndex={0}
                     role="button"
-                    {...(createProject || createBoard ? { open: true } : {})}
+                    {...(createProject || createBoard ? { open: false } : {})}
                   >
                     <summary>
                       <div>Create</div>

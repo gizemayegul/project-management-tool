@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { ProjectContext } from "../../Context/ProjectContext";
 import { Link } from "react-router-dom";
+import { TrashIcon } from "@heroicons/react/20/solid";
 
 export default function Projects() {
   const { projects, handleDeleteProject } = useContext(ProjectContext);
@@ -28,12 +29,14 @@ export default function Projects() {
                       {project.projectName}
                     </button>
                   </Link>
-                  <button
-                    onClick={() => handleDeleteProject(project._id)}
-                    className="btn btn-sm"
+
+                  <div
+                    onClick={() => {
+                      handleDeleteProject(project._id);
+                    }}
                   >
-                    delete me
-                  </button>
+                    <TrashIcon className="text-red-500 h-4 mt-1.5" />
+                  </div>
                 </div>
               </div>
             </div>

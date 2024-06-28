@@ -6,39 +6,9 @@ import { apiUrl } from "../../utils/config";
 import { AuthContext } from "../../Context/AuthContext";
 
 export default function CreateProject() {
-  const [projectName, setProjectName] = useState<string | undefined>("");
-  const [error, setError] = useState<string | undefined>("");
-  const navigate = useNavigate();
-  const { setProjects } = useContext(ProjectContext);
-  const { token } = useContext(AuthContext);
+  const { projectName, setProjectName, submitHandler } =
+    useContext(ProjectContext);
 
-  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log(projectName);
-    const createProject = async () => {
-      try {
-        const response = await axios.post(
-          `${apiUrl}/projects/createproject`,
-          { projectName: projectName },
-          {
-            headers: { Authorization: token },
-          }
-        );
-        if (response.status === 200) {
-          setProjects((prev) => [...prev, response.data]);
-          navigate(`/projects/${response.data._id}`);
-        }
-      } catch (err: unknown) {
-        if (err instanceof AxiosError) {
-          console.log(err, "errorr");
-          setError(err.response?.data.message);
-        }
-      }
-    };
-    createProject();
-
-    //TODO : projects page is not updated directly maybe it is better move them inside context
-  };
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -46,7 +16,12 @@ export default function CreateProject() {
           Create a project
         </h2>
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" onSubmit={submitHandler}>
+          <form
+            className="space-y-6"
+            onSubmit={(e) => {
+              submitHandler(e);
+            }}
+          >
             <label htmlFor="projectname">
               Project Name
               <input
@@ -54,8 +29,9 @@ export default function CreateProject() {
                 value={projectName}
                 name="projectname"
                 type="text"
-                onChange={(e: React.ChangeEvent): void => {
-                  setProjectName((e.target as HTMLInputElement).value);
+                onChange={(e) => {
+                  setProjectName(e.target.value);
+                  console.log(projectName);
                 }}
               />
             </label>
@@ -66,13 +42,6 @@ export default function CreateProject() {
               {" "}
               Create
             </button>
-            {error && (
-              <div>
-                <p className=" bg-red-400 p-1.5 mt-2 rounded-md text-white px-3 py-2 text-sm font-semibold  flex w-full justify-center">
-                  {error}
-                </p>
-              </div>
-            )}
           </form>
         </div>
       </div>

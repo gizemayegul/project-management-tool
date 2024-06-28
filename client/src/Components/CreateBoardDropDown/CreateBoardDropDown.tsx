@@ -18,14 +18,15 @@ export default function CreateBoardDropDown({
   >(undefined);
   const [boardName, setBoardName] = useState<string>("");
   const navigate = useNavigate();
+
+  const project = projects.find((project) => project._id === selectedProjectId);
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const response = await axios.post(
         `${apiUrl}/${selectedProjectId}/createboard`,
-        {
-          boardName: boardName,
-        },
+        { boardName: boardName, projectName: project?.projectName },
+
         { headers: { Authorization: token } }
       );
       if (response.status === 200) {

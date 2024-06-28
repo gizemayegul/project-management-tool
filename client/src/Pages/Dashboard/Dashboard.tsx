@@ -3,13 +3,12 @@ import { AuthContext } from "../../Context/AuthContext";
 import Empty from "../../Components/Empty/Empty";
 import { ProjectContext } from "../../Context/ProjectContext";
 import Projects from "../../Components/Projects/Projects";
-import AllBoards from "../../Components/BoardsAll/AllBoards";
+import AllBoards from "../../Components/Boards/Boards";
 import { Link } from "react-router-dom";
 
 export default function Dashboard() {
   const { user } = useContext(AuthContext);
   const { projects } = useContext(ProjectContext);
-  console.log(!projects.length);
 
   return (
     <div className="flex flex-col ">

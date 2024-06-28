@@ -1,62 +1,93 @@
-import { useParams, Link } from "react-router-dom";
-import { useState, useEffect, useContext } from "react";
+import { BoardType, Id } from "../../utils/types";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { AuthContext } from "../../Context/AuthContext";
-import { BoardType } from "../../utils/types";
 import { apiUrl } from "../../utils/config";
+import { Link, useParams } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../../Context/AuthContext";
+import { ProjectContext } from "../../Context/ProjectContext";
+import { TrashIcon } from "@heroicons/react/20/solid";
+
 export default function Boards() {
-  const [boards, setBoards] = useState<BoardType[]>();
-  const { projectId } = useParams();
+  const [boards, setBoards] = useState<BoardType[]>([]);
   const { token } = useContext(AuthContext);
+  const { projects } = useContext(ProjectContext);
+  const { projectId } = useParams();
 
-  useEffect(() => {
-    const fetchBoards = async () => {
-      try {
-        const response = await axios.get(`${apiUrl}/${projectId}/boards`, {
-          headers: { Authorization: token },
-        });
-        setBoards(response.data.boards);
-      } catch (error) {
-        console.error("Error fetching boards:", error);
-      }
-    };
+  if (!projectId) {
+    useEffect(() => {
+      const fetchAllBoards = async () => {
+        try {
+          const response = await axios.get(`${apiUrl}/boards`, {
+            headers: { Authorization: token },
+          });
+          setBoards(response.data);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      fetchAllBoards();
+    }, [token, projects]);
+  } else {
+    useEffect(() => {
+      const fetchBoards = async () => {
+        try {
+          const response = await axios.get(`${apiUrl}/${projectId}/boards`, {
+            headers: { Authorization: token },
+          });
+          setBoards(response.data.boards);
+        } catch (error) {
+          console.error("Error fetching boards:", error);
+        }
+      };
 
-    fetchBoards();
-  }, [projectId]);
+      fetchBoards();
+    }, [projectId]);
+  }
+
+  const handledeleteBoard = async (boardId: Id) => {
+    try {
+      await axios.delete(`${apiUrl}/boards/${boardId}`, {
+        headers: { Authorization: token },
+      });
+      setBoards((prev) => prev.filter((board) => board._id !== boardId));
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
-    <div>
-      <ul role="list" className="divide-y divide-gray-100">
-        {boards &&
-          boards.map((board) => (
-            <Link
-              key={board._id}
-              to={`/projects/${projectId}/boards/${board._id}`}
-            >
-              <li className="flex justify-between gap-x-6 py-5">
-                <div className="flex min-w-0 gap-x-4">
-                  <img
-                    className="h-12 w-12 flex-none rounded-full bg-gray-50"
-                    src={board.imageUrl}
-                    alt=""
-                  />
-                  <div className="min-w-0 flex-auto">
-                    <p className="text-sm font-semibold leading-6 text-gray-900">
-                      {board.boardName}
-                    </p>
-                    <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                      {board.updatedAt.toString()}
-                    </p>
+    <div className="flex flex-wrap">
+      {Array.isArray(boards) &&
+        boards.map((board) => (
+          <div
+            key={board._id}
+            className="card bg-base-100 image-full w-60 shadow-xl mx-3 my-3"
+          >
+            <figure>
+              <img src={board.imageUrl} alt="Shoes" />
+            </figure>
+            <div className="card-body">
+              <div className="card-actions justify-between">
+                <Link to={`/projects/${board.projectId}/boards/${board._id}`}>
+                  <div className="bg-red-300 text-black px-1 rounded-sm">
+                    {board.boardName}
                   </div>
+                </Link>
+                /
+                <Link to={`/projects/${board.projectId}`}>
+                  <u>{board.projectName}</u>
+                </Link>
+                <div
+                  onClick={() => {
+                    handledeleteBoard(board._id);
+                  }}
+                >
+                  <TrashIcon className="text-red-500 h-4 mt-1.5" />
                 </div>
-                <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-                  <p className="text-sm leading-6 text-gray-900">
-                    {board.createdAt.toString()}
-                  </p>
-                </div>
-              </li>
-            </Link>
-          ))}
-      </ul>
+              </div>
+            </div>
+          </div>
+        ))}
     </div>
   );
 }

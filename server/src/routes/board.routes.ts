@@ -22,6 +22,7 @@ boardRoute.post(
         projectId: projectId,
         boardName: boardName,
         userId: userId,
+        projectName: req.body.projectName,
       });
       const defaultColumns = ["To Do", "In Progress", "Done"];
       for (const columnName of defaultColumns) {
@@ -31,6 +32,7 @@ boardRoute.post(
           tasks: [],
           index: defaultColumns.indexOf(columnName),
           projectId: projectId,
+          projectName: createBoard.projectName,
         });
         createBoard.columns.push(column._id);
       }
@@ -138,6 +140,22 @@ boardRoute.get(
       res.status(500).json({
         message: "An error occurred while fetching the boards user",
       });
+    }
+  }
+);
+
+//!delete board
+
+boardRoute.delete(
+  "/boards/:boardId",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse) => {
+    const { boardId } = req.params;
+    try {
+      const response = await Boards.findByIdAndDelete(boardId);
+      res.json(response);
+    } catch (error) {
+      res.json(error);
     }
   }
 );

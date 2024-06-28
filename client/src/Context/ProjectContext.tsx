@@ -3,19 +3,24 @@ import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
 import { ProjectContextType, Id, ProjectType } from "../utils/types";
 import { apiUrl } from "../utils/config";
+import { useNavigate } from "react-router-dom";
 
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 const ProjectContext = createContext<ProjectContextType>({
   projects: [],
   setProjects: () => {},
-  handleDeleteProject: (projectId: Id) => {},
+  handleDeleteProject: () => {},
+  submitHandler: () => {},
+  setProjectName: () => {},
+  projectName: "",
 });
 
 function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
   const { isLoggedIn, token } = useContext(AuthContext);
-
+  const [projectName, setProjectName] = useState<string>("");
   const [projects, setProjects] = useState<ProjectType[]>([]);
+  const navigate = useNavigate();
   useEffect(() => {
     if (isLoggedIn) {
       const fetchProjects = async () => {
@@ -31,6 +36,40 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
       fetchProjects();
     }
   }, [token, isLoggedIn]);
+
+  const submitHandler = async (
+    e: React.FormEvent<HTMLFormElement>,
+    setCreateProject?: (createProject: boolean) => void
+  ) => {
+    e.preventDefault();
+    const createProject = async () => {
+      try {
+        const response = await axios.post(
+          `${apiUrl}/projects/createproject`,
+          { projectName: projectName },
+          {
+            headers: { Authorization: token },
+          }
+        );
+        if (response.status === 200) {
+          setProjects((prev) => [...prev, response.data]);
+          setProjectName("");
+
+          navigate(`/projects/${response.data._id}`);
+          if (setCreateProject) {
+            setCreateProject(false);
+          }
+        }
+      } catch (err: unknown) {
+        if (err instanceof AxiosError) {
+          console.log(err, "errorr");
+        }
+      }
+    };
+    createProject();
+
+    //TODO : projects page is not updated directly maybe it is better move them inside context
+  };
 
   const handleDeleteProject = async (projectId: Id) => {
     try {
@@ -52,6 +91,9 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
         projects,
         handleDeleteProject,
         setProjects,
+        submitHandler,
+        setProjectName,
+        projectName,
       }}
     >
       {props.children}

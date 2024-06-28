@@ -6,12 +6,16 @@ import { useContext } from "react";
 import { AuthContext } from "../../Context/AuthContext";
 
 import { useNavigate } from "react-router-dom";
+import { ProjectContext } from "../../Context/ProjectContext";
 export default function CreateBoard() {
   const [boardName, setBoardName] = useState<string | undefined>("");
   const [error, setError] = useState<string | undefined>("");
   const navigate = useNavigate();
   const { projectId } = useParams();
   const { token } = useContext(AuthContext);
+  const { projects } = useContext(ProjectContext);
+
+  const project = projects.find((project) => project._id === projectId);
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -19,7 +23,7 @@ export default function CreateBoard() {
       try {
         const response = await axios.post(
           `${apiUrl}/${projectId}/createboard`,
-          { boardName: boardName },
+          { boardName: boardName, projectName: project?.projectName },
           {
             headers: { Authorization: token },
           }
