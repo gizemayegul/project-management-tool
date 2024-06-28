@@ -127,7 +127,7 @@ export default function BoardsDetails() {
             `${apiUrl}/columns/tasks/updateColumns`,
             { updatedColumns: newColumns },
             {
-              headers: headers,
+              headers: { Authorization: token },
             }
           );
         }
@@ -157,7 +157,7 @@ export default function BoardsDetails() {
             tasks: newOrders,
           },
           {
-            headers: headers,
+            headers: { Authorization: token },
           }
         );
       }
@@ -193,7 +193,7 @@ export default function BoardsDetails() {
           `${apiUrl}/columns/tasks/updateColumns`,
           { updatedColumns: newColumns },
           {
-            headers: headers,
+            headers: { Authorization: token },
           }
         );
       }
@@ -235,7 +235,7 @@ export default function BoardsDetails() {
       await axios.put(
         `${apiUrl}/columns/reorder`,
         { updatedColumns: updatedColumns },
-        { headers: headers }
+        { headers: { Authorization: token } }
       );
     } catch (error) {
       console.log(error);
@@ -254,9 +254,7 @@ export default function BoardsDetails() {
           boardId: boardId,
           index: columns.length,
         },
-        {
-          headers: headers,
-        }
+        { headers: { Authorization: token } }
       );
       if (response.status === 200) {
         setColumns((prevColumns) => [...prevColumns, response.data]);

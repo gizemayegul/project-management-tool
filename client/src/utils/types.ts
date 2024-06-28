@@ -2,19 +2,19 @@ export type Id = string | number;
 
 export type TaskType = {
   _id: Id;
-  taskName: String;
-  taskPriority: String;
-  columnId: String;
+  taskName: string;
+  taskPriority: string;
+  columnId: string;
   index: Number;
-  description: String;
-  status: String;
+  description: string;
+  status: string;
   createdAt: string;
   updatedAt: string;
 };
 
 export type ColumnType = {
   _id: Id;
-  columnName: String;
+  columnName: string;
   index: Number;
   boardId: Number;
   tasks: TaskType[];
@@ -38,13 +38,13 @@ export type BoardType = {
   createdAt: string;
   updatedAt: string;
 };
-export type Project = {
-  projectName: string;
-  _id: number;
-  updatedAt: string;
-  createdAt: string;
-  imageUrl: string;
-};
+// export type Project = {
+//   projectName: string;
+//   _id: number;
+//   updatedAt: string;
+//   createdAt: string;
+//   imageUrl: string;
+// };
 export type AuthContextType = {
   user: any | null;
   isLoggedIn: boolean;
@@ -69,7 +69,6 @@ export type ProjectType = {
   imageUrl: string;
   boards: string[];
   userId: Id;
-  setCreateProject: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export type Create = {

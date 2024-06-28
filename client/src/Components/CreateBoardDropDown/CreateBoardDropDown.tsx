@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import axios from "axios";
-import { apiUrl, headers } from "../../utils/config";
+import { apiUrl } from "../../utils/config";
 import { useNavigate } from "react-router-dom";
 import { CreateBoardDropDownProps } from "../../utils/types";
 import { ProjectContext } from "../../Context/ProjectContext";

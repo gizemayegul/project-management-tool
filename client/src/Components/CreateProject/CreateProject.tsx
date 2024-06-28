@@ -6,7 +6,11 @@ import { apiUrl } from "../../utils/config";
 import { ProjectType } from "../../utils/types";
 import { AuthContext } from "../../Context/AuthContext";
 
-export default function CreateProject({ setCreateProject }: ProjectType) {
+interface Props {
+  setCreateProject: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export default function CreateProject({ setCreateProject }: Props) {
   const [projectName, setProjectName] = useState<string | undefined>("");
   const [error, setError] = useState<string | undefined>("");
   const { token } = useContext(AuthContext);
