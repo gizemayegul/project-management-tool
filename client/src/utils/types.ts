@@ -47,6 +47,19 @@ export type BoardType = {
   projectName: string;
 };
 
+export type CardType = {
+  _id: Id;
+  boardName?: string;
+  columns?: string[];
+  projectName?: string;
+  updatedAt: string;
+  createdAt: string;
+  imageUrl: string;
+  boards?: string[];
+  userId: Id;
+  projectId?: Id;
+};
+
 export type AuthContextType = {
   user: any | null;
   isLoggedIn: boolean;

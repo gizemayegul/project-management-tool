@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../Context/AuthContext";
-import taskFlow from "../../assets/images/taskFlow.webp";
+import taskFlow from "../../assets/images/taskFlow.png";
 
 import CreateProjectDropDown from "../CreateProjectDropDown/CreateProjectDropDown";
 import CreateBoardDropDown from "../CreateBoardDropDown/CreateBoardDropDown";
@@ -18,8 +18,7 @@ export default function Navbar() {
           <>
             <div className="navbar-start">
               <Link to="/dashboard">
-                <h1 className="text-xl">{}</h1>
-                <img src={taskFlow} alt="taskFlow" className="w-20" />
+                <h1 className="text-xl">TskFlow</h1>
               </Link>
             </div>
             <div className="navbar-center">

@@ -1,9 +1,6 @@
 import { useState, useEffect, useContext } from "react";
-import axios, { AxiosError } from "axios";
-import { useNavigate } from "react-router-dom";
+
 import { ProjectContext } from "../../Context/ProjectContext";
-import { apiUrl } from "../../utils/config";
-import { AuthContext } from "../../Context/AuthContext";
 
 export default function CreateProject() {
   const { projectName, setProjectName, submitHandler } =
