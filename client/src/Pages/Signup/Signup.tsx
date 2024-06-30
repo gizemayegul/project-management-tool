@@ -112,7 +112,7 @@ export default function Signup() {
         </div>
         {error && (
           <div>
-            <p className=" bg-red-400 p-1.5 mt-2 rounded-md text-white px-3 py-2 text-sm font-semibold  flex w-full justify-center">
+            <p className=" bg-red-500 p-1.5 mt-2 rounded-md text-white px-3 py-2 text-sm font-semibold  flex w-full justify-center">
               {error}
             </p>
           </div>

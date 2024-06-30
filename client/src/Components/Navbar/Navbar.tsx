@@ -18,7 +18,10 @@ export default function Navbar() {
           <>
             <div className="navbar-start">
               <Link to="/dashboard">
-                <h1 className="text-xl">TskFlow</h1>
+                <div className="flex justify-around items-center border-2 px-2 border-indigo-600 rounded-md bg-indigo-200">
+                  <img className="w-12" src={taskFlow} />
+                  <h1 className="text-xl">TaskFlow</h1>
+                </div>
               </Link>
             </div>
             <div className="navbar-center">
@@ -99,7 +102,7 @@ export default function Navbar() {
                 <button className="btn mx-2">Profile</button>
               </Link>
               <button
-                className="btn hover:bg-red-600 hover:text-white"
+                className="btn hover:bg-red-500 hover:text-white"
                 onClick={() => {
                   logOutUser();
                   navigate("/login");
@@ -113,17 +116,21 @@ export default function Navbar() {
           <>
             <div className="navbar-start">
               <Link to="/">
-                <button className="btn">TaskFlow</button>
+                <button className="btn btn-sm text-sm font-semibold ">
+                  TaskFlow
+                </button>
               </Link>
             </div>
             <div className="navbar-end">
               <Link to="/login">
-                <button className="btn btn-active btn-primary mx-3">
+                <button className="btn btn-active bg-indigo-600 btn-sm text-white text-sm mx-1 font-semibold ">
                   Login
                 </button>
               </Link>
               <Link to="/signup">
-                <button className="btn mx-3">Signup </button>
+                <button className="btn btn-sm mx-3 text-sm font-semibold ">
+                  Signup{" "}
+                </button>
               </Link>
             </div>
           </>

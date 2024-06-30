@@ -2,11 +2,10 @@ import { BoardType, Id } from "../../utils/types";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { apiUrl } from "../../utils/config";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../Context/AuthContext";
 import { ProjectContext } from "../../Context/ProjectContext";
-import { TrashIcon } from "@heroicons/react/20/solid";
 import Card from "../Card/Card";
 
 export default function Boards() {

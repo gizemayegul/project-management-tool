@@ -1,14 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { CSS } from "@dnd-kit/utilities";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import Task from "../Tasks/Task";
-import { DragOverlay, useDroppable } from "@dnd-kit/core";
+import { useDroppable } from "@dnd-kit/core";
 import { apiUrl } from "../../utils/config";
 import { ColumnProps } from "../../utils/types";
 import { useContext } from "react";
 import { AuthContext } from "../../Context/AuthContext";
-import { createPortal } from "react-dom";
+
+import DeleteModal from "../DeleteModal/DeleteModal";
 
 export default function Column({
   column,
@@ -84,7 +85,7 @@ export default function Column({
       cursor-grab
       rounded-md
       rounded-b-none
-      p-3
+     
       font-bold
       flex
       items-center
@@ -96,14 +97,11 @@ export default function Column({
       >
         <div className="flex justify-between w-full">
           {column.columnName}
-          <button
-            onClick={() => {
-              handleColumnDelete(column._id);
-            }}
-            className="hover:text-red-500"
-          >
-            delete
-          </button>
+          <DeleteModal
+            handleDelete={handleColumnDelete}
+            id={column._id}
+            modal="my_modal_8"
+          />
         </div>
       </div>
       <SortableContext items={tasks.map((task) => task._id)}>

@@ -1,6 +1,7 @@
 import { TaskProps, Id } from "../../utils/types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import DeleteModal from "../DeleteModal/DeleteModal";
 
 export default function Task({ task, columnId, handleDeleteTask }: TaskProps) {
   const {
@@ -45,14 +46,12 @@ export default function Task({ task, columnId, handleDeleteTask }: TaskProps) {
     >
       <div className="flex justify-between w-full">
         <div>{task.taskName}</div>
-        <button
-          onClick={() => {
-            handleDeleteTask(task._id, columnId);
-          }}
-          className="hover:text-red-500"
-        >
-          delete
-        </button>
+        <DeleteModal
+          handleDelete={handleDeleteTask}
+          id1={columnId}
+          id={task._id}
+          modal="my_modal_7"
+        />
       </div>
     </div>
   );

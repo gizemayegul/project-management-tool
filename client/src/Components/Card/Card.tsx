@@ -1,7 +1,6 @@
-import React from "react";
-import { TrashIcon } from "@heroicons/react/20/solid";
 import { Link } from "react-router-dom";
 import { CardType, Id } from "../../utils/types";
+import DeleteModal from "../DeleteModal/DeleteModal";
 
 type Card = {
   handleDelete: (cardId: Id) => void;
@@ -29,40 +28,11 @@ export default function Card({ handleDelete, card, cardType }: Card) {
                   <u>{card.projectName}</u>
                 </div>
               </Link>
-
-              <div
-                onClick={() =>
-                  document.getElementById("my_modal_5").showModal()
-                }
-              >
-                <TrashIcon className="text-red-500 h-4 mt-1.5"></TrashIcon>
-                {/* Open the modal using document.getElementById('ID').showModal() method */}
-                <dialog
-                  id="my_modal_5"
-                  className="modal modal-bottom sm:modal-middle"
-                >
-                  <div className="modal-box">
-                    {/* <h3 className="font-bold text-lg text-black">Hello!</h3> */}
-                    <p className="py-4 text-black">
-                      Are you sure you want to delete?
-                    </p>
-                    <div className="modal-action">
-                      <form method="dialog">
-                        {/* if there is a button in form, it will close the modal */}
-                        <button className="btn mx-2">Close</button>
-                        <button
-                          onClick={() => {
-                            handleDelete(card._id);
-                          }}
-                          className="btn btn-error text-white mx-2"
-                        >
-                          Delete
-                        </button>
-                      </form>
-                    </div>
-                  </div>
-                </dialog>
-              </div>
+              <DeleteModal
+                handleDelete={handleDelete}
+                id={card._id}
+                modal="my_modal_5"
+              />
             </div>
           </div>
         </>
@@ -79,39 +49,11 @@ export default function Card({ handleDelete, card, cardType }: Card) {
                   <u>{card.projectName}</u>
                 </div>
               </Link>
-              <div
-                onClick={() =>
-                  document.getElementById("my_modal_6").showModal()
-                }
-              >
-                <TrashIcon className="text-red-500 h-4 mt-1.5"></TrashIcon>
-                {/* Open the modal using document.getElementById('ID').showModal() method */}
-                <dialog
-                  id="my_modal_6"
-                  className="modal modal-bottom sm:modal-middle"
-                >
-                  <div className="modal-box">
-                    {/* <h3 className="font-bold text-lg text-black">Hello!</h3> */}
-                    <p className="py-4 text-black">
-                      Are you sure you want to delete?
-                    </p>
-                    <div className="modal-action">
-                      <form method="dialog">
-                        {/* if there is a button in form, it will close the modal */}
-                        <button className="btn mx-2">Close</button>
-                        <button
-                          onClick={() => {
-                            handleDelete(card._id);
-                          }}
-                          className="btn btn-error text-white mx-2"
-                        >
-                          Delete
-                        </button>
-                      </form>
-                    </div>
-                  </div>
-                </dialog>
-              </div>
+              <DeleteModal
+                handleDelete={handleDelete}
+                id={card._id}
+                modal="my_modal_6"
+              />
             </div>
           </div>
         </>
