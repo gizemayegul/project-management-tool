@@ -18,7 +18,7 @@ export default function Navbar() {
           <>
             <div className="navbar-start">
               <Link to="/dashboard">
-                <div className="flex justify-around items-center border-2 px-2 border-indigo-600 rounded-md bg-indigo-200">
+                <div className="flex justify-around items-center  px-2 border-indigo-600 rounded-md">
                   <img className="w-12" src={taskFlow} />
                   <h1 className="text-xl">TaskFlow</h1>
                 </div>

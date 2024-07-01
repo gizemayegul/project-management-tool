@@ -60,6 +60,7 @@ export default function Boards() {
       {Array.isArray(boards) &&
         boards.map((board) => (
           <Card
+            key={board._id}
             card={board}
             handleDelete={handledeleteBoard}
             cardType="board"

@@ -15,7 +15,9 @@ export default function DeleteModal({
 }: ModalProps) {
   return (
     <div>
-      <div onClick={() => document.getElementById(modal).showModal()}>
+      <div
+        onClick={() => document.getElementById(modal as Modal)?.showModal?.()}
+      >
         <TrashIcon className="hover:text-red-500 h-4 mt-1.5"></TrashIcon>
         {/* Open the modal using document.getElementById('ID').showModal() method */}
         <dialog id={modal} className="modal modal-bottom sm:modal-middle">

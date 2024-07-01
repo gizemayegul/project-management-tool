@@ -2,6 +2,7 @@ import { TaskProps, Id } from "../../utils/types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import DeleteModal from "../DeleteModal/DeleteModal";
+import { useState } from "react";
 
 export default function Task({ task, columnId, handleDeleteTask }: TaskProps) {
   const {
@@ -35,6 +36,7 @@ export default function Task({ task, columnId, handleDeleteTask }: TaskProps) {
       />
     );
   }
+  console.log;
 
   return (
     <div
