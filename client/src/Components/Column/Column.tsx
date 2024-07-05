@@ -3,13 +3,16 @@ import axios from "axios";
 import { CSS } from "@dnd-kit/utilities";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import Task from "../Tasks/Task";
-import { useDroppable } from "@dnd-kit/core";
 import { apiUrl } from "../../utils/config";
-import { ColumnProps } from "../../utils/types";
+import { ColumnProps, Id } from "../../utils/types";
 import { useContext } from "react";
 import { AuthContext } from "../../Context/AuthContext";
+import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
+import Dropdown from "../Dropdown/Dropdown";
 
 import DeleteModal from "../DeleteModal/DeleteModal";
+import Edit from "../Edit/Edit";
+import DeleteDropDown from "../DeleteDropDown/DeleteDropDown";
 
 export default function Column({
   column,
@@ -17,12 +20,15 @@ export default function Column({
   setColumns,
   handleDeleteTask,
   handleColumnDelete,
+  setUpdateColumns,
 }: ColumnProps) {
   const [addNewTask, setAddNewTask] = useState<string>("");
+  const [showButton, setShowButton] = useState<boolean>(false);
+  const [columnName, setColumnName] = useState<string>(column.columnName);
+  const [showEdit, setShowEdit] = useState<boolean>(false);
+  const [color, setColor] = useState("#00000");
   const { token } = useContext(AuthContext);
-  const { isOver } = useDroppable({
-    id: column._id,
-  });
+
   const {
     isDragging,
     attributes,
@@ -40,10 +46,10 @@ export default function Column({
   const style = {
     transition,
     transform: CSS.Transform.toString(transform),
-    border: "2px solid #E0E0E0",
-  };
-  const columnStyle = {
-    backgroundColor: isOver ? "#E0E0E0" : "white", // change color when a task is dragged over
+    border: "2px solid bg-slate-500",
+    backgroundColor: isDragging ? "#B0B9B9" : "#F1F2F4",
+    opacity: isDragging ? 0.5 : 1,
+    height: "unsets",
     borderRadius: "10px",
     padding: "20px",
   };
@@ -72,11 +78,35 @@ export default function Column({
     }
   };
 
+  const handleEditColumn = async () => {
+    try {
+      const response = await axios.put(
+        `${apiUrl}/columns/${column._id}`,
+        { columnName },
+        { headers: { Authorization: token } }
+      );
+
+      console.log(response.data);
+      if (response.status === 200) {
+        setColumnName(response.data.columnName);
+        setUpdateColumns(response.data.columnName);
+      }
+      setShowEdit(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div
       ref={setNodeRef}
-      style={{ ...style, ...columnStyle }}
-      // style={style}
+      style={style}
+      onMouseLeave={() => {
+        setShowButton(false);
+      }}
+      onMouseEnter={() => {
+        setShowButton(true);
+      }}
     >
       <div
         className="
@@ -85,23 +115,72 @@ export default function Column({
       cursor-grab
       rounded-md
       rounded-b-none
-     
       font-bold
       flex
       items-center
       justify-between
-      width-full
+      w-60
       "
         {...listeners}
         {...attributes}
       >
-        <div className="flex justify-between w-full">
-          {column.columnName}
-          <DeleteModal
-            handleDelete={handleColumnDelete}
-            id={column._id}
-            modal="my_modal_8"
-          />
+        <div className="flex justify-between w-full ">
+          {showEdit ? (
+            <input
+              className="border-2 rounded-md border-indigo-500 h-fit"
+              type="text"
+              value={columnName}
+              onBlur={() => {
+                setShowEdit(false);
+                handleEditColumn();
+              }}
+              onChange={(e) => {
+                setColumnName(e.target.value);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  setShowEdit(false);
+                  handleEditColumn();
+                }
+              }}
+            />
+          ) : (
+            <div className="break-all w-9/12" style={{ color: color }}>
+              {columnName}
+            </div>
+          )}
+
+          <div>
+            <Dropdown>
+              <div
+                className="mx-1"
+                onClick={() => {
+                  setShowEdit(true);
+                }}
+              >
+                <Edit />
+                Edit
+              </div>
+              <div>
+                <input
+                  onChange={(e) => {
+                    setColor(e.target.value);
+                  }}
+                  type="color"
+                  className="border-2 rounded-md h-6 w-6"
+                />
+                <span>Change Color</span>
+              </div>
+              <DeleteModal
+                handleDelete={() => {
+                  handleColumnDelete(column._id);
+                }}
+                id1={column._id}
+                modal="my_modal_8"
+                showDelete={true}
+              />
+            </Dropdown>
+          </div>
         </div>
       </div>
       <SortableContext items={tasks.map((task) => task._id)}>

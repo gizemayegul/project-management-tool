@@ -24,9 +24,10 @@ export type ColumnType = {
 export type ColumnProps = {
   column: ColumnType;
   tasks: TaskType[];
-  setColumns: React.Dispatch<React.SetStateAction<ColumnType[]>>;
+  setUpdateColumns: React.Dispatch<React.SetStateAction<string>>;
   handleDeleteTask: (columnId: Id, taskId: Id) => void;
   handleColumnDelete: (columnId: Id) => void;
+  setColumns: React.Dispatch<React.SetStateAction<ColumnType[]>>;
 };
 
 export type TaskProps = {

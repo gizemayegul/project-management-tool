@@ -17,13 +17,9 @@ import {
   DragOverlay,
   DragEndEvent,
   DragOverEvent,
-  closestCenter,
 } from "@dnd-kit/core";
-import {
-  SortableContext,
-  arrayMove,
-  rectSortingStrategy,
-} from "@dnd-kit/sortable";
+import { SortableContext, arrayMove } from "@dnd-kit/sortable";
+import { set } from "mongoose";
 
 export default function BoardsDetails() {
   const { boardId, projectId } = useParams<{
@@ -34,6 +30,7 @@ export default function BoardsDetails() {
   const [activeColumn, setActiveColumn] = useState<ColumnType | null>(null);
   const [addNewColumn, setAddNewColumn] = useState<string>("");
   const [activeTask, setActiveTask] = useState<TaskType | null>(null);
+  const [updateColumns, setUpdateColumns] = useState<string>("");
   const { token } = useContext(AuthContext);
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -51,13 +48,14 @@ export default function BoardsDetails() {
         });
 
         setColumns(response.data);
+        console.log(response.data);
       } catch (error) {
         console.log("error happened");
       }
     };
 
     fetchColumns();
-  }, [boardId]);
+  }, [boardId, updateColumns]);
 
   function onDragStart(event: DragStartEvent) {
     if (event.active.data.current?.type === "column") {
@@ -278,17 +276,15 @@ export default function BoardsDetails() {
         `${apiUrl}/columns/${columnId}/deleteTask/${taskId}`,
         { headers: { Authorization: token } }
       );
+      console.log(taskId, "task");
+
+      console.log(response.data);
+
       if (response.status === 200) {
-        setColumns((prevColumns) => {
-          let newColumns = [...prevColumns];
-          const findTheColumn = prevColumns.findIndex(
-            (col) => col._id === columnId
-          );
-          newColumns[findTheColumn].tasks = newColumns[
-            findTheColumn
-          ].tasks.filter((task) => task._id !== taskId);
-          return newColumns;
+        const response = await axios.get(`${apiUrl}/columns/${boardId}`, {
+          headers: { Authorization: token },
         });
+        setColumns(response.data);
       }
     } catch (error) {
       console.log(error);
@@ -296,6 +292,7 @@ export default function BoardsDetails() {
   };
 
   const handleColumnDelete = async (columnId: Id) => {
+    console.log(columnId, "columnId");
     try {
       const response = await axios.delete(`${apiUrl}/columns/${columnId}`, {
         headers: { Authorization: token },
@@ -334,6 +331,7 @@ export default function BoardsDetails() {
                   setColumns={setColumns}
                   handleDeleteTask={handleDeleteTask}
                   handleColumnDelete={handleColumnDelete}
+                  setUpdateColumns={setUpdateColumns}
                 />
               ))}
             </SortableContext>
@@ -353,13 +351,14 @@ export default function BoardsDetails() {
         {createPortal(
           <DragOverlay>
             {activeColumn && (
-              <div className="min-h-screen ">
+              <div className="min-h-screen">
                 <Column
                   column={activeColumn}
                   tasks={activeColumn.tasks}
                   setColumns={setColumns}
                   handleDeleteTask={handleDeleteTask}
                   handleColumnDelete={handleColumnDelete}
+                  setUpdateColumns={setUpdateColumns}
                 />
               </div>
             )}
