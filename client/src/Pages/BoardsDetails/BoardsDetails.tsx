@@ -7,6 +7,8 @@ import { createPortal } from "react-dom";
 import Task from "../../Components/Tasks/Task";
 import { apiUrl } from "../../utils/config";
 import { AuthContext } from "../../Context/AuthContext";
+import { BoardType } from "../../utils/types";
+import { useNavigate } from "react-router-dom";
 
 import {
   DndContext,
@@ -19,7 +21,8 @@ import {
   DragOverEvent,
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
-import { set } from "mongoose";
+import Dropdown from "../../Components/Dropdown/Dropdown";
+import DeleteModal from "../../Components/DeleteModal/DeleteModal";
 
 export default function BoardsDetails() {
   const { boardId, projectId } = useParams<{
@@ -31,6 +34,10 @@ export default function BoardsDetails() {
   const [addNewColumn, setAddNewColumn] = useState<string>("");
   const [activeTask, setActiveTask] = useState<TaskType | null>(null);
   const [updateColumns, setUpdateColumns] = useState<string>("");
+  const [boardDetails, setBoardDetails] = useState<BoardType>();
+  const [boards, setBoards] = useState<BoardType[]>([]);
+  const navigate = useNavigate();
+
   const { token } = useContext(AuthContext);
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -46,6 +53,14 @@ export default function BoardsDetails() {
         const response = await axios.get(`${apiUrl}/columns/${boardId}`, {
           headers: { Authorization: token },
         });
+        const responseBoard = await axios.get(
+          `${apiUrl}/${projectId}/boards/${boardId}`,
+          {
+            headers: { Authorization: token },
+          }
+        );
+        setBoardDetails(responseBoard.data[0]);
+        console.log(responseBoard.data);
 
         setColumns(response.data);
         console.log(response.data);
@@ -306,10 +321,40 @@ export default function BoardsDetails() {
       console.log(error);
     }
   };
+  const handledeleteBoard = async (boardId: Id) => {
+    try {
+      const response = await axios.delete(`${apiUrl}/boards/${boardId}`, {
+        headers: { Authorization: token },
+      });
+      if (response.status === 200) {
+        navigate("/dashboard");
+      }
+
+      setBoards((prev) => prev.filter((board) => board._id !== boardId));
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div>
-      <div>{boardId}</div>
+      <div
+        className="h-20 w-full bg-gray-200
+      "
+      >
+        <div>
+          {boardDetails && (
+            <div className="text-black">{boardDetails.boardName}</div>
+          )}
+        </div>
+        <Dropdown>
+          <DeleteModal
+            handleDelete={handledeleteBoard}
+            id={boardDetails?._id}
+            modal="my_modal_5"
+          />
+        </Dropdown>
+      </div>
       <DndContext
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}

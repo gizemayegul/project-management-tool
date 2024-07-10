@@ -22,17 +22,12 @@ export default function Card({ handleDelete, card, cardType }: Card) {
                   {card.boardName}
                 </div>
               </Link>
-              <Link to={`/projects/${card.projectId}`}>
-                <div className="badge badge-accent">
-                  {" "}
-                  <u>{card.projectName}</u>
-                </div>
-              </Link>
-              <DeleteModal
+
+              {/* <DeleteModal
                 handleDelete={handleDelete}
                 id={card._id}
                 modal="my_modal_5"
-              />
+              /> */}
             </div>
           </div>
         </>
@@ -49,11 +44,11 @@ export default function Card({ handleDelete, card, cardType }: Card) {
                   <u>{card.projectName}</u>
                 </div>
               </Link>
-              <DeleteModal
+              {/* <DeleteModal
                 handleDelete={handleDelete}
                 id={card._id}
                 modal="my_modal_6"
-              />
+              /> */}
             </div>
           </div>
         </>

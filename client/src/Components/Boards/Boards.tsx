@@ -45,16 +45,7 @@ export default function Boards() {
     }, [projectId]);
   }
 
-  const handledeleteBoard = async (boardId: Id) => {
-    try {
-      await axios.delete(`${apiUrl}/boards/${boardId}`, {
-        headers: { Authorization: token },
-      });
-      setBoards((prev) => prev.filter((board) => board._id !== boardId));
-    } catch (error) {
-      console.log(error);
-    }
-  };
+
   return (
     <div className="flex flex-wrap">
       {Array.isArray(boards) &&

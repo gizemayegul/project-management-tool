@@ -7,12 +7,9 @@ import { apiUrl } from "../../utils/config";
 import { ColumnProps, Id } from "../../utils/types";
 import { useContext } from "react";
 import { AuthContext } from "../../Context/AuthContext";
-import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 import Dropdown from "../Dropdown/Dropdown";
-
 import DeleteModal from "../DeleteModal/DeleteModal";
 import Edit from "../Edit/Edit";
-import DeleteDropDown from "../DeleteDropDown/DeleteDropDown";
 
 export default function Column({
   column,
@@ -23,7 +20,6 @@ export default function Column({
   setUpdateColumns,
 }: ColumnProps) {
   const [addNewTask, setAddNewTask] = useState<string>("");
-  const [showButton, setShowButton] = useState<boolean>(false);
   const [columnName, setColumnName] = useState<string>(column.columnName);
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [color, setColor] = useState("#00000");
@@ -98,16 +94,7 @@ export default function Column({
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      onMouseLeave={() => {
-        setShowButton(false);
-      }}
-      onMouseEnter={() => {
-        setShowButton(true);
-      }}
-    >
+    <div ref={setNodeRef} style={style}>
       <div
         className="
       text-md

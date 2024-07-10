@@ -36,6 +36,10 @@ const ColumnsSchema = new Schema(
       type: Number,
       default: 0,
     },
+    color: {
+      type: String,
+      default: "#000000",
+    },
   },
   {
     timestamps: true,

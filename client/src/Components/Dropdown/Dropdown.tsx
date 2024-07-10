@@ -9,11 +9,11 @@ export default function Dropdown({ children }: Props) {
     <div>
       <div className="dropdown dropdown-right">
         <div tabIndex={0} role="button">
-          <EllipsisHorizontalIcon className="h-6 opacity-50" />
+          <EllipsisHorizontalIcon className="h-6 opacity-70" />
         </div>
         <ul
           tabIndex={0}
-          className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+          className="dropdown-content menu bg-base-100 rounded-box z-30 w-52 p-2 shadow"
         >
           {React.Children.map(children, (child, index) => (
             <li key={index}>{child}</li>
