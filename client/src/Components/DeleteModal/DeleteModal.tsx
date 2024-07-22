@@ -1,5 +1,7 @@
 import { Id } from "../../utils/types";
 import { TrashIcon } from "@heroicons/react/20/solid";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 type ModalProps = {
   handleDelete(id: Id, id1?: Id): void;
   modal: string;
@@ -15,6 +17,8 @@ export default function DeleteModal({
   id,
   id1,
 }: ModalProps) {
+  const notify = () => toast.success("Deleted!");
+
   return (
     <div onClick={() => document.getElementById(modal as Modal)?.showModal?.()}>
       <TrashIcon className="pb-1 h-4 mt-1.5 " />
@@ -32,6 +36,7 @@ export default function DeleteModal({
               <button
                 onClick={() => {
                   handleDelete(id, id1);
+                  notify();
                 }}
                 className="btn bg-red-500  text-white mx-2"
               >

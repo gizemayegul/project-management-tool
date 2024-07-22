@@ -15,10 +15,13 @@ import BoardsDetails from "./Pages/BoardsDetails/BoardsDetails";
 import IsPrivate from "./utils/IsPrivate";
 import IsAnon from "./utils/IsAnon";
 import CreateProject from "./Pages/CreateProject/CreateProject";
-IsPrivate;
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+-IsPrivate;
 function App() {
   return (
     <>
+      <ToastContainer />
       <Navbar />
       <Routes>
         <Route
