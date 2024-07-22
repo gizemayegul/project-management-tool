@@ -40,12 +40,17 @@ export default function Column({
     },
   });
   const style = {
-    transition,
-    transform: CSS.Transform.toString(transform),
+    transition: {
+      duration: 150, // milliseconds
+      easing: "cubic-bezier(0.25, 1, 0.5, 1)",
+    },
+    transform: transform
+      ? `translate(${transform.x}px, ${transform.y}px)`
+      : undefined,
     border: "2px solid bg-slate-500",
     backgroundColor: isDragging ? "#B0B9B9" : "#F1F2F4",
     opacity: isDragging ? 0.5 : 1,
-    height: "unsets",
+    height: "fit-content",
     borderRadius: "10px",
     padding: "20px",
   };
@@ -97,24 +102,25 @@ export default function Column({
     <div ref={setNodeRef} style={style}>
       <div
         className="
-      text-md
-      h-[60px]
-      cursor-grab
-      rounded-md
-      rounded-b-none
-      font-bold
-      flex
-      items-center
-      justify-between
-      w-60
-      "
+          text-md
+        min-h-fit
+          cursor-grab
+          rounded-md
+          rounded-b-none
+          font-bold
+          flex
+          items-center
+          justify-between
+          w-60
+          "
         {...listeners}
         {...attributes}
       >
         <div className="flex justify-between w-full ">
           {showEdit ? (
             <input
-              className="border-2 rounded-md border-indigo-500 h-fit"
+              className="border-2 rounded-md border-indigo-500 hsad
+              -fit"
               type="text"
               value={columnName}
               onBlur={() => {

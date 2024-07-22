@@ -160,4 +160,26 @@ boardRoute.delete(
   }
 );
 
+//!!update board name
+boardRoute.put(
+  "/boards/:boardId/boardName",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse) => {
+    const { boardId } = req.params;
+    const { boardName } = req.body;
+
+    try {
+      const response = await Boards.findByIdAndUpdate(
+        boardId,
+        { boardName },
+        { new: true }
+      );
+
+      res.json(response);
+    } catch (error) {
+      res.json(error);
+    }
+  }
+);
+
 export default boardRoute;

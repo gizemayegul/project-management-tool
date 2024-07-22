@@ -95,7 +95,7 @@ export default function Login() {
                   id="password"
                   name="password"
                   type="password"
-                  autoComplete="current-password"
+                  autoComplete="on d"
                   required
                   value={password}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {

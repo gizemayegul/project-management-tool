@@ -7,12 +7,14 @@ import { useContext } from "react";
 import { AuthContext } from "../../Context/AuthContext";
 import { ProjectContext } from "../../Context/ProjectContext";
 import Card from "../Card/Card";
+import { useNavigate } from "react-router-dom";
 
 export default function Boards() {
   const [boards, setBoards] = useState<BoardType[]>([]);
   const { token } = useContext(AuthContext);
   const { projects } = useContext(ProjectContext);
   const { projectId } = useParams();
+  const navigate = useNavigate();
 
   if (!projectId) {
     useEffect(() => {
@@ -45,17 +47,11 @@ export default function Boards() {
     }, [projectId]);
   }
 
-
   return (
     <div className="flex flex-wrap">
       {Array.isArray(boards) &&
         boards.map((board) => (
-          <Card
-            key={board._id}
-            card={board}
-            handleDelete={handledeleteBoard}
-            cardType="board"
-          />
+          <Card key={board._id} card={board} cardType="board" />
         ))}
     </div>
   );

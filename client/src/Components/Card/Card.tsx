@@ -3,11 +3,10 @@ import { CardType, Id } from "../../utils/types";
 import DeleteModal from "../DeleteModal/DeleteModal";
 
 type Card = {
-  handleDelete: (cardId: Id) => void;
   card: CardType;
   cardType?: string;
 };
-export default function Card({ handleDelete, card, cardType }: Card) {
+export default function Card({ card, cardType }: Card) {
   return (
     <div className="card bg-base-100  image-full w-60 shadow-xl mx-3 my-3">
       {cardType === "board" && (

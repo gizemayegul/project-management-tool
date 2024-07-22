@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useState, useEffect, useMemo, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import Column from "../../Components/Column/Column";
 import { ColumnType, TaskType, Id } from "../../utils/types";
@@ -9,6 +9,8 @@ import { apiUrl } from "../../utils/config";
 import { AuthContext } from "../../Context/AuthContext";
 import { BoardType } from "../../utils/types";
 import { useNavigate } from "react-router-dom";
+import Drawer from "../../Components/Drawer/Drawer";
+import { useRef } from "react";
 
 import {
   DndContext,
@@ -21,8 +23,6 @@ import {
   DragOverEvent,
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
-import Dropdown from "../../Components/Dropdown/Dropdown";
-import DeleteModal from "../../Components/DeleteModal/DeleteModal";
 
 export default function BoardsDetails() {
   const { boardId, projectId } = useParams<{
@@ -36,7 +36,11 @@ export default function BoardsDetails() {
   const [updateColumns, setUpdateColumns] = useState<string>("");
   const [boardDetails, setBoardDetails] = useState<BoardType>();
   const [boards, setBoards] = useState<BoardType[]>([]);
+  const [show, setShow] = useState(false);
+  const [boardName, setBoardName] = useState<string>("");
+
   const navigate = useNavigate();
+  const divRef = useRef<HTMLDivElement>(null);
 
   const { token } = useContext(AuthContext);
   const sensors = useSensors(
@@ -70,7 +74,7 @@ export default function BoardsDetails() {
     };
 
     fetchColumns();
-  }, [boardId, updateColumns]);
+  }, [boardId, updateColumns, show]);
 
   function onDragStart(event: DragStartEvent) {
     if (event.active.data.current?.type === "column") {
@@ -336,24 +340,64 @@ export default function BoardsDetails() {
     }
   };
 
+  const handleBoardName = async () => {
+    console.log("handleBoardName");
+    try {
+      const response = await axios.put(
+        `${apiUrl}/boards/${boardId}/boardName`,
+        {
+          boardName: boardName,
+        },
+        {
+          headers: { Authorization: token },
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div>
       <div
         className="h-20 w-full bg-gray-200
-      "
+ flex justify-between items-center px-4 mb-3 mt-3 min-h-max"
       >
         <div>
-          {boardDetails && (
+          {boardDetails && !show && (
             <div className="text-black">{boardDetails.boardName}</div>
           )}
+          {show && (
+            <div className={`flex align-bottom`}>
+              <input
+                className="border-4 py-1"
+                type="text"
+                value={boardName}
+                onChange={(e) => {
+                  setBoardName(e.target.value);
+                }}
+              />
+              <button
+                onClick={() => {
+                  setShow(false);
+                  handleBoardName();
+                }}
+                className={`btn btn-sm btn-primary `}
+              >
+                save
+              </button>
+            </div>
+          )}
         </div>
-        <Dropdown>
-          <DeleteModal
-            handleDelete={handledeleteBoard}
-            id={boardDetails?._id}
-            modal="my_modal_5"
-          />
-        </Dropdown>
+        <Drawer
+          handleDelete={handledeleteBoard}
+          id={boardDetails?._id}
+          modal="my_modal_5"
+          showDelete={true}
+          show={show}
+          setShow={setShow}
+        />
       </div>
       <DndContext
         onDragStart={onDragStart}
@@ -362,7 +406,7 @@ export default function BoardsDetails() {
         sensors={sensors}
         // collisionDetection={closestCenter}
       >
-        <div className="m-auto flex gap-4">
+        <div className="m-auto flex gap-4 overflow-x-auto min-h-screen h-screen">
           <div className="flex gap-4">
             <SortableContext
               // strategy={rectSortingStrategy}
@@ -396,7 +440,7 @@ export default function BoardsDetails() {
         {createPortal(
           <DragOverlay>
             {activeColumn && (
-              <div className="min-h-screen">
+              <div>
                 <Column
                   column={activeColumn}
                   tasks={activeColumn.tasks}

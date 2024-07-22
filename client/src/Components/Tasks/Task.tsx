@@ -1,6 +1,5 @@
 import { TaskProps } from "../../utils/types";
 import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import DeleteModal from "../DeleteModal/DeleteModal";
 import Edit from "../Edit/Edit";
 import { useState, useContext } from "react";
@@ -13,21 +12,15 @@ export default function Task({ task, columnId, handleDeleteTask }: TaskProps) {
   const [show, setShow] = useState(false);
   const [taskName, setTaskName] = useState(task.taskName);
   const { token } = useContext(AuthContext);
-  const {
-    isDragging,
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({
-    id: task._id,
-    data: {
-      type: "task",
-      task: task,
-      column: columnId,
-    },
-  });
+  const { isDragging, attributes, listeners, setNodeRef, transition } =
+    useSortable({
+      id: task._id,
+      data: {
+        type: "task",
+        task: task,
+        column: columnId,
+      },
+    });
   const style = {
     transition,
     // transform: CSS.Transform.toString(transform),
@@ -35,7 +28,7 @@ export default function Task({ task, columnId, handleDeleteTask }: TaskProps) {
 
   const taskStyle = {
     style:
-      "h-fit-content break-words break-all min-h-12 px-2 my-2 items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset cursor-grab relative w-60 bg-white shadow-xl",
+      "bg-base-100 h-fit-content break-words break-all min-h-12 px-2 my-2 items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset cursor-grab relative w-60 bg-white shadow-xl ",
     editStyle:
       "h-fit-content break-words break-all  w-60 min-h-12  transition-all scale-y-110 p-3 min-h-12 z-[70] px-2 my-2 items-center bg-slate-300 flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:border-slate-500  cursor-grab relative task tra",
     draggingStyle:
