@@ -11,6 +11,9 @@ const boardsSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Projects",
     },
+    projectName: {
+      type: String,
+    },
     userId: {
       type: Schema.Types.ObjectId,
       ref: "User",

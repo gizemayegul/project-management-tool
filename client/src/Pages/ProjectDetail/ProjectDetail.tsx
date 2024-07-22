@@ -1,22 +1,22 @@
 import { Link, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import { AuthContext } from "../../Context/AuthContext";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import Boards from "../../Components/Boards/Boards";
 import CreateButton from "../../Components/CreateButton/CreateButton";
-import { headers, apiUrl } from "../../utils/config";
+import { apiUrl } from "../../utils/config";
 import { ProjectsDetails } from "../../utils/types";
+import Boards from "../../Components/Boards/Boards";
 
 export default function ProjectDetail() {
   const { projectId } = useParams();
   const [projectDetail, setprojectDetail] = useState<ProjectsDetails | null>();
-  const navigate = useNavigate();
+  const { token } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         const response = await axios.get(`${apiUrl}/projects/${projectId}`, {
-          headers: headers,
+          headers: { Authorization: token },
         });
         setprojectDetail(response.data[0]);
       } catch (error) {

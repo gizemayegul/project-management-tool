@@ -1,24 +1,31 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
-import { headers, apiUrl } from "../../utils/config";
+import { apiUrl } from "../../utils/config";
+import { useContext } from "react";
+import { AuthContext } from "../../Context/AuthContext";
 
 import { useNavigate } from "react-router-dom";
+import { ProjectContext } from "../../Context/ProjectContext";
 export default function CreateBoard() {
   const [boardName, setBoardName] = useState<string | undefined>("");
   const [error, setError] = useState<string | undefined>("");
-  const localStoreToken = localStorage.getItem("token");
   const navigate = useNavigate();
   const { projectId } = useParams();
+  const { token } = useContext(AuthContext);
+  const { projects } = useContext(ProjectContext);
+
+  const project = projects.find((project) => project._id === projectId);
+
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const createBoard = async () => {
       try {
         const response = await axios.post(
           `${apiUrl}/${projectId}/createboard`,
-          { boardName: boardName },
+          { boardName: boardName, projectName: project?.projectName },
           {
-            headers: headers,
+            headers: { Authorization: token },
           }
         );
         navigate(`/projects/${projectId}`);
@@ -60,7 +67,7 @@ export default function CreateBoard() {
             </button>
             {error && (
               <div>
-                <p className=" bg-red-400 p-1.5 mt-2 rounded-md text-white px-3 py-2 text-sm font-semibold  flex w-full justify-center">
+                <p className=" bg-red-500 p-1.5 mt-2 rounded-md text-white px-3 py-2 text-sm font-semibold  flex w-full justify-center">
                   {error}
                 </p>
               </div>

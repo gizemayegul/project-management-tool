@@ -1,11 +1,16 @@
 import { useParams } from "react-router-dom";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import Column from "../../Components/Column/Column";
-import { ColumnType, TaskType } from "../../utils/types";
+import { ColumnType, TaskType, Id } from "../../utils/types";
 import { createPortal } from "react-dom";
 import Task from "../../Components/Tasks/Task";
-import { headers, apiUrl } from "../../utils/config";
+import { apiUrl } from "../../utils/config";
+import { AuthContext } from "../../Context/AuthContext";
+import { BoardType } from "../../utils/types";
+import { useNavigate } from "react-router-dom";
+import Drawer from "../../Components/Drawer/Drawer";
+import { useRef } from "react";
 
 import {
   DndContext,
@@ -16,20 +21,28 @@ import {
   DragOverlay,
   DragEndEvent,
   DragOverEvent,
-  closestCenter,
 } from "@dnd-kit/core";
-import {
-  SortableContext,
-  arrayMove,
-  rectSortingStrategy,
-} from "@dnd-kit/sortable";
+import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 
 export default function BoardsDetails() {
-  const { boardId } = useParams<{ boardId: string }>();
+  const { boardId, projectId } = useParams<{
+    boardId: string;
+    projectId: string;
+  }>();
   const [columns, setColumns] = useState<ColumnType[]>([]);
   const [activeColumn, setActiveColumn] = useState<ColumnType | null>(null);
   const [addNewColumn, setAddNewColumn] = useState<string>("");
   const [activeTask, setActiveTask] = useState<TaskType | null>(null);
+  const [updateColumns, setUpdateColumns] = useState<string>("");
+  const [boardDetails, setBoardDetails] = useState<BoardType>();
+  const [boards, setBoards] = useState<BoardType[]>([]);
+  const [show, setShow] = useState(false);
+  const [boardName, setBoardName] = useState<string>("");
+
+  const navigate = useNavigate();
+  const divRef = useRef<HTMLDivElement>(null);
+
+  const { token } = useContext(AuthContext);
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -42,17 +55,26 @@ export default function BoardsDetails() {
     const fetchColumns = async () => {
       try {
         const response = await axios.get(`${apiUrl}/columns/${boardId}`, {
-          headers: headers,
+          headers: { Authorization: token },
         });
+        const responseBoard = await axios.get(
+          `${apiUrl}/${projectId}/boards/${boardId}`,
+          {
+            headers: { Authorization: token },
+          }
+        );
+        setBoardDetails(responseBoard.data[0]);
+        console.log(responseBoard.data);
 
         setColumns(response.data);
+        console.log(response.data);
       } catch (error) {
         console.log("error happened");
       }
     };
 
     fetchColumns();
-  }, [boardId]);
+  }, [boardId, updateColumns, show]);
 
   function onDragStart(event: DragStartEvent) {
     if (event.active.data.current?.type === "column") {
@@ -61,7 +83,9 @@ export default function BoardsDetails() {
     }
 
     if (event.active.data.current?.type === "task") {
-      setActiveTask(event.active.data.current.task);
+      const task = event.active.data.current.task;
+      const columnId = event.active.data.current.column;
+      setActiveTask({ ...task, columnId });
       return;
     }
   }
@@ -100,10 +124,10 @@ export default function BoardsDetails() {
             (t) => t._id === overId
           );
           if (activeIndex === -1 || overIndex === -1) return;
-          const activeTask = findColumnActive.tasks.find(
-            (t) => t._id === activeId
-          );
-          const overTask = findOverColumn.tasks.find((t) => t._id === overId);
+          // const activeTask = findColumnActive.tasks.find(
+          //   (t) => t._id === activeId
+          // );
+          // const overTask = findOverColumn.tasks.find((t) => t._id === overId);
           const activeColumnIndex = columns.findIndex(
             (columns) => columns._id === findColumnActive._id
           );
@@ -124,7 +148,7 @@ export default function BoardsDetails() {
             `${apiUrl}/columns/tasks/updateColumns`,
             { updatedColumns: newColumns },
             {
-              headers: headers,
+              headers: { Authorization: token },
             }
           );
         }
@@ -154,7 +178,7 @@ export default function BoardsDetails() {
             tasks: newOrders,
           },
           {
-            headers: headers,
+            headers: { Authorization: token },
           }
         );
       }
@@ -190,7 +214,7 @@ export default function BoardsDetails() {
           `${apiUrl}/columns/tasks/updateColumns`,
           { updatedColumns: newColumns },
           {
-            headers: headers,
+            headers: { Authorization: token },
           }
         );
       }
@@ -232,7 +256,7 @@ export default function BoardsDetails() {
       await axios.put(
         `${apiUrl}/columns/reorder`,
         { updatedColumns: updatedColumns },
-        { headers: headers }
+        { headers: { Authorization: token } }
       );
     } catch (error) {
       console.log(error);
@@ -250,10 +274,9 @@ export default function BoardsDetails() {
           tasks: [],
           boardId: boardId,
           index: columns.length,
+          projectId: projectId,
         },
-        {
-          headers: headers,
-        }
+        { headers: { Authorization: token } }
       );
       if (response.status === 200) {
         setColumns((prevColumns) => [...prevColumns, response.data]);
@@ -266,9 +289,116 @@ export default function BoardsDetails() {
     }
   };
 
+  const handleDeleteTask = async (taskId: Id, columnId: Id) => {
+    try {
+      const response = await axios.delete(
+        `${apiUrl}/columns/${columnId}/deleteTask/${taskId}`,
+        { headers: { Authorization: token } }
+      );
+      console.log(taskId, "task");
+
+      console.log(response.data);
+
+      if (response.status === 200) {
+        const response = await axios.get(`${apiUrl}/columns/${boardId}`, {
+          headers: { Authorization: token },
+        });
+        setColumns(response.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleColumnDelete = async (columnId: Id) => {
+    console.log(columnId, "columnId");
+    try {
+      const response = await axios.delete(`${apiUrl}/columns/${columnId}`, {
+        headers: { Authorization: token },
+      });
+      if (response.status === 200) {
+        setColumns((prevColumns) => {
+          return prevColumns.filter((col) => col._id !== columnId);
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handledeleteBoard = async (boardId: Id) => {
+    try {
+      const response = await axios.delete(`${apiUrl}/boards/${boardId}`, {
+        headers: { Authorization: token },
+      });
+      if (response.status === 200) {
+        navigate("/dashboard");
+      }
+
+      setBoards((prev) => prev.filter((board) => board._id !== boardId));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleBoardName = async () => {
+    console.log("handleBoardName");
+    try {
+      const response = await axios.put(
+        `${apiUrl}/boards/${boardId}/boardName`,
+        {
+          boardName: boardName,
+        },
+        {
+          headers: { Authorization: token },
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div>
-      <div>{boardId}</div>
+      <div
+        className="h-20 w-full bg-gray-200
+ flex justify-between items-center px-4 mb-3 mt-3 min-h-max"
+      >
+        <div>
+          {boardDetails && !show && (
+            <div className="text-black">{boardDetails.boardName}</div>
+          )}
+          {show && (
+            <div className={`flex align-bottom`}>
+              <input
+                className="border-4 py-1"
+                type="text"
+                value={boardName}
+                onChange={(e) => {
+                  setBoardName(e.target.value);
+                }}
+              />
+              <button
+                onClick={() => {
+                  setShow(false);
+                  handleBoardName();
+                }}
+                className={`btn btn-sm btn-primary `}
+              >
+                save
+              </button>
+            </div>
+          )}
+        </div>
+        <Drawer
+          handleDelete={handledeleteBoard}
+          id={boardDetails?._id}
+          modal="my_modal_5"
+          showDelete={true}
+          show={show}
+          setShow={setShow}
+        />
+      </div>
       <DndContext
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
@@ -276,7 +406,7 @@ export default function BoardsDetails() {
         sensors={sensors}
         // collisionDetection={closestCenter}
       >
-        <div className="m-auto flex gap-4">
+        <div className="m-auto flex gap-4 overflow-x-auto min-h-screen h-screen">
           <div className="flex gap-4">
             <SortableContext
               // strategy={rectSortingStrategy}
@@ -288,6 +418,9 @@ export default function BoardsDetails() {
                   column={column}
                   tasks={column.tasks}
                   setColumns={setColumns}
+                  handleDeleteTask={handleDeleteTask}
+                  handleColumnDelete={handleColumnDelete}
+                  setUpdateColumns={setUpdateColumns}
                 />
               ))}
             </SortableContext>
@@ -307,15 +440,24 @@ export default function BoardsDetails() {
         {createPortal(
           <DragOverlay>
             {activeColumn && (
-              <div className="min-h-screen ">
+              <div>
                 <Column
                   column={activeColumn}
                   tasks={activeColumn.tasks}
                   setColumns={setColumns}
+                  handleDeleteTask={handleDeleteTask}
+                  handleColumnDelete={handleColumnDelete}
+                  setUpdateColumns={setUpdateColumns}
                 />
               </div>
             )}
-            {activeTask && <Task {...activeTask} />}
+            {activeTask && (
+              <Task
+                task={activeTask}
+                columnId={activeTask.columnId}
+                handleDeleteTask={handleDeleteTask}
+              />
+            )}
           </DragOverlay>,
           document.body
         )}

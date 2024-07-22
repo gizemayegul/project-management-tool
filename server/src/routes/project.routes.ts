@@ -2,33 +2,28 @@ import { Router, Request, Response, NextFunction } from "express";
 import isAuthenticated from "../middleware/isAutenticated";
 import { CustomRequest, CustomResponse } from "../types/ types";
 import Projects from "../models/Projects.model";
+import Boards from "../models/Boards.model";
+import Columns from "../models/Columns.model";
 
 const projectRoute = Router();
 projectRoute.post(
-  "/createproject",
+  "/projects/createproject",
   isAuthenticated,
   async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
     const { projectName } = req.body;
-    console.log(req.user, "projectroute");
     const userId = req.user._id;
-    console.log(projectName);
 
     if (!projectName) {
       res.status(400).json({ message: "Please provide a project name" });
       return;
     }
     try {
-      const createProject = await Projects.create({
+      const response = await Projects.create({
         projectName: projectName,
         userId: userId,
       });
 
-      const { ...projectInfo } = createProject.toObject();
-      res.status(200).json({
-        success: true,
-        message: "Project created successfully",
-        projectInfo: projectInfo,
-      });
+      res.status(200).json(response);
     } catch (error) {
       if (error && (error as any).code === 11000) {
         res.status(400).json({ message: "The project already exists" });
@@ -76,11 +71,35 @@ projectRoute.get(
     }
     try {
       const findProject = await Projects.find({ _id: projectId });
-      console.log(findProject);
       res.status(200).json(findProject);
     } catch (error) {
       console.error({
         message: "An error occurred while fetching the projects user",
+      });
+    }
+  }
+);
+
+//!! this route is deleting the project and its children
+projectRoute.delete(
+  "/projects/:projectId",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
+    const { projectId } = req.params;
+    if (!projectId) {
+      res.status(400).json({ message: "An expected error happened" });
+      return;
+    }
+    try {
+      const deleteProject = await Projects.deleteOne({ _id: projectId });
+      res.status(200).json({ message: "Project deleted successfully" });
+      //!! deleting the boards of the project
+      await Boards.deleteMany({ projectId: projectId });
+      //!! deleting the columns of the project
+      await Columns.deleteMany({ projectId: projectId });
+    } catch (error) {
+      console.error({
+        message: "An error occurred while deleting the project",
       });
     }
   }

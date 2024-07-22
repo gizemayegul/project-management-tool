@@ -1,30 +1,33 @@
-import React, { useState, useContext, ReactEventHandler } from "react";
+import React, { useState, useContext } from "react";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import axios from "axios";
-import { apiUrl, headers } from "../../utils/config";
+import { apiUrl } from "../../utils/config";
 import { useNavigate } from "react-router-dom";
 import { CreateBoardDropDownProps } from "../../utils/types";
 import { ProjectContext } from "../../Context/ProjectContext";
+import { AuthContext } from "../../Context/AuthContext";
 
 export default function CreateBoardDropDown({
   setCreateBoard,
 }: CreateBoardDropDownProps) {
   const { projects } = useContext(ProjectContext);
+  const { token } = useContext(AuthContext);
   const [selectedProject, setSelectedProject] = useState<string>("");
   const [selectedProjectId, setSelectedProjectId] = useState<
     string | undefined
   >(undefined);
   const [boardName, setBoardName] = useState<string>("");
   const navigate = useNavigate();
+
+  const project = projects.find((project) => project._id === selectedProjectId);
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const response = await axios.post(
         `${apiUrl}/${selectedProjectId}/createboard`,
-        {
-          boardName: boardName,
-        },
-        { headers }
+        { boardName: boardName, projectName: project?.projectName },
+
+        { headers: { Authorization: token } }
       );
       if (response.status === 200) {
         setCreateBoard(false);

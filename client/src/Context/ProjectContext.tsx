@@ -1,28 +1,32 @@
 import { createContext, useState, useEffect } from "react";
 import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
-import { ProjectContextType } from "../utils/types";
+import { ProjectContextType, Id, ProjectType } from "../utils/types";
+import { apiUrl } from "../utils/config";
+import { useNavigate } from "react-router-dom";
 
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 const ProjectContext = createContext<ProjectContextType>({
   projects: [],
   setProjects: () => {},
+  handleDeleteProject: () => {},
+  submitHandler: () => {},
+  setProjectName: () => {},
+  projectName: "",
 });
-const API_URL = import.meta.env.VITE_SERVER_URL;
 
 function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
-  const { isLoggedIn } = useContext(AuthContext);
-
-  const localStoreToken = localStorage.getItem("token");
-
-  const [projects, setProjects] = useState(null);
+  const { isLoggedIn, token } = useContext(AuthContext);
+  const [projectName, setProjectName] = useState<string>("");
+  const [projects, setProjects] = useState<ProjectType[]>([]);
+  const navigate = useNavigate();
   useEffect(() => {
     if (isLoggedIn) {
       const fetchProjects = async () => {
         try {
-          const response = await axios.get(`${API_URL}/projects`, {
-            headers: { Authorization: localStoreToken },
+          const response = await axios.get(`${apiUrl}/projects`, {
+            headers: { Authorization: token },
           });
           setProjects(response.data.projects);
         } catch (error) {
@@ -31,15 +35,65 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
       };
       fetchProjects();
     }
-  }, [localStoreToken, isLoggedIn]);
+  }, [token, isLoggedIn]);
+
+  const submitHandler = async (
+    e: React.FormEvent<HTMLFormElement>,
+    setCreateProject?: (createProject: boolean) => void
+  ) => {
+    e.preventDefault();
+    const createProject = async () => {
+      try {
+        const response = await axios.post(
+          `${apiUrl}/projects/createproject`,
+          { projectName: projectName },
+          {
+            headers: { Authorization: token },
+          }
+        );
+        if (response.status === 200) {
+          setProjects((prev) => [...prev, response.data]);
+          setProjectName("");
+
+          navigate(`/projects/${response.data._id}`);
+          if (setCreateProject) {
+            setCreateProject(false);
+          }
+        }
+      } catch (err: unknown) {
+        if (err instanceof AxiosError) {
+          console.log(err, "errorr");
+        }
+      }
+    };
+    createProject();
+
+    //TODO : projects page is not updated directly maybe it is better move them inside context
+  };
+
+  const handleDeleteProject = async (projectId: Id) => {
+    try {
+      await axios.delete(`${apiUrl}/projects/${projectId}`, {
+        headers: { Authorization: token },
+      });
+      if (!projects) return;
+      setProjects((prev) => {
+        return prev.filter((project) => project._id !== projectId);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <ProjectContext.Provider
       value={{
         projects,
-        setProjects: setProjects as React.Dispatch<
-          React.SetStateAction<any[] | null>
-        >,
+        handleDeleteProject,
+        setProjects,
+        submitHandler,
+        setProjectName,
+        projectName,
       }}
     >
       {props.children}
