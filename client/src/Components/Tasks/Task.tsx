@@ -6,12 +6,14 @@ import { useState, useContext } from "react";
 import axios from "axios";
 import { apiUrl } from "../../utils/config";
 import { AuthContext } from "../../Context/AuthContext";
+import { toast } from "react-toastify";
 
 export default function Task({ task, columnId, handleDeleteTask }: TaskProps) {
   const [edit, setEdit] = useState(false);
   const [show, setShow] = useState(false);
   const [taskName, setTaskName] = useState(task.taskName);
   const { token } = useContext(AuthContext);
+  const notify = () => toast.success("Edited!");
   const { isDragging, attributes, listeners, setNodeRef, transition } =
     useSortable({
       id: task._id,
@@ -113,7 +115,13 @@ export default function Task({ task, columnId, handleDeleteTask }: TaskProps) {
                 }
               }}
             ></textarea>
-            <button className="btn btn-sm" onClick={handleEditTask}>
+            <button
+              className="btn btn-sm"
+              onClick={() => {
+                handleEditTask();
+                notify();
+              }}
+            >
               Save
             </button>
           </div>
