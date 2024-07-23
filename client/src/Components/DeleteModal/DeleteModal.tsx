@@ -1,6 +1,6 @@
 import { Id } from "../../utils/types";
 import { TrashIcon } from "@heroicons/react/20/solid";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 type ModalProps = {
   handleDelete(id: Id, id1?: Id): void;
