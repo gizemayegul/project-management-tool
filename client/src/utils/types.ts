@@ -28,12 +28,14 @@ export type ColumnProps = {
   handleDeleteTask: (columnId: Id, taskId: Id) => void;
   handleColumnDelete: (columnId: Id) => void;
   setColumns: React.Dispatch<React.SetStateAction<ColumnType[]>>;
+  setUpdateTask: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export type TaskProps = {
   task: TaskType;
   columnId: Id;
   handleDeleteTask: (columnId: Id, taskId: Id) => void;
+  setUpdateTask: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export type BoardType = {

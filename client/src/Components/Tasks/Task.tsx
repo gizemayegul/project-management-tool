@@ -7,8 +7,14 @@ import axios from "axios";
 import { apiUrl } from "../../utils/config";
 import { AuthContext } from "../../Context/AuthContext";
 import { toast } from "react-toastify";
+import { set } from "mongoose";
 
-export default function Task({ task, columnId, handleDeleteTask }: TaskProps) {
+export default function Task({
+  task,
+  columnId,
+  handleDeleteTask,
+  setUpdateTask,
+}: TaskProps) {
   const [edit, setEdit] = useState(false);
   const [show, setShow] = useState(false);
   const [taskName, setTaskName] = useState(task.taskName);
@@ -45,7 +51,8 @@ export default function Task({ task, columnId, handleDeleteTask }: TaskProps) {
         { headers: { Authorization: token } }
       );
       setEdit((prev) => !prev);
-      console.log(response.data);
+      console.log(response.data, "edited");
+      setUpdateTask((prev) => !prev);
     } catch (error) {
       console.log(error);
     }

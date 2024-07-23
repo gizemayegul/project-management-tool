@@ -18,6 +18,7 @@ export default function Column({
   handleDeleteTask,
   handleColumnDelete,
   setUpdateColumns,
+  setUpdateTask,
 }: ColumnProps) {
   const [addNewTask, setAddNewTask] = useState<string>("");
   const [columnName, setColumnName] = useState<string>(column.columnName);
@@ -183,6 +184,7 @@ export default function Column({
             task={task}
             columnId={column._id}
             handleDeleteTask={handleDeleteTask}
+            setUpdateTask={setUpdateTask}
           />
         ))}
         <form
