@@ -10,7 +10,6 @@ import { AuthContext } from "../../Context/AuthContext";
 import { BoardType } from "../../utils/types";
 import { useNavigate } from "react-router-dom";
 import Drawer from "../../Components/Drawer/Drawer";
-import { useRef } from "react";
 
 import {
   DndContext,
@@ -38,9 +37,9 @@ export default function BoardsDetails() {
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [show, setShow] = useState(false);
   const [boardName, setBoardName] = useState<string>("");
+  const [updateTask, setUpdateTask] = useState<boolean>(false);
 
   const navigate = useNavigate();
-  const divRef = useRef<HTMLDivElement>(null);
 
   const { token } = useContext(AuthContext);
   const sensors = useSensors(
@@ -74,7 +73,7 @@ export default function BoardsDetails() {
     };
 
     fetchColumns();
-  }, [boardId, updateColumns, show]);
+  }, [boardId, updateColumns, show, updateTask]);
 
   function onDragStart(event: DragStartEvent) {
     if (event.active.data.current?.type === "column") {
@@ -297,8 +296,6 @@ export default function BoardsDetails() {
       );
       console.log(taskId, "task");
 
-      console.log(response.data);
-
       if (response.status === 200) {
         const response = await axios.get(`${apiUrl}/columns/${boardId}`, {
           headers: { Authorization: token },
@@ -316,6 +313,7 @@ export default function BoardsDetails() {
       const response = await axios.delete(`${apiUrl}/columns/${columnId}`, {
         headers: { Authorization: token },
       });
+      console.log(response.data);
       if (response.status === 200) {
         setColumns((prevColumns) => {
           return prevColumns.filter((col) => col._id !== columnId);
@@ -325,6 +323,7 @@ export default function BoardsDetails() {
       console.log(error);
     }
   };
+
   const handledeleteBoard = async (boardId: Id) => {
     try {
       const response = await axios.delete(`${apiUrl}/boards/${boardId}`, {
@@ -393,7 +392,7 @@ export default function BoardsDetails() {
         <Drawer
           handleDelete={handledeleteBoard}
           id={boardDetails?._id}
-          modal="my_modal_5"
+          modal={boardDetails?._id}
           showDelete={true}
           show={show}
           setShow={setShow}
@@ -421,6 +420,7 @@ export default function BoardsDetails() {
                   handleDeleteTask={handleDeleteTask}
                   handleColumnDelete={handleColumnDelete}
                   setUpdateColumns={setUpdateColumns}
+                  setUpdateTask={setUpdateTask}
                 />
               ))}
             </SortableContext>
@@ -448,6 +448,7 @@ export default function BoardsDetails() {
                   handleDeleteTask={handleDeleteTask}
                   handleColumnDelete={handleColumnDelete}
                   setUpdateColumns={setUpdateColumns}
+                  setUpdateTask={setUpdateTask}
                 />
               </div>
             )}
@@ -456,6 +457,7 @@ export default function BoardsDetails() {
                 task={activeTask}
                 columnId={activeTask.columnId}
                 handleDeleteTask={handleDeleteTask}
+                setUpdateTask={setUpdateTask}
               />
             )}
           </DragOverlay>,

@@ -48,11 +48,13 @@ export default function Boards() {
   }
 
   return (
-    <div className="flex flex-wrap">
-      {Array.isArray(boards) &&
-        boards.map((board) => (
-          <Card key={board._id} card={board} cardType="board" />
-        ))}
+    <div className="flex">
+      <div className="flex flex-wrap">
+        {Array.isArray(boards) &&
+          boards.map((board) => (
+            <Card key={board._id} card={board} cardType="board" />
+          ))}
+      </div>
     </div>
   );
 }

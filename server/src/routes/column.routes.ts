@@ -215,6 +215,7 @@ columnRoute.delete(
   isAuthenticated,
   async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
     const { columnId } = req.params;
+    console.log(columnId);
 
     try {
       const response = await Columns.findByIdAndDelete(columnId);

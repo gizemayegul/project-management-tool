@@ -1,6 +1,7 @@
 import DeleteModal from "../DeleteModal/DeleteModal";
 import { Id } from "../../utils/types";
 import Edit from "../Edit/Edit";
+import { Cog8ToothIcon } from "@heroicons/react/20/solid";
 
 type propTypes = {
   id: Id;
@@ -21,15 +22,12 @@ export default function Drawer({
 }: propTypes) {
   return (
     <div>
-      <div className="drawer drawer-end z-30">
+      <div className="drawer drawer-end z-30 ">
         <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content">
           {/* Page content here */}
-          <label
-            htmlFor="my-drawer-4"
-            className="drawer-button btn bg-indigo-600 text-white"
-          >
-            Settings
+          <label htmlFor="my-drawer-4">
+            <Cog8ToothIcon className="h-6" />
           </label>
         </div>
         <div className="drawer-side">
@@ -44,7 +42,7 @@ export default function Drawer({
               <DeleteModal
                 handleDelete={handleDelete}
                 id={id}
-                modal={modal}
+                modal={id}
                 showDelete={showDelete}
               />
             </li>

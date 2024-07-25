@@ -25,4 +25,5 @@ body,
 
 body {
   overflow-x: hidden;
+  padding: 0 4rem 0 4rem;
 }

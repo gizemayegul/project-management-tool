@@ -18,6 +18,7 @@ export default function Column({
   handleDeleteTask,
   handleColumnDelete,
   setUpdateColumns,
+  setUpdateTask,
 }: ColumnProps) {
   const [addNewTask, setAddNewTask] = useState<string>("");
   const [columnName, setColumnName] = useState<string>(column.columnName);
@@ -160,7 +161,7 @@ export default function Column({
                     setColor(e.target.value);
                   }}
                   type="color"
-                  className="border-2 rounded-md h-6 w-6"
+                  className="border-2 rounded-full h-4 w-4"
                 />
                 <span>Change Color</span>
               </div>
@@ -168,8 +169,8 @@ export default function Column({
                 handleDelete={() => {
                   handleColumnDelete(column._id);
                 }}
-                id1={column._id}
-                modal="my_modal_8"
+                id={column._id}
+                modal={column._id}
                 showDelete={true}
               />
             </Dropdown>
@@ -183,6 +184,7 @@ export default function Column({
             task={task}
             columnId={column._id}
             handleDeleteTask={handleDeleteTask}
+            setUpdateTask={setUpdateTask}
           />
         ))}
         <form
