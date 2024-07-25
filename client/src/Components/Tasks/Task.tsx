@@ -101,7 +101,7 @@ export default function Task({
                       handleDelete={handleDeleteTask}
                       id1={columnId}
                       id={task._id}
-                      modal="my_modal_10"
+                      modal={task._id}
                     />
                   </div>
                 </>

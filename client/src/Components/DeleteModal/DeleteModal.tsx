@@ -31,18 +31,20 @@ export default function DeleteModal({
           <p className="py-4 text-black">Are you sure you want to delete?</p>
           <div className="modal-action">
             {/* if there is a button in form, it will close the modal */}
-            <button className="btn mx-2">Cancel</button>
-            <button
-              onClick={() => {
-                handleDelete(id, id1);
-                console.log("DeleteModal: Calling handleDelete for ID:", id); // Debug log
+            <form method="dialog">
+              <button className="btn mx-2">Cancel</button>
+              <button
+                onClick={() => {
+                  handleDelete(id, id1);
+                  console.log("DeleteModal: Calling handleDelete for ID:", id); // Debug log
 
-                notify();
-              }}
-              className="btn bg-red-500  text-white mx-2"
-            >
-              Delete
-            </button>
+                  notify();
+                }}
+                className="btn bg-red-500  text-white mx-2"
+              >
+                Delete
+              </button>
+            </form>
           </div>
         </div>
       </dialog>

@@ -11,9 +11,9 @@ export default function Dashboard() {
   const { projects } = useContext(ProjectContext);
 
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col py-4">
       <h1>Welcome {user && user.name}</h1>
-      <div className="flex flex-col">
+      <div className="flex flex-col mt-6">
         {projects.length === 0 && (
           <div>
             <h1>You haven't created a Project yet Let's get start</h1>
@@ -24,13 +24,13 @@ export default function Dashboard() {
         )}
       </div>
       {projects.length > 0 && (
-        <div className="flex flex-col divide-y">
-          <div>
+        <div className="flex flex-col divide-y py-10 ">
+          <div className="mb-6">
             <h2>Projects</h2>
             <Projects />
           </div>
-          <div>
-            <h2>Boards</h2>
+          <div className="mt-6">
+            <h2 className="mt-4">Boards</h2>
             <AllBoards />
           </div>
         </div>

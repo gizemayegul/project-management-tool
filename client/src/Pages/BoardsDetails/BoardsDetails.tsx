@@ -392,7 +392,7 @@ export default function BoardsDetails() {
         <Drawer
           handleDelete={handledeleteBoard}
           id={boardDetails?._id}
-          modal="my_modal_5"
+          modal={boardDetails?._id}
           showDelete={true}
           show={show}
           setShow={setShow}
