@@ -7,7 +7,6 @@ import axios from "axios";
 import { apiUrl } from "../../utils/config";
 import { AuthContext } from "../../Context/AuthContext";
 import { toast } from "react-toastify";
-import { set } from "mongoose";
 
 export default function Task({
   task,

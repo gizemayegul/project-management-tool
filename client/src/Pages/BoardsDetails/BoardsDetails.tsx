@@ -296,8 +296,6 @@ export default function BoardsDetails() {
       );
       console.log(taskId, "task");
 
-      console.log(response.data);
-
       if (response.status === 200) {
         const response = await axios.get(`${apiUrl}/columns/${boardId}`, {
           headers: { Authorization: token },
@@ -315,6 +313,7 @@ export default function BoardsDetails() {
       const response = await axios.delete(`${apiUrl}/columns/${columnId}`, {
         headers: { Authorization: token },
       });
+      console.log(response.data);
       if (response.status === 200) {
         setColumns((prevColumns) => {
           return prevColumns.filter((col) => col._id !== columnId);
@@ -324,6 +323,7 @@ export default function BoardsDetails() {
       console.log(error);
     }
   };
+
   const handledeleteBoard = async (boardId: Id) => {
     try {
       const response = await axios.delete(`${apiUrl}/boards/${boardId}`, {

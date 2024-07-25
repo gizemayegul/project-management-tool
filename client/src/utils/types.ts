@@ -25,7 +25,7 @@ export type ColumnProps = {
   column: ColumnType;
   tasks: TaskType[];
   setUpdateColumns: React.Dispatch<React.SetStateAction<string>>;
-  handleDeleteTask: (columnId: Id, taskId: Id) => void;
+  handleDeleteTask: (taskId: Id, columnIDd: Id) => void;
   handleColumnDelete: (columnId: Id) => void;
   setColumns: React.Dispatch<React.SetStateAction<ColumnType[]>>;
   setUpdateTask: React.Dispatch<React.SetStateAction<boolean>>;

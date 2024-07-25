@@ -3,9 +3,9 @@ import { TrashIcon } from "@heroicons/react/20/solid";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 type ModalProps = {
-  handleDelete(id: Id, id1?: Id): void;
-  modal: string;
-  id?: Id;
+  handleDelete(id: Id, id1: Id): void;
+  modal: string | Id;
+  id: Id;
   id1?: Id;
   showDelete?: boolean;
 };
@@ -30,19 +30,19 @@ export default function DeleteModal({
           {/* <h3 className="font-bold text-lg text-black">Hello!</h3> */}
           <p className="py-4 text-black">Are you sure you want to delete?</p>
           <div className="modal-action">
-            <form method="dialog">
-              {/* if there is a button in form, it will close the modal */}
-              <button className="btn mx-2">Cancel</button>
-              <button
-                onClick={() => {
-                  handleDelete(id, id1);
-                  notify();
-                }}
-                className="btn bg-red-500  text-white mx-2"
-              >
-                Delete
-              </button>
-            </form>
+            {/* if there is a button in form, it will close the modal */}
+            <button className="btn mx-2">Cancel</button>
+            <button
+              onClick={() => {
+                handleDelete(id, id1);
+                console.log("DeleteModal: Calling handleDelete for ID:", id); // Debug log
+
+                notify();
+              }}
+              className="btn bg-red-500  text-white mx-2"
+            >
+              Delete
+            </button>
           </div>
         </div>
       </dialog>
