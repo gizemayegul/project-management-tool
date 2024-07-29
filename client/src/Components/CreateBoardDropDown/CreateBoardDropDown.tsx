@@ -6,6 +6,7 @@ import { CreateBoardDropDownProps } from "../../utils/types";
 import { ProjectContext } from "../../Context/ProjectContext";
 import { AuthContext } from "../../Context/AuthContext";
 import { ChevronLeftIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import { set } from "mongoose";
 
 export default function CreateBoardDropDown({
   setCreateBoard,
@@ -57,6 +58,7 @@ export default function CreateBoardDropDown({
         <div
           onClick={() => {
             setDropdown((prev) => !prev);
+            setCreateBoard(false);
           }}
         >
           <XMarkIcon className="h-5" />

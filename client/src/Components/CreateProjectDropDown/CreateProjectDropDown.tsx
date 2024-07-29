@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { ChevronLeftIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { ProjectContext } from "../../Context/ProjectContext";
 import { CreateProjectDropDownProps } from "../../utils/types";
+import { set } from "mongoose";
 
 export default function CreateProjectDropDown({
   setCreateProject,
@@ -26,6 +27,7 @@ export default function CreateProjectDropDown({
         <div
           onClick={() => {
             setDropdown((prev) => !prev);
+            setCreateProject(false);
           }}
         >
           <XMarkIcon className="h-5" />
