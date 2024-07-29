@@ -1,24 +1,36 @@
 import { useState, useEffect, useContext } from "react";
-import axios, { AxiosError } from "axios";
-import { useNavigate } from "react-router-dom";
-import { ChevronLeftIcon } from "@chakra-ui/icons";
-import { apiUrl } from "../../utils/config";
-import { AuthContext } from "../../Context/AuthContext";
+import { ChevronLeftIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { ProjectContext } from "../../Context/ProjectContext";
+import { CreateProjectDropDownProps } from "../../utils/types";
 
-interface Props {
-  setCreateProject: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-export default function CreateProjectDropDown({ setCreateProject }: Props) {
+export default function CreateProjectDropDown({
+  setCreateProject,
+  setDropdown,
+}: CreateProjectDropDownProps) {
   const { projectName, setProjectName, submitHandler } =
     useContext(ProjectContext);
 
   return (
     <div className="flex flex-col ">
-      <button onClick={() => setCreateProject(false)} className="self-start">
-        <ChevronLeftIcon />
-      </button>
+      <div className="flex justify-between w-full">
+        <button
+          className="self-start"
+          onClick={() => {
+            setCreateProject(false);
+          }}
+        >
+          <ChevronLeftIcon className="h-5" />
+        </button>
+
+        <h3>Create a Project</h3>
+        <div
+          onClick={() => {
+            setDropdown((prev) => !prev);
+          }}
+        >
+          <XMarkIcon className="h-5" />
+        </div>
+      </div>
 
       <form
         onSubmit={(e) => {

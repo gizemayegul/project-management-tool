@@ -1,14 +1,15 @@
 import React, { useState, useContext } from "react";
-import { ChevronLeftIcon } from "@chakra-ui/icons";
 import axios from "axios";
 import { apiUrl } from "../../utils/config";
 import { useNavigate } from "react-router-dom";
 import { CreateBoardDropDownProps } from "../../utils/types";
 import { ProjectContext } from "../../Context/ProjectContext";
 import { AuthContext } from "../../Context/AuthContext";
+import { ChevronLeftIcon, XMarkIcon } from "@heroicons/react/20/solid";
 
 export default function CreateBoardDropDown({
   setCreateBoard,
+  setDropdown,
 }: CreateBoardDropDownProps) {
   const { projects } = useContext(ProjectContext);
   const { token } = useContext(AuthContext);
@@ -31,6 +32,7 @@ export default function CreateBoardDropDown({
       );
       if (response.status === 200) {
         setCreateBoard(false);
+        setDropdown((prev) => !prev);
         navigate(
           `projects/${selectedProjectId}/boards/${response.data.boardInfo._id}`
         );
@@ -42,25 +44,37 @@ export default function CreateBoardDropDown({
 
   return (
     <div className="flex flex-col">
-      <button
-        className=" hover:round-sm h-5 w-6 self-start  hover:text-white"
-        onClick={() => setCreateBoard(false)}
-      >
-        <ChevronLeftIcon />
-      </button>
+      <div className="flex justify-between w-full">
+        <button
+          className=" hover:round-sm h-6 w-6 self-start  hover:text-white"
+          onClick={() => {
+            setCreateBoard(false);
+          }}
+        >
+          <ChevronLeftIcon className="h-5" />
+        </button>
+        <h3>Create a Board</h3>
+        <div
+          onClick={() => {
+            setDropdown((prev) => !prev);
+          }}
+        >
+          <XMarkIcon className="h-5" />
+        </div>
+      </div>
+
       <form onSubmit={(e) => handleSubmit(e)}>
-        <label htmlFor="boardName"></label>
+        <label htmlFor="boardName"> Board Name</label>
         <input
-          className="input input-bordered input-sm w-full max-w-xs"
+          className="input input-bordered input-sm w-full max-w-xs mt-2"
           required
           type="text"
           name="boardName"
           id="boardName"
-          placeholder="Board Name"
           value={boardName}
           onChange={(e) => setBoardName(e.target.value)}
         />
-        <label htmlFor="projectSelect"></label>
+        <label htmlFor="projectSelect"> </label>
 
         <select
           className="input input-bordered input-sm w-full max-w-xs mt-2"

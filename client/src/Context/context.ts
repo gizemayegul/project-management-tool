@@ -8,7 +8,9 @@ export type BoardContextType = {
 };
 
 export type ProjectContextType = {
-  favChange: boolean;
+  setDropdown: React.Dispatch<React.SetStateAction<boolean>>;
+  dropdown: boolean;
+  favChange: boolean | null;
   favoriteProjects: ProjectType[];
   projects: ProjectType[];
   setProjects: React.Dispatch<React.SetStateAction<ProjectType[]>>;

@@ -18,6 +18,9 @@ const ProjectContext = createContext<ProjectContextType>({
   handleFavoriteProject: () => {},
   setFavoriteProjects: () => {},
   favoriteProjects: [],
+  favChange: null,
+  dropdown: false,
+  setDropdown: () => {},
 });
 
 function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
@@ -25,7 +28,8 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
   const [projectName, setProjectName] = useState<string>("");
   const [projects, setProjects] = useState<ProjectType[]>([]);
   const [favoriteProjects, setFavoriteProjects] = useState<ProjectType[]>([]);
-  const [favChange, setFavChange] = useState<boolean>();
+  const [favChange, setFavChange] = useState<boolean | null>(null);
+  const [dropdown, setDropdown] = useState<boolean>(false);
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -76,6 +80,7 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
         if (response.status === 200) {
           setProjects((prev) => [...prev, response.data]);
           setProjectName("");
+          setDropdown((prev) => !prev);
 
           navigate(`/projects/${response.data._id}`);
           if (setCreateProject) {
@@ -128,6 +133,8 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
         handleFavoriteProject,
         favoriteProjects,
         setFavoriteProjects,
+        setDropdown,
+        dropdown,
       }}
     >
       {props.children}

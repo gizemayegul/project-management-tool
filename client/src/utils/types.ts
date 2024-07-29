@@ -1,4 +1,5 @@
 export type Id = string | number;
+import CreateProjectDropDown from "../Components/CreateProjectDropDown/CreateProjectDropDown";
 
 export type TaskType = {
   _id: Id;
@@ -99,4 +100,10 @@ export type ProjectsDetails = {
 
 export type CreateBoardDropDownProps = {
   setCreateBoard: React.Dispatch<React.SetStateAction<boolean>>;
+  setDropdown: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export type CreateProjectDropDownProps = {
+  setCreateProject: React.Dispatch<React.SetStateAction<boolean>>;
+  setDropdown: React.Dispatch<React.SetStateAction<boolean>>;
 };
