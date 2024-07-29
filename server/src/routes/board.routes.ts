@@ -181,5 +181,70 @@ boardRoute.put(
     }
   }
 );
+boardRoute.put(
+  "/boards/:boardId/favorite",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
+    const { boardId } = req.params;
+    console.log(boardId);
+    if (!boardId) {
+      res.status(400).json({ message: "An unexpected error happened" });
+      return;
+    }
+    try {
+      // Find the board by ID first
+      const board = await Boards.findById(boardId);
+      if (!board) {
+        res.status(404).json({ message: "Project not found" });
+        return;
+      }
 
+      // Update the favorite field and return the updated document
+      const updatedBoard = await Boards.findByIdAndUpdate(
+        boardId,
+        { favorite: !board.favorite },
+        { new: true }
+      );
+
+      if (updatedBoard) {
+        res.status(200).json(updatedBoard);
+      } else {
+        res.status(500).json({ message: "Failed to update the board" });
+      }
+    } catch (error) {
+      console.error(
+        "An error occurred while updating the board's favorite status:",
+        error
+      );
+      res
+        .status(500)
+        .json({
+          message:
+            "An error occurred while updating the board's favorite status",
+        });
+    }
+  }
+);
+
+boardRoute.get(
+  "/boards/favorites",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse) => {
+    const userId = req.user._id;
+    try {
+      const favoriteBoards = await Boards.find({
+        userId: userId,
+        favorite: true,
+      });
+      if (!favoriteBoards) {
+        return res.status(404).json([]);
+      }
+      return res.status(200).json(favoriteBoards);
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "An error occurred while fetching favorites" });
+    }
+  }
+);
 export default boardRoute;

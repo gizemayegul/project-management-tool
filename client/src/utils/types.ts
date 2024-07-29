@@ -48,6 +48,7 @@ export type BoardType = {
   createdAt: string;
   updatedAt: string;
   projectName: string;
+  favorite: boolean;
 };
 
 export type CardType = {
@@ -61,6 +62,7 @@ export type CardType = {
   boards?: string[];
   userId: Id;
   projectId?: Id;
+  favorite: boolean;
 };
 
 export type AuthContextType = {
@@ -74,18 +76,6 @@ export type AuthContextType = {
   token: string | null;
 };
 
-export type ProjectContextType = {
-  projects: ProjectType[];
-  setProjects: React.Dispatch<React.SetStateAction<ProjectType[]>>;
-  handleDeleteProject: (projectId: Id) => void;
-  submitHandler: (
-    e: React.FormEvent<HTMLFormElement>,
-    setCreateProject?: (createProject: boolean) => void
-  ) => void;
-  projectName: string;
-  setProjectName: React.Dispatch<React.SetStateAction<string>>;
-};
-
 export type ProjectType = {
   projectName: string;
   _id: Id;
@@ -94,6 +84,7 @@ export type ProjectType = {
   imageUrl: string;
   boards: string[];
   userId: Id;
+  favorite: boolean;
 };
 
 export type Create = {

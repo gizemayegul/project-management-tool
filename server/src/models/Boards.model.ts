@@ -24,8 +24,11 @@ const boardsSchema = new Schema(
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4WmAlrjjUTOOYs35vGliGHYUdtUkXyQ-t9cyThMmGX0Uh4gtmZ0lkJE8ixZIRSSmgJzI&usqp=CAU",
     },
     columns: [{ type: Schema.Types.ObjectId, ref: "Column" }],
+    favorite: {
+      type: Boolean,
+      default: false,
+    },
   },
-
   {
     timestamps: true,
   }
