@@ -1,15 +1,19 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../../Context/AuthContext";
 import taskFlow from "../../assets/images/taskFlow.png";
-
 import CreateProjectDropDown from "../CreateProjectDropDown/CreateProjectDropDown";
 import CreateBoardDropDown from "../CreateBoardDropDown/CreateBoardDropDown";
+import { BoardContext } from "../../Context/BoardContext";
+import { ProjectContext } from "../../Context/ProjectContext";
+
 export default function Navbar() {
   const { logOutUser, isLoggedIn } = useContext(AuthContext);
   const [createProject, setCreateProject] = useState<boolean>(false);
   const [createBoard, setCreateBoard] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { favBoards } = useContext(BoardContext);
+  const { favoriteProjects } = useContext(ProjectContext);
 
   return (
     <div>
@@ -75,22 +79,37 @@ export default function Navbar() {
                 <li className="m-2">
                   <details className="dropdown" tabIndex={0} role="button">
                     <summary>
-                      <div>Projects</div>
-                    </summary>
-                    <ul className="menu dropdown-content bg-base-100 rounded-box z-30 w-52 p-2 shadow">
-                      <li> pro1</li>
-                      <li>pro2</li>
-                    </ul>
-                  </details>
-                </li>
-                <li className="m-2">
-                  <details className="dropdown" tabIndex={0} role="button">
-                    <summary>
                       <div>Favs</div>
                     </summary>
                     <ul className="menu dropdown-content bg-base-100 rounded-box z-30 w-52 p-2 shadow">
-                      <li> fav1</li>
-                      <li>fav2</li>
+                      {favBoards.length > 0 &&
+                        favBoards.map((fav) => (
+                          <li
+                            key={fav._id}
+                            className="m-2 p-2 hover:bg-gray-200 cursor-pointer rounded-md"
+                            onClick={() => {
+                              navigate(
+                                `/projects/${fav.projectId}/boards/${fav._id}`
+                              );
+                            }}
+                          >
+                            {fav.boardName}
+                          </li>
+                        ))}
+
+                      {favoriteProjects &&
+                        favoriteProjects.length > 0 &&
+                        favoriteProjects.map((fav) => (
+                          <li
+                            key={fav._id}
+                            className="m-2 p-2 hover:bg-gray-200 cursor-pointer rounded-md"
+                            onClick={() => {
+                              navigate(`/projects/${fav._id}`);
+                            }}
+                          >
+                            {fav.projectName}
+                          </li>
+                        ))}
                     </ul>
                   </details>
                 </li>

@@ -3,7 +3,7 @@ import { AuthContext } from "../../Context/AuthContext";
 import Empty from "../../Components/Empty/Empty";
 import { ProjectContext } from "../../Context/ProjectContext";
 import Projects from "../../Components/Projects/Projects";
-import AllBoards from "../../Components/Boards/Boards";
+import Boards from "../../Components/Boards/Boards";
 import { Link } from "react-router-dom";
 
 export default function Dashboard() {
@@ -31,7 +31,7 @@ export default function Dashboard() {
           </div>
           <div className="mt-6">
             <h2 className="mt-4">Boards</h2>
-            <AllBoards />
+            <Boards />
           </div>
         </div>
       )}

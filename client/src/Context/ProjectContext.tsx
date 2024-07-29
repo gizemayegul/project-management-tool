@@ -1,7 +1,8 @@
 import { createContext, useState, useEffect } from "react";
 import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
-import { ProjectContextType, Id, ProjectType } from "../utils/types";
+import { Id, ProjectType } from "../utils/types";
+import { ProjectContextType } from "./context";
 import { apiUrl } from "../utils/config";
 import { useNavigate } from "react-router-dom";
 
@@ -14,12 +15,18 @@ const ProjectContext = createContext<ProjectContextType>({
   submitHandler: () => {},
   setProjectName: () => {},
   projectName: "",
+  handleFavoriteProject: () => {},
+  setFavoriteProjects: () => {},
+  favoriteProjects: [],
 });
 
 function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
   const { isLoggedIn, token } = useContext(AuthContext);
   const [projectName, setProjectName] = useState<string>("");
   const [projects, setProjects] = useState<ProjectType[]>([]);
+  const [favoriteProjects, setFavoriteProjects] = useState<ProjectType[]>([]);
+  const [favChange, setFavChange] = useState<boolean>();
+
   const navigate = useNavigate();
   useEffect(() => {
     if (isLoggedIn) {
@@ -35,7 +42,22 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
       };
       fetchProjects();
     }
-  }, [token, isLoggedIn]);
+  }, [token, isLoggedIn, favChange]);
+
+  useEffect(() => {
+    const fetchFavoriteProjects = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/api/projects/favorites`, {
+          headers: { Authorization: token },
+        });
+        setFavoriteProjects(response.data);
+        console.log(response.data, "fav projects");
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchFavoriteProjects();
+  }, [favChange]);
 
   const submitHandler = async (
     e: React.FormEvent<HTMLFormElement>,
@@ -67,8 +89,6 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
       }
     };
     createProject();
-
-    //TODO : projects page is not updated directly maybe it is better move them inside context
   };
 
   const handleDeleteProject = async (projectId: Id) => {
@@ -84,6 +104,17 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
       console.log(error);
     }
   };
+  const handleFavoriteProject = async (projectId: Id) => {
+    const response = await axios.put(
+      `${apiUrl}/projects/${projectId}/favorite`,
+      {
+        projectId,
+      },
+      { headers: { Authorization: token } }
+    );
+    console.log(response.data);
+    setFavChange(response.data);
+  };
 
   return (
     <ProjectContext.Provider
@@ -94,6 +125,9 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
         submitHandler,
         setProjectName,
         projectName,
+        handleFavoriteProject,
+        favoriteProjects,
+        setFavoriteProjects,
       }}
     >
       {props.children}

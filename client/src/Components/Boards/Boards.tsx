@@ -7,14 +7,14 @@ import { useContext } from "react";
 import { AuthContext } from "../../Context/AuthContext";
 import { ProjectContext } from "../../Context/ProjectContext";
 import Card from "../Card/Card";
-import { useNavigate } from "react-router-dom";
+import { BoardContext } from "../../Context/BoardContext";
 
 export default function Boards() {
   const [boards, setBoards] = useState<BoardType[]>([]);
   const { token } = useContext(AuthContext);
   const { projects } = useContext(ProjectContext);
   const { projectId } = useParams();
-  const navigate = useNavigate();
+  const { favChange } = useContext(BoardContext);
 
   if (!projectId) {
     useEffect(() => {
@@ -29,7 +29,7 @@ export default function Boards() {
         }
       };
       fetchAllBoards();
-    }, [token, projects]);
+    }, [token, projects, favChange]);
   } else {
     useEffect(() => {
       const fetchBoards = async () => {
@@ -38,13 +38,14 @@ export default function Boards() {
             headers: { Authorization: token },
           });
           setBoards(response.data.boards);
+          console.log(response.data.boards);
         } catch (error) {
           console.error("Error fetching boards:", error);
         }
       };
 
       fetchBoards();
-    }, [projectId]);
+    }, [projectId, favChange]);
   }
 
   return (

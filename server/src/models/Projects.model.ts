@@ -18,6 +18,10 @@ const projectsSchema = new Schema(
       ref: "User",
     },
     boards: [{ type: Schema.Types.ObjectId, ref: "Board" }],
+    favorite: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

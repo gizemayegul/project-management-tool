@@ -104,4 +104,59 @@ projectRoute.delete(
     }
   }
 );
+
+projectRoute.put(
+  "/projects/:projectId/favorite",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
+    const { projectId } = req.params;
+    console.log(projectId);
+    if (!projectId) {
+      res.status(400).json({ message: "An expected error happened" });
+      return;
+    }
+    try {
+      const project = await Projects.findById(projectId);
+      if (!project) {
+        res.status(404).json({ message: "Project not found" });
+        return;
+      }
+
+      const updatedProject = await Projects.findByIdAndUpdate(
+        projectId,
+        { favorite: !project.favorite },
+        { new: true }
+      );
+      return res.status(200).json(updatedProject);
+    } catch (error) {
+      console.error({
+        message: "An error occurred while updating the project",
+      });
+    }
+  }
+);
+
+projectRoute.get(
+  "/api/projects/favorites",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
+    const userId = req.user._id;
+    try {
+      const projects = await Projects.find({
+        userId: userId,
+        favorite: true,
+      });
+
+      // if (!projects.length) {
+      //   return res.status(404).json([]);
+      // }
+
+      return res.status(200).json(projects);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "An internal server error occurred" });
+    }
+  }
+);
+
 export default projectRoute;

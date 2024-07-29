@@ -1,6 +1,5 @@
 import { useState } from "react";
 import axios from "axios";
-import { CSS } from "@dnd-kit/utilities";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import Task from "../Tasks/Task";
 import { apiUrl } from "../../utils/config";

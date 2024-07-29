@@ -8,7 +8,6 @@ import errorHandler from "./error-handling";
 import projectRoute from "./routes/project.routes";
 import boardRoute from "./routes/board.routes";
 import columnRoute from "./routes/column.routes";
-
 const app: Application = express();
 middleWare(app);
 
