@@ -24,3 +24,36 @@ export type ProjectContextType = {
   handleFavoriteProject: (projectId: Id) => void;
   setFavoriteProjects: React.Dispatch<React.SetStateAction<ProjectType[]>>;
 };
+export type AuthContextType = {
+  user: User | null;
+  isLoggedIn: boolean;
+  isLoading: boolean;
+  logOutUser: Function; // Add logOutUser property
+  storeToken: (token: string) => void;
+  authenticateUser: () => void;
+  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+  token: string | null;
+  handleSubmitFile: (e: React.FormEvent<HTMLFormElement>) => void;
+  setIsLineLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  isLineLoading: boolean;
+  handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  setSelectedFile: React.Dispatch<React.SetStateAction<File | null>>;
+  selectedFile: File | null;
+  handleUpdate: () => void;
+  userUpdate: User;
+  setUserUpdate: React.Dispatch<
+    React.SetStateAction<{
+      name: string;
+      email: string;
+      password: string;
+    }>
+  >;
+};
+
+type User = {
+  email: string;
+  image?: string;
+  name: string;
+  password: string;
+  _id?: Id;
+};

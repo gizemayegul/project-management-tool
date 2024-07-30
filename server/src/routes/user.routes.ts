@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import isAuthenticated from "../middleware/isAutenticated";
 import { CustomRequest, CustomResponse } from "../types/ types";
+const fileUploader = require("../config/cloudinary.config");
 
 interface UserRequestBody {
   email: string;
@@ -90,8 +91,60 @@ userRoute.post(
 userRoute.get(
   "/verify",
   isAuthenticated,
-  (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
-    res.json(req.user);
+  async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
+    const user = await User.findById(req.user?._id);
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+    const { password: _, ...userInfo } = user.toObject();
+    res.status(200).json(userInfo);
   }
 );
+
+userRoute.post(
+  "/upload",
+  isAuthenticated,
+  fileUploader.single("image"),
+  async (req: CustomRequest, res: CustomResponse) => {
+    if (!req.file) {
+      res.status(400).json({ message: "Please provide an image" });
+      return;
+    }
+    const updateImage = await User.findByIdAndUpdate(
+      req.user?._id,
+      { image: req.file.path },
+      { new: true }
+    );
+    console.log(req.user);
+
+    res.status(200).json(updateImage);
+  }
+);
+
+userRoute.put(
+  "/update",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse) => {
+    const { email, password, name } = req.body as UserRequestBody;
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    try {
+      const response = await User.findByIdAndUpdate(
+        req.user._id,
+        { email, name, password: hashedPassword },
+        {
+          new: true,
+        }
+      );
+
+      res.status(200).json(response);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
+
 export default userRoute;

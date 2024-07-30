@@ -66,17 +66,6 @@ export type CardType = {
   favorite: boolean;
 };
 
-export type AuthContextType = {
-  user: any | null;
-  isLoggedIn: boolean;
-  isLoading: boolean;
-  logOutUser: Function; // Add logOutUser property
-  storeToken: (token: string) => void;
-  authenticateUser: () => void;
-  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-  token: string | null;
-};
-
 export type ProjectType = {
   projectName: string;
   _id: Id;

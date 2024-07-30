@@ -55,7 +55,6 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
           headers: { Authorization: token },
         });
         setFavoriteProjects(response.data);
-        console.log(response.data, "fav projects");
       } catch (error) {
         console.log(error);
       }
@@ -135,6 +134,7 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
         setFavoriteProjects,
         setDropdown,
         dropdown,
+        favChange,
       }}
     >
       {props.children}

@@ -6,9 +6,10 @@ import CreateProjectDropDown from "../CreateProjectDropDown/CreateProjectDropDow
 import CreateBoardDropDown from "../CreateBoardDropDown/CreateBoardDropDown";
 import { BoardContext } from "../../Context/BoardContext";
 import { ProjectContext } from "../../Context/ProjectContext";
+import { ArrowLeftStartOnRectangleIcon } from "@heroicons/react/20/solid";
 
 export default function Navbar() {
-  const { logOutUser, isLoggedIn } = useContext(AuthContext);
+  const { logOutUser, isLoggedIn, user } = useContext(AuthContext);
   const [createProject, setCreateProject] = useState<boolean>(false);
   const [createBoard, setCreateBoard] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -128,19 +129,18 @@ export default function Navbar() {
               </ul>
             </div>
 
-            <div className="navbar-end ">
-              <Link to="/profile">
-                <button className="btn mx-2">Profile</button>
-              </Link>
-              <button
-                className="btn hover:bg-red-500 hover:text-white"
+            <div className="navbar-end">
+              <div
                 onClick={() => {
-                  logOutUser();
-                  navigate("/login");
+                  navigate("/profile");
                 }}
               >
-                Logout
-              </button>
+                <img
+                  className="inline-block h-8 w-18 rounded-full ring-2 ring-white"
+                  src={user.image}
+                  alt=""
+                />{" "}
+              </div>
             </div>
           </>
         ) : (

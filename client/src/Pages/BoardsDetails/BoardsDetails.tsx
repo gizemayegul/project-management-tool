@@ -382,7 +382,7 @@ export default function BoardsDetails() {
                   setShow(false);
                   handleBoardName();
                 }}
-                className={`btn btn-sm btn-primary `}
+                className={`btn  btn-primary `}
               >
                 save
               </button>
