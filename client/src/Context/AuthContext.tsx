@@ -2,7 +2,7 @@ import { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import Loading from "../Components/Loading/Loading";
 import { AuthContextType } from "./context";
-import { set } from "mongoose";
+import { toast } from "react-toastify";
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
@@ -37,19 +37,8 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
     email: "",
     password: "",
   });
-
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.put(`${API_URL}/api/update`, userUpdate, {
-        headers: { Authorization: token },
-      });
-      setUser(response.data);
-      console.log(response.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  const notify = () => toast.success("Uploaded!");
+  const notifyUpdate = () => toast.success("User information is changed!");
 
   const [token, setToken] = useState<string | null>(
     localStorage.getItem("token")
@@ -111,6 +100,7 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
     setUser(response.data);
     setIsLineLoading(false);
     setSelectedFile(null);
+    notify();
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,6 +109,20 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
       console.log(e.target.files[0]);
     }
   };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.put(`${API_URL}/api/update`, userUpdate, {
+        headers: { Authorization: token },
+      });
+      setUser(response.data);
+      notifyUpdate();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{

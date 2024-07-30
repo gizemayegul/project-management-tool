@@ -1,12 +1,13 @@
 import DeleteModal from "../DeleteModal/DeleteModal";
 import { Id } from "../../utils/types";
 import Edit from "../Edit/Edit";
-import { Cog8ToothIcon } from "@heroicons/react/20/solid";
-
+import { Cog8ToothIcon, ArrowUpOnSquareIcon } from "@heroicons/react/20/solid";
+import { useState } from "react";
+import UploadBackground from "../UploadBackground/UploadBackground";
 type propTypes = {
-  id: Id;
+  id: Id | undefined;
   handleDelete: (id: Id) => void;
-  modal: string;
+  modal: string | undefined | Id;
   showDelete: boolean;
   show: boolean;
   setShow: (show: boolean) => void;
@@ -20,6 +21,7 @@ export default function Drawer({
   show,
   setShow,
 }: propTypes) {
+  const [uploadImage, seUploadImage] = useState<boolean>(false);
   return (
     <div>
       <div className="drawer drawer-end z-30 ">
@@ -53,6 +55,21 @@ export default function Drawer({
               }}
             >
               <Edit show={true} />
+            </li>
+            <li
+              onClick={() => {
+                seUploadImage(true);
+                console.log("he");
+              }}
+            >
+              {uploadImage ? (
+                <UploadBackground boardId={id} />
+              ) : (
+                <div>
+                  <ArrowUpOnSquareIcon className="h-4" />
+                  Upload Background
+                </div>
+              )}
             </li>
           </ul>
         </div>

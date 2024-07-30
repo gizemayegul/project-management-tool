@@ -111,14 +111,19 @@ userRoute.post(
       res.status(400).json({ message: "Please provide an image" });
       return;
     }
-    const updateImage = await User.findByIdAndUpdate(
-      req.user?._id,
-      { image: req.file.path },
-      { new: true }
-    );
-    console.log(req.user);
-
-    res.status(200).json(updateImage);
+    try {
+      const updateImage = await User.findByIdAndUpdate(
+        req.user?._id,
+        { image: req.file.path },
+        { new: true }
+      );
+      res.status(200).json(updateImage);
+    } catch (error) {
+      console.error(
+        "An error occurred while updating the user's image:",
+        error
+      );
+    }
   }
 );
 

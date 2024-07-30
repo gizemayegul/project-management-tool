@@ -9,6 +9,7 @@ import { AuthContext } from "../../Context/AuthContext";
 import Dropdown from "../Dropdown/Dropdown";
 import DeleteModal from "../DeleteModal/DeleteModal";
 import Edit from "../Edit/Edit";
+import { DragHandleIcon } from "@chakra-ui/icons";
 
 export default function Column({
   column,
@@ -116,7 +117,9 @@ export default function Column({
         {...listeners}
         {...attributes}
       >
-        <div className="flex justify-between w-full ">
+        <div className="flex justify-between items-start w-full ">
+          <DragHandleIcon />
+
           {showEdit ? (
             <input
               className="border-2 rounded-md border-indigo-500 hsad
@@ -143,7 +146,7 @@ export default function Column({
             </div>
           )}
 
-          <div>
+          <div className="flex">
             <Dropdown>
               <div
                 className="mx-1"

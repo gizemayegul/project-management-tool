@@ -3,11 +3,6 @@ import { AuthContext } from "../../Context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { ArrowRightEndOnRectangleIcon } from "@heroicons/react/20/solid";
 
-import { Suspense } from "react";
-import axios from "axios";
-import { apiUrl } from "../../utils/config";
-import { set } from "mongoose";
-
 export default function Profile() {
   const {
     logOutUser,
