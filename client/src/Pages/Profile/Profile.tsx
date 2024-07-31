@@ -23,7 +23,7 @@ export default function Profile() {
   return (
     <div className="flex flex-col items-center justify-center relative space-y-6">
       <img
-        className="inline-block h-40 w-40 rounded-full ring-2 ring-white"
+        className="inline-block h-40 w-40 rounded-full ring-2 ring-white border-8"
         src={user?.image ?? ""}
         alt=""
       />
@@ -104,7 +104,7 @@ export default function Profile() {
           }}
         />
 
-        <button className="btn btn-primary text-white" type="submit">
+        <button className="btn bg-indigo-600 text-white" type="submit">
           {" "}
           Update your profile
         </button>

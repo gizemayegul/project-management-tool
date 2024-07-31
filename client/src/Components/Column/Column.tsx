@@ -10,6 +10,8 @@ import Dropdown from "../Dropdown/Dropdown";
 import DeleteModal from "../DeleteModal/DeleteModal";
 import Edit from "../Edit/Edit";
 import { DragHandleIcon } from "@chakra-ui/icons";
+import { PlusIcon } from "@heroicons/react/20/solid";
+import { XMarkIcon } from "@heroicons/react/16/solid";
 
 export default function Column({
   column,
@@ -24,6 +26,7 @@ export default function Column({
   const [columnName, setColumnName] = useState<string>(column.columnName);
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [color, setColor] = useState("#00000");
+  const [showAddTask, setShowAddTask] = useState<boolean>(false);
   const { token } = useContext(AuthContext);
 
   const {
@@ -163,7 +166,7 @@ export default function Column({
                     setColor(e.target.value);
                   }}
                   type="color"
-                  className="border-2 rounded-full h-4 w-4"
+                  className="input input-bordered w-full "
                 />
                 <span>Change Color</span>
               </div>
@@ -190,19 +193,46 @@ export default function Column({
           />
         ))}
         <form
+          className="flex space-x-4 space-y-2 items-center"
           onSubmit={(e) => {
             handleAddTask(e);
           }}
         >
-          <input
-            onChange={(e) => {
-              setAddNewTask(e.target.value);
-            }}
-            className="border-4"
-            type="text"
-            value={addNewTask}
-          />
-          <button type="submit">Add Task</button>
+          {showAddTask ? (
+            <div className="flex flex-col space-y-4">
+              <input
+                required
+                onChange={(e) => {
+                  setAddNewTask(e.target.value);
+                }}
+                className="input input-bordered w-full shadow-xl p-2 "
+                type="text"
+                value={addNewTask}
+              />
+              <div className="flex items-center space-x-4">
+                <button
+                  className="p-0 m-0 btn bg-indigo-600 text-white w-fit px-4"
+                  type="submit"
+                >
+                  Add Task
+                </button>
+                <button onClick={() => setShowAddTask((prev) => !prev)}>
+                  <XMarkIcon className="h-8" />
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <PlusIcon className="h-5" />
+              <button
+                onClick={() => setShowAddTask((prev) => !prev)}
+                className="p-0 m-0"
+                type="submit"
+              >
+                <h2 className="pb-2">Add Task</h2>
+              </button>
+            </>
+          )}
         </form>
       </SortableContext>
     </div>

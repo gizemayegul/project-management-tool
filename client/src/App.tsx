@@ -17,6 +17,7 @@ import IsAnon from "./utils/IsAnon";
 import CreateProject from "./Pages/CreateProject/CreateProject";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import TaskDetails from "./Pages/TaskDetails/TaskDetails";
 -IsPrivate;
 function App() {
   return (
@@ -81,6 +82,15 @@ function App() {
           element={
             <IsPrivate>
               <BoardsDetails />
+            </IsPrivate>
+          }
+        />
+
+        <Route
+          path="/tasks/:columnId/:taskId"
+          element={
+            <IsPrivate>
+              <TaskDetails />
             </IsPrivate>
           }
         />

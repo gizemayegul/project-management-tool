@@ -10,6 +10,7 @@ export type TaskType = {
   status: string;
   createdAt: string;
   updatedAt: string;
+  taskDescription: string;
 };
 
 export type ColumnType = {

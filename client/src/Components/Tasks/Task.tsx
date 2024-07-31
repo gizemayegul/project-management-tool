@@ -7,6 +7,7 @@ import axios from "axios";
 import { apiUrl } from "../../utils/config";
 import { AuthContext } from "../../Context/AuthContext";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 export default function Task({
   task,
@@ -84,7 +85,10 @@ export default function Task({
       <div className="flex justify-between w-full">
         {!edit ? (
           <>
-            <div className="w-fit py-2 px-1">{taskName}</div>
+            <Link to={`/tasks/${columnId}/${task._id}`}>
+              <div className="w-fit py-2 px-1">{taskName}</div>
+            </Link>
+
             <div className="flex justify-between absolute right-1 top-3 ">
               {show && (
                 <>

@@ -158,8 +158,6 @@ columnRoute.put(
   }
 );
 
-export default columnRoute;
-
 //!! edit task information
 
 columnRoute.put(
@@ -246,3 +244,24 @@ columnRoute.put(
     }
   }
 );
+
+columnRoute.get(
+  "/tasks/:columnId/:taskId",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
+    try {
+      const { taskId, columnId } = req.params;
+      const response = await Columns.findById(columnId);
+      const taskDetail = response?.tasks.find(
+        (task) => task?._id?.toString() == taskId
+      );
+      res.status(200).json(taskDetail);
+    } catch (error) {
+      console.error({
+        message: "An error occurred while fetching the boards user",
+      });
+    }
+  }
+);
+
+export default columnRoute;

@@ -10,6 +10,7 @@ import { AuthContext } from "../../Context/AuthContext";
 import { BoardType } from "../../utils/types";
 import { useNavigate } from "react-router-dom";
 import Drawer from "../../Components/Drawer/Drawer";
+import { PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
 
 import {
   DndContext,
@@ -38,6 +39,7 @@ export default function BoardsDetails() {
   const [show, setShow] = useState(false);
   const [boardName, setBoardName] = useState<string>("");
   const [updateTask, setUpdateTask] = useState<boolean>(false);
+  const [addNewColumnShow, setAddNewColumnShow] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -368,9 +370,9 @@ export default function BoardsDetails() {
             <div className="text-black">{boardDetails.boardName}</div>
           )}
           {show && (
-            <div className={`flex align-bottom`}>
+            <div className={`flex align-bottom space-x-4`}>
               <input
-                className="border-4 py-1"
+                className="input input-bordered w-full "
                 type="text"
                 value={boardName}
                 onChange={(e) => {
@@ -382,9 +384,9 @@ export default function BoardsDetails() {
                   setShow(false);
                   handleBoardName();
                 }}
-                className={`btn  btn-primary `}
+                className=" bg-indigo-600  text-white hover:bg-indigo-500  hover:text-white rounded-md px-3  text-sm font-medium"
               >
-                save
+                Change Name
               </button>
             </div>
           )}
@@ -425,16 +427,47 @@ export default function BoardsDetails() {
                 />
               ))}
             </SortableContext>
-            <form onSubmit={(e) => handleSubmitColumn(e)}>
-              <input
-                onChange={(e) => {
-                  setAddNewColumn(e.target.value);
-                }}
-                className="border-4"
-                type="text"
-                value={addNewColumn}
-              />
-              <button type="submit">Add Column</button>
+            <form
+              className="bg-[#F1F2F4] h-fit w-60 p-4 rounded-md bg-opacity-30"
+              onSubmit={(e) => handleSubmitColumn(e)}
+            >
+              {addNewColumnShow ? (
+                <div className="flex flex-col space-y-4">
+                  <input
+                    required
+                    onChange={(e) => {
+                      setAddNewColumn(e.target.value);
+                    }}
+                    className="input input-bordered w-full shadow-xl p-2 "
+                    type="text"
+                    value={addNewColumn}
+                  />
+                  <div className="flex items-center space-x-4">
+                    <button
+                      className="p-0 m-0 btn bg-indigo-600 text-white w-fit px-4"
+                      type="submit"
+                    >
+                      Add Column
+                    </button>
+                    <button
+                      onClick={() => setAddNewColumnShow((prev) => !prev)}
+                    >
+                      <XMarkIcon className="h-8" />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex space-x-2">
+                  <PlusIcon className="h-5" />
+                  <button
+                    onClick={() => setAddNewColumnShow((prev) => !prev)}
+                    className="p-0 m-0"
+                    type="submit"
+                  >
+                    <h2 className="pb-2"> Add Column</h2>
+                  </button>
+                </div>
+              )}
             </form>
           </div>
         </div>

@@ -26,6 +26,10 @@ const ColumnsSchema = new Schema(
           default: "P3",
           enum: ["P1", "P2", "P3"],
         },
+        taskDescription: {
+          type: String,
+          default: "No Description",
+        },
       },
 
       {

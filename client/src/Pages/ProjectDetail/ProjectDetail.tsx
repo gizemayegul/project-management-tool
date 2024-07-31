@@ -65,9 +65,9 @@ export default function ProjectDetail() {
           <div className="text-black">{projectName}</div>
         )}
         {show && (
-          <div className={`flex align-bottom`}>
+          <div className={`flex align-bottom space-x-4`}>
             <input
-              className="border-4 py-1"
+              className="input input-bordered w-full "
               type="text"
               value={projectName}
               onChange={(e) => {
@@ -79,9 +79,9 @@ export default function ProjectDetail() {
                 setShow(false);
                 handleProjectName();
               }}
-              className={`btn  btn-primary `}
+              className=" bg-indigo-600  text-white hover:bg-indigo-500  hover:text-white rounded-md px-3  text-sm font-medium"
             >
-              save
+              Change Name
             </button>
           </div>
         )}
