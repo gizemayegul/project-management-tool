@@ -27,10 +27,8 @@ export default function Navbar() {
       !dropdownRef.current.contains(e.target as Node)
     ) {
       setDropdown((prev) => !prev);
-      console.log("outside");
     } else if (favRef.current && !favRef.current.contains(e.target as Node)) {
       setDropdown((prev) => !prev);
-      console.log("outside");
     }
   };
 
