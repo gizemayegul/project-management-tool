@@ -21,6 +21,7 @@ export type ColumnType = {
   tasks: TaskType[];
   createdAt: string;
   updatedAt: string;
+  color: string;
 };
 
 export type ColumnProps = {

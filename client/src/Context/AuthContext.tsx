@@ -35,6 +35,7 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
   const [isLoading, setIsLoading] = useState(true);
   const [isLineLoading, setIsLineLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [logOut, setLogOut] = useState(false);
   const [userUpdate, setUserUpdate] = useState({
     name: "",
     email: "",
@@ -170,6 +171,8 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
         handleUserDelete,
         userUpdate,
         setUserUpdate,
+        logOut,
+        setLogOut,
       }}
     >
       {isLoading ? <Loading /> : props.children}

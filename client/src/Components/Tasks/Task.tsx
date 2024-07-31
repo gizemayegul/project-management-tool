@@ -85,8 +85,8 @@ export default function Task({
       <div className="flex justify-between w-full">
         {!edit ? (
           <>
-            <Link to={`/tasks/${columnId}/${task._id}`}>
-              <div className="w-fit py-2 px-1">{taskName}</div>
+            <Link className="grow" to={`/tasks/${columnId}/${task._id}`}>
+              <div className="w-fit py-2 px-1 ">{taskName}</div>
             </Link>
 
             <div className="flex justify-between absolute right-1 top-3 ">

@@ -42,6 +42,7 @@ export default function BoardsDetails() {
   const [addNewColumnShow, setAddNewColumnShow] = useState<boolean>(false);
 
   const navigate = useNavigate();
+  console.log("he");
 
   const { token } = useContext(AuthContext);
   const sensors = useSensors(

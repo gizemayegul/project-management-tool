@@ -12,6 +12,7 @@ import Edit from "../Edit/Edit";
 import { DragHandleIcon } from "@chakra-ui/icons";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { XMarkIcon } from "@heroicons/react/16/solid";
+import { Arguments } from "@dnd-kit/sortable/dist/hooks/useSortable";
 
 export default function Column({
   column,
@@ -25,9 +26,20 @@ export default function Column({
   const [addNewTask, setAddNewTask] = useState<string>("");
   const [columnName, setColumnName] = useState<string>(column.columnName);
   const [showEdit, setShowEdit] = useState<boolean>(false);
-  const [color, setColor] = useState("#00000");
   const [showAddTask, setShowAddTask] = useState<boolean>(false);
+  const [color, setColor] = useState(column.color);
+
   const { token } = useContext(AuthContext);
+
+  // const debounce = (func: void, wait) => {
+  //   let timeout;
+  //   return (...args: Arguments) => {
+  //     clearTimeout(timeout);
+  //     timeout = setTimeout(() => func.apply(this, args), wait);
+  //   };
+  // };
+
+  //TODO debounce implementation
 
   const {
     isDragging,
@@ -80,6 +92,31 @@ export default function Column({
       }
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const handleColorChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      const response = await axios.put(
+        `${apiUrl}/columns/${column._id}/color`,
+        {
+          color: e.target.value,
+        },
+        { headers: { Authorization: token } }
+      );
+      if (response.status === 200) {
+        setColor(response.data.color);
+        setColumns((prevColumns) => {
+          let newColumns = [...prevColumns];
+          const findTheColumn = prevColumns.findIndex(
+            (col) => col._id === column._id
+          );
+          newColumns[findTheColumn].color = response.data.color;
+          return newColumns;
+        });
+      }
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -145,7 +182,10 @@ export default function Column({
               }}
             />
           ) : (
-            <div className="break-all w-9/12 mt-0.5" style={{ color: color }}>
+            <div
+              className="break-all w-9/12 mt-0.5"
+              style={{ color: column.color }}
+            >
               {columnName}
             </div>
           )}
@@ -164,10 +204,10 @@ export default function Column({
               <div>
                 <input
                   onChange={(e) => {
-                    setColor(e.target.value);
+                    handleColorChange(e);
                   }}
                   type="color"
-                  className="input input-bordered w-full "
+                  className="color-input"
                 />
                 <span>Change Color</span>
               </div>
@@ -212,7 +252,7 @@ export default function Column({
               />
               <div className="flex items-center space-x-4">
                 <button
-                  className="btn p-0 m-0 btn bg-indigo-600 text-white w-fit px-4"
+                  className="btn p-0 m-0 bg-indigo-600 text-white w-fit px-4"
                   type="submit"
                 >
                   Add Task

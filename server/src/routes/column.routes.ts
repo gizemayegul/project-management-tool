@@ -264,4 +264,28 @@ columnRoute.get(
   }
 );
 
+columnRoute.put(
+  "/columns/:columnId/color",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
+    try {
+      const { columnId } = req.params;
+      const { color } = req.body;
+      console.log(columnId, color, "color");
+
+      const response = await Columns.findByIdAndUpdate(
+        columnId,
+        { color: color },
+        {
+          new: true,
+        }
+      );
+      console.log(response);
+      res.status(200).json(response);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
+
 export default columnRoute;
