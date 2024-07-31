@@ -23,6 +23,8 @@ export type ProjectContextType = {
   setProjectName: React.Dispatch<React.SetStateAction<string>>;
   handleFavoriteProject: (projectId: Id) => void;
   setFavoriteProjects: React.Dispatch<React.SetStateAction<ProjectType[]>>;
+  background: boolean;
+  setBackGround: React.Dispatch<React.SetStateAction<boolean>>;
 };
 export type AuthContextType = {
   user: User | null;

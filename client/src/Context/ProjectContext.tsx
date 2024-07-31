@@ -7,6 +7,7 @@ import { apiUrl } from "../utils/config";
 import { useNavigate } from "react-router-dom";
 
 import axios, { AxiosError } from "axios";
+import { set } from "mongoose";
 
 const ProjectContext = createContext<ProjectContextType>({
   projects: [],
@@ -21,6 +22,8 @@ const ProjectContext = createContext<ProjectContextType>({
   favChange: null,
   dropdown: false,
   setDropdown: () => {},
+  background: false,
+  setBackGround: () => {},
 });
 
 function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
@@ -30,6 +33,7 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
   const [favoriteProjects, setFavoriteProjects] = useState<ProjectType[]>([]);
   const [favChange, setFavChange] = useState<boolean | null>(null);
   const [dropdown, setDropdown] = useState<boolean>(false);
+  const [background, setBackGround] = useState<boolean>(false);
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -46,7 +50,7 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
       };
       fetchProjects();
     }
-  }, [token, isLoggedIn, favChange]);
+  }, [token, isLoggedIn, favChange, background]);
 
   useEffect(() => {
     const fetchFavoriteProjects = async () => {
@@ -137,6 +141,7 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
         setDropdown,
         dropdown,
         favChange,
+        setBackGround,
       }}
     >
       {props.children}

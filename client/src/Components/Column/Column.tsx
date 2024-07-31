@@ -121,12 +121,13 @@ export default function Column({
         {...attributes}
       >
         <div className="flex justify-between items-start w-full ">
-          <DragHandleIcon />
+          <div>
+            <DragHandleIcon />
+          </div>
 
           {showEdit ? (
             <input
-              className="border-2 rounded-md border-indigo-500 hsad
-              -fit"
+              className=" input input-bordered border-2 rounded-md border-indigo-500 h-fit"
               type="text"
               value={columnName}
               onBlur={() => {
@@ -144,7 +145,7 @@ export default function Column({
               }}
             />
           ) : (
-            <div className="break-all w-9/12" style={{ color: color }}>
+            <div className="break-all w-9/12 mt-0.5" style={{ color: color }}>
               {columnName}
             </div>
           )}
@@ -211,7 +212,7 @@ export default function Column({
               />
               <div className="flex items-center space-x-4">
                 <button
-                  className="p-0 m-0 btn bg-indigo-600 text-white w-fit px-4"
+                  className="btn p-0 m-0 btn bg-indigo-600 text-white w-fit px-4"
                   type="submit"
                 >
                   Add Task

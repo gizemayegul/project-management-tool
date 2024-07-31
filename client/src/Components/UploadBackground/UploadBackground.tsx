@@ -4,6 +4,8 @@ import axios from "axios";
 import { apiUrl } from "../../utils/config";
 import { Id } from "../../utils/types";
 import { toast } from "react-toastify";
+import { useContext } from "react";
+import { ProjectContext } from "../../Context/ProjectContext";
 
 export default function UploadBackground({
   id,
@@ -15,6 +17,7 @@ export default function UploadBackground({
   const notify = () => toast.success("Uploaded!");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isLineLoading, setIsLineLoading] = useState<boolean>(false);
+  const { setBackGround } = useContext(ProjectContext);
 
   const handleSubmitFile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -29,11 +32,12 @@ export default function UploadBackground({
           headers: { Authorization: localStorage.getItem("token") },
         }
       );
-      console.log(response.data);
-
       setIsLineLoading(false);
       setSelectedFile(null);
       notify();
+      if (type === "projects") {
+        setBackGround((prev) => !prev);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -57,7 +61,7 @@ export default function UploadBackground({
         type="file"
         id="file"
         name="file"
-        className="w-full max-w-xs mb-2"
+        className="w-full max-w-xs mb-2 input input-bordered"
         onChange={(e) => {
           handleFileChange(e);
         }}

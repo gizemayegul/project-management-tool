@@ -38,7 +38,7 @@ export default function Profile() {
           type="file"
           id="file"
           name="file"
-          className="w-full max-w-xs mb-2"
+          className="input input-bordered w-full max-w-xs mb-2"
           onChange={(e) => {
             handleFileChange(e);
           }}
