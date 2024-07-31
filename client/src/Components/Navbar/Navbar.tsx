@@ -6,16 +6,46 @@ import CreateProjectDropDown from "../CreateProjectDropDown/CreateProjectDropDow
 import CreateBoardDropDown from "../CreateBoardDropDown/CreateBoardDropDown";
 import { BoardContext } from "../../Context/BoardContext";
 import { ProjectContext } from "../../Context/ProjectContext";
-import { ArrowLeftStartOnRectangleIcon } from "@heroicons/react/20/solid";
+import { useRef } from "react";
+import { set } from "mongoose";
 
 export default function Navbar() {
   const { logOutUser, isLoggedIn, user } = useContext(AuthContext);
   const [createProject, setCreateProject] = useState<boolean>(false);
   const [createBoard, setCreateBoard] = useState<boolean>(false);
   const navigate = useNavigate();
+  const dropdownRef = useRef<HTMLDetailsElement>(null);
+  const favRef = useRef<HTMLDetailsElement>(null);
+
   const { favBoards } = useContext(BoardContext);
   const { favoriteProjects, dropdown, setDropdown } =
     useContext(ProjectContext);
+
+  const clickSomewhere = (e: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(e.target as Node)
+    ) {
+      setDropdown((prev) => !prev);
+      console.log("outside");
+    } else if (favRef.current && !favRef.current.contains(e.target as Node)) {
+      setDropdown((prev) => !prev);
+      console.log("outside");
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("click", (e: MouseEvent) => clickSomewhere(e));
+
+    return () => {
+      window.removeEventListener("click", (e: MouseEvent) => clickSomewhere(e));
+    };
+  }, []);
+
+  const toggleDropdown = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent the event from propagating to the window
+    setDropdown((prev) => !prev);
+  };
 
   return (
     <div className="navbar bg-base-100 z-50">
@@ -33,12 +63,14 @@ export default function Navbar() {
             <ul className="menu menu-horizontal px-1 ">
               <li className="m-2">
                 <details
+                  ref={dropdownRef}
                   className="dropdown"
                   tabIndex={0}
+                  onClick={(e) => e.stopPropagation()}
                   role="button"
                   {...(dropdown ? { open: false } : {})}
                 >
-                  <summary>
+                  <summary onClick={toggleDropdown}>
                     <div>Create</div>
                   </summary>
                   <ul className="menu dropdown-content bg-base-100 rounded-box z-30 w-80 p-2 shadow flex justify-between">
@@ -85,8 +117,15 @@ export default function Navbar() {
                 </details>
               </li>
               <li className="m-2">
-                <details className="dropdown" tabIndex={0} role="button">
-                  <summary>
+                <details
+                  className="dropdown"
+                  tabIndex={0}
+                  role="button"
+                  ref={favRef}
+                  onClick={(e) => e.stopPropagation()}
+                  {...(dropdown ? { open: false } : {})}
+                >
+                  <summary onClick={toggleDropdown}>
                     <div>Favs</div>
                   </summary>
                   <ul className="menu dropdown-content bg-base-100 rounded-box z-30 w-52 p-2 shadow">
