@@ -53,7 +53,7 @@ export type AuthContextType = {
   handleUserDelete: (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
-
+};
 
 type User = {
   email: string;
