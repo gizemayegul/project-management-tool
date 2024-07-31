@@ -39,7 +39,7 @@ export type AuthContextType = {
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   setSelectedFile: React.Dispatch<React.SetStateAction<File | null>>;
   selectedFile: File | null;
-  handleUpdate: () => void;
+  handleUpdate: (e: React.FormEvent<HTMLFormElement>) => void;
   userUpdate: User;
   setUserUpdate: React.Dispatch<
     React.SetStateAction<{
@@ -48,6 +48,9 @@ export type AuthContextType = {
       password: string;
     }>
   >;
+  handleUserDelete: (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => void;
 };
 
 type User = {

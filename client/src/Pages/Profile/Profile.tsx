@@ -15,6 +15,7 @@ export default function Profile() {
     userUpdate,
     setUserUpdate,
     selectedFile,
+    handleUserDelete,
   } = useContext(AuthContext);
 
   const navigate = useNavigate();
@@ -120,7 +121,13 @@ export default function Profile() {
           <ArrowRightEndOnRectangleIcon className="h-6 w-6" />
         </button>
       </div>
-      <button className="btn btn-error text-white"> Delete Account</button>
+      <button
+        onClick={(e) => handleUserDelete(e)}
+        className="btn btn-error text-white"
+      >
+        {" "}
+        Delete Account
+      </button>
     </div>
   );
 }

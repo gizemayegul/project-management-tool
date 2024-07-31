@@ -6,9 +6,11 @@ import { Id } from "../../utils/types";
 import { toast } from "react-toastify";
 
 export default function UploadBackground({
-  boardId,
+  id,
+  type,
 }: {
-  boardId: Id | undefined;
+  id: Id | undefined;
+  type: string;
 }) {
   const notify = () => toast.success("Uploaded!");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -19,20 +21,22 @@ export default function UploadBackground({
     const uploadData = new FormData();
     uploadData.append("imagebackground", selectedFile as Blob);
     console.log(uploadData);
+    try {
+      const response = await axios.put(
+        `${apiUrl}/${type}/${id}/upload`,
+        uploadData,
+        {
+          headers: { Authorization: localStorage.getItem("token") },
+        }
+      );
+      console.log(response.data);
 
-    const response = await axios.put(
-      `${apiUrl}/boards/${boardId}/upload`,
-      uploadData,
-      {
-        headers: { Authorization: localStorage.getItem("token") },
-      }
-    );
-    console.log(response.data);
-    console.log(response.data.imageUrl);
-
-    setIsLineLoading(false);
-    setSelectedFile(null);
-    notify();
+      setIsLineLoading(false);
+      setSelectedFile(null);
+      notify();
+    } catch (error) {
+      console.log(error);
+    }
   };
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {

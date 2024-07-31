@@ -396,6 +396,7 @@ export default function BoardsDetails() {
           showDelete={true}
           show={show}
           setShow={setShow}
+          type="boards"
         />
       </div>
       <DndContext

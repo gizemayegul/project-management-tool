@@ -104,6 +104,8 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
       setProjects((prev) => {
         return prev.filter((project) => project._id !== projectId);
       });
+
+      navigate("/dashboard");
     } catch (error) {
       console.log(error);
     }

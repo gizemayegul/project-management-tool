@@ -4,6 +4,7 @@ import { CustomRequest, CustomResponse } from "../types/ types";
 import Projects from "../models/Projects.model";
 import Boards from "../models/Boards.model";
 import Columns from "../models/Columns.model";
+const fileUploader = require("../config/cloudinary.config");
 
 const projectRoute = Router();
 projectRoute.post(
@@ -155,6 +156,47 @@ projectRoute.get(
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "An internal server error occurred" });
+    }
+  }
+);
+projectRoute.put(
+  "/projects/:productId/upload",
+  isAuthenticated,
+  fileUploader.single("imagebackground"),
+  async (req: CustomRequest, res: CustomResponse) => {
+    const { productId } = req.params;
+    console.log(req.file, "hello");
+    if (!req.file) {
+      res.status(400).json({ message: "Please provide an image" });
+      return;
+    }
+    try {
+      const updateImage = await Projects.findByIdAndUpdate(
+        productId,
+        { imageUrl: req.file.path },
+        { new: true }
+      );
+      res.status(200).json(updateImage);
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  }
+);
+
+projectRoute.put(
+  "/projects/:projectId",
+  async (req: CustomRequest, res: CustomResponse) => {
+    try {
+      const { projectId } = req.params;
+      const { projectName } = req.body;
+      const project = await Projects.findByIdAndUpdate(
+        projectId,
+        { projectName },
+        { new: true }
+      );
+      res.status(200).json(project);
+    } catch (error) {
+      console.log(error);
     }
   }
 );

@@ -123,6 +123,10 @@ userRoute.post(
         "An error occurred while updating the user's image:",
         error
       );
+      res.status(500).json({
+        message:
+          "An error occurred while updating the user's image,try any other image type",
+      });
     }
   }
 );
@@ -145,6 +149,19 @@ userRoute.put(
         }
       );
 
+      res.status(200).json(response);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
+
+userRoute.delete(
+  "/delete",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse) => {
+    try {
+      const response = await User.findByIdAndDelete(req.user?._id);
       res.status(200).json(response);
     } catch (err) {
       console.log(err);

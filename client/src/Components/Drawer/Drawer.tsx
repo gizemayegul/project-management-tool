@@ -4,22 +4,23 @@ import Edit from "../Edit/Edit";
 import { Cog8ToothIcon, ArrowUpOnSquareIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
 import UploadBackground from "../UploadBackground/UploadBackground";
+import { XMarkIcon } from "@heroicons/react/16/solid";
 type propTypes = {
   id: Id | undefined;
   handleDelete: (id: Id) => void;
-  modal: string | undefined | Id;
   showDelete: boolean;
   show: boolean;
   setShow: (show: boolean) => void;
+  type: string;
 };
 
 export default function Drawer({
   id,
   handleDelete,
-  modal,
   showDelete,
   show,
   setShow,
+  type,
 }: propTypes) {
   const [uploadImage, seUploadImage] = useState<boolean>(false);
   return (
@@ -59,11 +60,10 @@ export default function Drawer({
             <li
               onClick={() => {
                 seUploadImage(true);
-                console.log("he");
               }}
             >
               {uploadImage ? (
-                <UploadBackground boardId={id} />
+                <UploadBackground id={id} type={type} />
               ) : (
                 <div>
                   <ArrowUpOnSquareIcon className="h-4" />
@@ -71,6 +71,16 @@ export default function Drawer({
                 </div>
               )}
             </li>
+            {uploadImage && (
+              <li
+                className="w-full"
+                onClick={() => {
+                  seUploadImage(false);
+                }}
+              >
+                <XMarkIcon className="h-8" />
+              </li>
+            )}
           </ul>
         </div>
       </div>
