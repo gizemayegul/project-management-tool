@@ -4,5 +4,12 @@ export default {
   theme: {
     extend: {},
   },
+  screens: {
+    xs: { max: "640px" },
+  },
+
   plugins: [require("daisyui")],
+  daisyui: {
+    themes: ["light", "dark", "synthwave"], // Add all the themes you want to use
+  },
 };

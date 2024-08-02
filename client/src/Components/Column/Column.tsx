@@ -12,7 +12,6 @@ import Edit from "../Edit/Edit";
 import { DragHandleIcon } from "@chakra-ui/icons";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { XMarkIcon } from "@heroicons/react/16/solid";
-import { Arguments } from "@dnd-kit/sortable/dist/hooks/useSortable";
 
 export default function Column({
   column,
@@ -63,13 +62,16 @@ export default function Column({
     transform: transform
       ? `translate(${transform.x}px, ${transform.y}px)`
       : undefined,
-    border: "2px solid bg-slate-500",
-    backgroundColor: isDragging ? "#B0B9B9" : "#F1F2F4",
-    opacity: isDragging ? 0.5 : 1,
-    height: "fit-content",
-    borderRadius: "10px",
-    padding: "20px",
   };
+
+  const columnStyle = ` ${isDragging ? "opacity-30" : ""} ${
+    isDragging ? "bg-base-[#B0B9B9]" : "bg-base-300"
+  }
+  opacity-100
+  h-fit
+  rounded-lg
+  p-4
+`;
 
   const handleAddTask = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -128,7 +130,6 @@ export default function Column({
         { headers: { Authorization: token } }
       );
 
-      console.log(response.data);
       if (response.status === 200) {
         setColumnName(response.data.columnName);
         setUpdateColumns(response.data.columnName);
@@ -140,9 +141,10 @@ export default function Column({
   };
 
   return (
-    <div ref={setNodeRef} style={style}>
+    <div ref={setNodeRef} style={style} className={columnStyle}>
       <div
         className="
+        
           text-md
         min-h-fit
           cursor-grab
@@ -164,7 +166,7 @@ export default function Column({
 
           {showEdit ? (
             <input
-              className=" input input-bordered border-2 rounded-md border-indigo-500 h-fit"
+              className=" input border-2 w-2/3 rounded-md border-indigo-500 h-fit"
               type="text"
               value={columnName}
               onBlur={() => {
@@ -182,10 +184,7 @@ export default function Column({
               }}
             />
           ) : (
-            <div
-              className="break-all w-9/12 mt-0.5"
-              style={{ color: column.color }}
-            >
+            <div className="break-all w-9/12 mt-0.5" style={{ color: color }}>
               {columnName}
             </div>
           )}
@@ -201,16 +200,17 @@ export default function Column({
                 <Edit />
                 Edit
               </div>
-              <div>
+              <label htmlFor="changeColor">
                 <input
+                  name="changeColor"
                   onChange={(e) => {
                     handleColorChange(e);
                   }}
                   type="color"
                   className="color-input"
                 />
-                <span>Change Color</span>
-              </div>
+                Change Color
+              </label>
               <DeleteModal
                 handleDelete={() => {
                   handleColumnDelete(column._id);
@@ -263,16 +263,15 @@ export default function Column({
               </div>
             </div>
           ) : (
-            <>
+            <div
+              className="flex space-x-4"
+              onClick={() => setShowAddTask((prev) => !prev)}
+            >
               <PlusIcon className="h-5" />
-              <button
-                onClick={() => setShowAddTask((prev) => !prev)}
-                className="p-0 m-0"
-                type="submit"
-              >
+              <button className="p-0 m-0" type="submit">
                 <h2 className="pb-2">Add Task</h2>
               </button>
-            </>
+            </div>
           )}
         </form>
       </SortableContext>

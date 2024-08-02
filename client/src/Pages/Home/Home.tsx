@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export default function Home() {
   return (
-    <div className="bg-white">
+    <div className="bg-base-100">
       <div className="relative isolate px-6 pt-14 lg:px-8">
         <div
           className="absolute inset-x-0 -top-0 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-0"
@@ -15,7 +15,7 @@ export default function Home() {
         </div>
         <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
           <div className="hidden sm:mb-8 sm:flex sm:justify-center">
-            <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
+            <div className=" relative rounded-full px-3 py-1 text-sm leading-6 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
               Announcing our next round of funding.{" "}
               <a
                 href="https://www.gizemayaz.com/"
@@ -27,10 +27,10 @@ export default function Home() {
             </div>
           </div>
           <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+            <h1 className=" dark:text-white text-4xl font-bold tracking-tight  sm:text-6xl">
               Boost your productivity by using our application
             </h1>
-            <p className="mt-6 text-lg leading-8 text-gray-600 text-center">
+            <p className=" mt-6 text-lg leading-8text-center">
               Discover the ultimate solution to enhance your productivity. Our
               application is designed to streamline your tasks, allowing you to
               focus on what truly matters. Experience unparalleled efficiency
@@ -48,7 +48,7 @@ export default function Home() {
               <a
                 href="https://www.gizemayaz.com/"
                 target="_blank"
-                className="text-sm font-semibold leading-6 text-gray-900"
+                className="dark:text-white text-sm font-semibold leading-6 "
               >
                 Learn more <span aria-hidden="true">→</span>
               </a>

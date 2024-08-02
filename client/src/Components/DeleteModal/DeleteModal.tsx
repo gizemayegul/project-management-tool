@@ -4,11 +4,10 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 type ModalProps = {
   handleDelete(id: Id, id1: Id): void;
-  modal: string;
-  id: Id;
+  modal: string | number;
+  id?: Id;
   id1?: Id;
   showDelete?: boolean;
-  Modal: React.ReactDOM;
 };
 
 export default function DeleteModal({
@@ -29,7 +28,9 @@ export default function DeleteModal({
       <dialog id={modal} className="modal modal-bottom sm:modal-middle z-30">
         <div className="modal-box">
           {/* <h3 className="font-bold text-lg text-black">Hello!</h3> */}
-          <p className="py-4 text-black">Are you sure you want to delete?</p>
+          <p className="py-4Are you sure you want to delete?">
+            Are you sure you want to delete?
+          </p>
           <div className="modal-action">
             {/* if there is a button in form, it will close the modal */}
             <form method="dialog">

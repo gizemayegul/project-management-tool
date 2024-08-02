@@ -42,3 +42,15 @@ input[type="color"]::-webkit-color-swatch-wrapper {
 input[type="color"]::-webkit-color-swatch {
   border-radius: 50%; /* Ensure the swatch itself is circular */
 }
+
+@media screen and (max-width: 768px) {
+  body {
+    padding: 0 0.25rem 0 0.25rem;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  body {
+    padding: 0 0.5rem 0 0.5rem;
+  }
+}

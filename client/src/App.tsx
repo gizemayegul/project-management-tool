@@ -18,7 +18,6 @@ import CreateProject from "./Pages/CreateProject/CreateProject";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import TaskDetails from "./Pages/TaskDetails/TaskDetails";
--IsPrivate;
 function App() {
   return (
     <>

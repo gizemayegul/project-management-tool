@@ -47,7 +47,7 @@ export default function Signup() {
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight ">
           Create a new account
         </h2>
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -58,12 +58,12 @@ export default function Signup() {
             onSubmit={submitHandler}
           >
             <label
-              className="block text-sm font-medium leading-6 text-gray-900"
+              className="block text-sm font-medium leading-6 "
               htmlFor="name"
             >
               Name
               <input
-                className="input input-bordered block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="input input-bordered block w-full rounded-md border-0 py-1.5  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 name="name"
                 type="text"
                 value={name}
@@ -73,12 +73,12 @@ export default function Signup() {
               />
             </label>
             <label
-              className="block text-sm font-medium leading-6 text-gray-900"
+              className="block text-sm font-medium leading-6 "
               htmlFor="email"
             >
               Email
               <input
-                className=" input input-bordered block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className=" input input-bordered block w-full rounded-md border-0 py-1.5  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 name="email"
                 type="email"
                 value={email}
@@ -88,12 +88,12 @@ export default function Signup() {
               />
             </label>
             <label
-              className="block text-sm font-medium leading-6 text-gray-900"
+              className="block text-sm font-medium leading-6 "
               htmlFor="password"
             >
               Password
               <input
-                className="input input-bordered block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="input input-bordered block w-full rounded-md border-0 py-1.5  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 name="password"
                 type="password"
                 value={password}

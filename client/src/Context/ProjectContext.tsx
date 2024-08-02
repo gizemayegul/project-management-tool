@@ -80,11 +80,11 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
             headers: { Authorization: token },
           }
         );
+        setProjectName("");
+
         if (response.status === 200) {
           setProjects((prev) => [...prev, response.data]);
-          setProjectName("");
           setDropdown((prev) => !prev);
-
           navigate(`/projects/${response.data._id}`);
           if (setCreateProject) {
             setCreateProject(false);

@@ -56,16 +56,14 @@ export default function ProjectDetail() {
   };
 
   return (
-    <div>
+    <div className="px-4">
       <div
-        className="h-20 w-full bg-gray-200
- flex justify-between items-center px-4 mb-3 mt-3 min-h-max"
+        className="h-20 w-full rounded-md bg-base-300
+ flex justify-between items-center px-4 mb-3 mt-3 min-h-max flex-wrap "
       >
-        {projectName && !show && (
-          <div className="text-black">{projectName}</div>
-        )}
+        {projectName && !show && <div>{projectName}</div>}
         {show && (
-          <div className={`flex align-bottom space-x-4`}>
+          <div className={`flex align-bottom space-x-4 `}>
             <input
               className="input input-bordered w-full "
               type="text"
@@ -101,7 +99,7 @@ export default function ProjectDetail() {
         </div>
       </div>
 
-      <h1 className="text-black divide-x-4">Your Boards</h1>
+      <h1 className="divide-x-4">Your Boards</h1>
 
       <div>
         <Boards />

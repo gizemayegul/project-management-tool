@@ -28,7 +28,7 @@ export default function Profile() {
         alt=""
       />
       <form
-        className="flex flex-col w-3/12 space-y-4"
+        className="flex flex-col lg:w-3/12 space-y-4"
         onSubmit={(e) => {
           handleSubmitFile(e);
           setIsLineLoading(true);
@@ -52,7 +52,7 @@ export default function Profile() {
           {isLineLoading ? (
             <span className="loading loading-dots loading-lg"></span>
           ) : (
-            <span>Submit</span>
+            <span className="dark:text-white">Submit</span>
           )}
         </button>
       </form>
@@ -61,7 +61,7 @@ export default function Profile() {
         onSubmit={(e) => {
           handleUpdate(e);
         }}
-        className="flex flex-col w-3/12 space-y-4"
+        className="flex flex-col lg:w-3/12 space-y-4"
       >
         <input
           type="text"
@@ -116,7 +116,7 @@ export default function Profile() {
         }}
       >
         {" "}
-        <button className="btn px-7">
+        <button className="btn px-7 ">
           Logout
           <ArrowRightEndOnRectangleIcon className="h-6 w-6" />
         </button>

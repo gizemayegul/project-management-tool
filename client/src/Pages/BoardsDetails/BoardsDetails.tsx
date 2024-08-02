@@ -42,7 +42,6 @@ export default function BoardsDetails() {
   const [addNewColumnShow, setAddNewColumnShow] = useState<boolean>(false);
 
   const navigate = useNavigate();
-  console.log("he");
 
   const { token } = useContext(AuthContext);
   const sensors = useSensors(
@@ -66,10 +65,8 @@ export default function BoardsDetails() {
           }
         );
         setBoardDetails(responseBoard.data[0]);
-        console.log(responseBoard.data);
 
         setColumns(response.data);
-        console.log(response.data);
       } catch (error) {
         console.log("error happened");
       }
@@ -316,7 +313,6 @@ export default function BoardsDetails() {
       const response = await axios.delete(`${apiUrl}/columns/${columnId}`, {
         headers: { Authorization: token },
       });
-      console.log(response.data);
       if (response.status === 200) {
         setColumns((prevColumns) => {
           return prevColumns.filter((col) => col._id !== columnId);
@@ -354,22 +350,19 @@ export default function BoardsDetails() {
           headers: { Authorization: token },
         }
       );
-      console.log(response.data);
     } catch (error) {
       console.log(error);
     }
   };
 
   return (
-    <div>
+    <div className="px-4">
       <div
-        className="h-20 w-full bg-gray-200
+        className="h-20 w-full rounded-md bg-base-300
  flex justify-between items-center px-4 mb-3 mt-3 min-h-max"
       >
         <div>
-          {boardDetails && !show && (
-            <div className="text-black">{boardDetails.boardName}</div>
-          )}
+          {boardDetails && !show && <div>{boardDetails.boardName}</div>}
           {show && (
             <div className={`flex align-bottom space-x-4`}>
               <input
@@ -429,7 +422,7 @@ export default function BoardsDetails() {
               ))}
             </SortableContext>
             <form
-              className="bg-[#F1F2F4] h-fit w-60 p-4 rounded-md bg-opacity-30"
+              className="bg-base-300  h-fit w-60 p-4 rounded-md bg-opacity-30"
               onSubmit={(e) => handleSubmitColumn(e)}
             >
               {addNewColumnShow ? (
@@ -445,7 +438,7 @@ export default function BoardsDetails() {
                   />
                   <div className="flex items-center space-x-4">
                     <button
-                      className="p-0 m-0 btn bg-indigo-600 text-white w-fit px-4"
+                      className=" p-0 m-0 btn bg-indigo-600 text-white w-fit px-4"
                       type="submit"
                     >
                       Add Column
@@ -458,13 +451,12 @@ export default function BoardsDetails() {
                   </div>
                 </div>
               ) : (
-                <div className="flex space-x-2">
+                <div
+                  className="flex space-x-2"
+                  onClick={() => setAddNewColumnShow((prev) => !prev)}
+                >
                   <PlusIcon className="h-5" />
-                  <button
-                    onClick={() => setAddNewColumnShow((prev) => !prev)}
-                    className="p-0 m-0"
-                    type="submit"
-                  >
+                  <button className="p-0 m-0" type="submit">
                     <h2 className="pb-2"> Add Column</h2>
                   </button>
                 </div>

@@ -14,7 +14,7 @@ export default function UploadBackground({
   id: Id | undefined;
   type: string;
 }) {
-  const notify = () => toast.success("Uploaded!");
+  const notify = () => toast.success("Uploaded! go to dashboard to check it");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isLineLoading, setIsLineLoading] = useState<boolean>(false);
   const { setBackGround } = useContext(ProjectContext);

@@ -8,6 +8,7 @@ import { AuthContext } from "../../Context/AuthContext";
 import { ProjectContext } from "../../Context/ProjectContext";
 import Card from "../Card/Card";
 import { BoardContext } from "../../Context/BoardContext";
+import Empty from "../Empty/Empty";
 
 export default function Boards() {
   const [boards, setBoards] = useState<BoardType[]>([]);
@@ -49,13 +50,23 @@ export default function Boards() {
   }
 
   return (
-    <div className="flex">
-      <div className="flex flex-wrap">
-        {Array.isArray(boards) &&
-          boards.map((board) => (
-            <Card key={board._id} card={board} cardType="board" />
-          ))}
-      </div>
-    </div>
+    <>
+      {boards.length == 0 && projectId ? (
+        <div className="flex items-center mt-4 flex-col xs:flex-wrap xs:items-start xs:w-1/2 md-flex-wrap">
+          It looks like you don't have any boards yet. Create a new board to get
+          started!
+        </div>
+      ) : (
+        <div className="flex">
+          <div className="flex flex-wrap">
+            {" "}
+            {Array.isArray(boards) &&
+              boards.map((board) => (
+                <Card key={board._id} card={board} cardType="board" />
+              ))}
+          </div>
+        </div>
+      )}
+    </>
   );
 }

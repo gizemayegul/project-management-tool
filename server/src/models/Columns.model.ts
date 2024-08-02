@@ -43,7 +43,7 @@ const ColumnsSchema = new Schema(
     },
     color: {
       type: String,
-      default: "#000000",
+      default: "",
     },
   },
   {
