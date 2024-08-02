@@ -39,7 +39,6 @@ export default function Boards() {
             headers: { Authorization: token },
           });
           setBoards(response.data.boards);
-          console.log(response.data.boards);
         } catch (error) {
           console.error("Error fetching boards:", error);
         }

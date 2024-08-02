@@ -1,10 +1,50 @@
 import { useState, useEffect, useContext } from "react";
-
+import { apiUrl } from "../../utils/config";
+import axios from "axios";
 import { ProjectContext } from "../../Context/ProjectContext";
+import { AuthContext } from "../../Context/AuthContext";
+import { AxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateProject() {
-  const { projectName, setProjectName, submitHandler } =
-    useContext(ProjectContext);
+  const { setProjects, setDropdown } = useContext(ProjectContext);
+  const [projectName, setProjectName] = useState<string>("");
+
+  const { token } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const submitHandler = async (
+    e: React.FormEvent<HTMLFormElement>,
+    setCreateProject?: (createProject: boolean) => void
+  ) => {
+    e.preventDefault();
+    const createProject = async () => {
+      try {
+        const response = await axios.post(
+          `${apiUrl}/projects/createproject`,
+          { projectName: projectName },
+          {
+            headers: { Authorization: token },
+          }
+        );
+
+        if (response.status === 200) {
+          setProjects((prev) => [...prev, response.data]);
+          setDropdown((prev) => !prev);
+          navigate(`/projects/${response.data._id}`);
+          setProjectName("");
+          if (setCreateProject) {
+            setCreateProject(false);
+          }
+        }
+      } catch (err: unknown) {
+        if (err instanceof AxiosError) {
+          console.log(err, "errorr");
+        }
+      }
+    };
+    createProject();
+  };
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -17,6 +57,7 @@ export default function CreateProject() {
             className="space-y-6"
             onSubmit={(e) => {
               submitHandler(e);
+              setProjectName("");
             }}
           >
             <label htmlFor="projectname">

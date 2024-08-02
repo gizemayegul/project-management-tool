@@ -13,7 +13,6 @@ const ProjectContext = createContext<ProjectContextType>({
   projects: [],
   setProjects: () => {},
   handleDeleteProject: () => {},
-  submitHandler: () => {},
   setProjectName: () => {},
   projectName: "",
   handleFavoriteProject: () => {},
@@ -28,7 +27,6 @@ const ProjectContext = createContext<ProjectContextType>({
 
 function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
   const { isLoggedIn, token } = useContext(AuthContext);
-  const [projectName, setProjectName] = useState<string>("");
   const [projects, setProjects] = useState<ProjectType[]>([]);
   const [favoriteProjects, setFavoriteProjects] = useState<ProjectType[]>([]);
   const [favChange, setFavChange] = useState<boolean | null>(null);
@@ -66,39 +64,6 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
     fetchFavoriteProjects();
   }, [favChange]);
 
-  const submitHandler = async (
-    e: React.FormEvent<HTMLFormElement>,
-    setCreateProject?: (createProject: boolean) => void
-  ) => {
-    e.preventDefault();
-    const createProject = async () => {
-      try {
-        const response = await axios.post(
-          `${apiUrl}/projects/createproject`,
-          { projectName: projectName },
-          {
-            headers: { Authorization: token },
-          }
-        );
-        setProjectName("");
-
-        if (response.status === 200) {
-          setProjects((prev) => [...prev, response.data]);
-          setDropdown((prev) => !prev);
-          navigate(`/projects/${response.data._id}`);
-          if (setCreateProject) {
-            setCreateProject(false);
-          }
-        }
-      } catch (err: unknown) {
-        if (err instanceof AxiosError) {
-          console.log(err, "errorr");
-        }
-      }
-    };
-    createProject();
-  };
-
   const handleDeleteProject = async (projectId: Id) => {
     try {
       await axios.delete(`${apiUrl}/projects/${projectId}`, {
@@ -132,9 +97,7 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
         projects,
         handleDeleteProject,
         setProjects,
-        submitHandler,
-        setProjectName,
-        projectName,
+
         handleFavoriteProject,
         favoriteProjects,
         setFavoriteProjects,
@@ -142,6 +105,7 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
         dropdown,
         favChange,
         setBackGround,
+        background,
       }}
     >
       {props.children}

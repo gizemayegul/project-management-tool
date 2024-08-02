@@ -15,12 +15,7 @@ export type ProjectContextType = {
   projects: ProjectType[];
   setProjects: React.Dispatch<React.SetStateAction<ProjectType[]>>;
   handleDeleteProject: (projectId: Id) => void;
-  submitHandler: (
-    e: React.FormEvent<HTMLFormElement>,
-    setCreateProject?: (createProject: boolean) => void
-  ) => void;
-  projectName: string;
-  setProjectName: React.Dispatch<React.SetStateAction<string>>;
+
   handleFavoriteProject: (projectId: Id) => void;
   setFavoriteProjects: React.Dispatch<React.SetStateAction<ProjectType[]>>;
   background: boolean;
