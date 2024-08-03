@@ -10,7 +10,8 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "jest --watch --verbose",
-    "host": "vite --host"
+    "host": "vite --host",
+    "serve": "serve -s build -l 5173"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",

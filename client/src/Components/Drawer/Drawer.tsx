@@ -6,7 +6,7 @@ import { useState } from "react";
 import UploadBackground from "../UploadBackground/UploadBackground";
 import { XMarkIcon } from "@heroicons/react/16/solid";
 type propTypes = {
-  id: Id | undefined;
+  id: Id;
   handleDelete: (id: Id) => void;
   showDelete: boolean;
   show: boolean;

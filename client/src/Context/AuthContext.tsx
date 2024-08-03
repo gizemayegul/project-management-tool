@@ -11,7 +11,7 @@ const AuthContext = createContext<AuthContextType>({
   isLoggedIn: false,
   logOutUser: () => {},
   isLoading: true,
-  storeToken: (token: string) => {},
+  storeToken: () => {},
   authenticateUser: () => {},
   setIsLoggedIn: () => {},
   token: null,
@@ -25,6 +25,8 @@ const AuthContext = createContext<AuthContextType>({
   userUpdate: { name: "", email: "", password: "" },
   setUserUpdate: () => {},
   handleUserDelete: () => {},
+  logOut: false,
+  setLogOut: () => {},
 });
 
 const API_URL = import.meta.env.VITE_SERVER_URL;
@@ -122,7 +124,7 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
     }
   };
 
-  const handleUpdate = async (e) => {
+  const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const response = await axios.put(`${API_URL}/api/update`, userUpdate, {
@@ -135,7 +137,7 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
     }
   };
 
-  const handleUserDelete = async (e) => {
+  const handleUserDelete = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const response = await axios.delete(`${API_URL}/api/delete`, {

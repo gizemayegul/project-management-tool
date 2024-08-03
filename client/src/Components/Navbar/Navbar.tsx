@@ -1,7 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../../Context/AuthContext";
-import taskFlow from "../../assets/images/taskFlow.png";
 import CreateProjectDropDown from "../CreateProjectDropDown/CreateProjectDropDown";
 import CreateBoardDropDown from "../CreateBoardDropDown/CreateBoardDropDown";
 import { BoardContext } from "../../Context/BoardContext";
@@ -71,8 +70,8 @@ export default function Navbar() {
                   />
                 </svg>
               </div>
-              <ul className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow ">
-                <li className="m-2">
+              <ul className="menu menu-sm dropdown-content bg-base-100 rounded-box z-30 mt-3 w-52 p-2 shadow ">
+                <li className="m-2 z-30">
                   <Link to="/createaproject">Create Project</Link>
                 </li>
 

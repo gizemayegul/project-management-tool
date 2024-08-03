@@ -6,15 +6,12 @@ import { ProjectContextType } from "./context";
 import { apiUrl } from "../utils/config";
 import { useNavigate } from "react-router-dom";
 
-import axios, { AxiosError } from "axios";
-import { set } from "mongoose";
+import axios from "axios";
 
 const ProjectContext = createContext<ProjectContextType>({
   projects: [],
   setProjects: () => {},
   handleDeleteProject: () => {},
-  setProjectName: () => {},
-  projectName: "",
   handleFavoriteProject: () => {},
   setFavoriteProjects: () => {},
   favoriteProjects: [],
@@ -97,7 +94,7 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
         projects,
         handleDeleteProject,
         setProjects,
-
+        background,
         handleFavoriteProject,
         favoriteProjects,
         setFavoriteProjects,
@@ -105,7 +102,6 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
         dropdown,
         favChange,
         setBackGround,
-        background,
       }}
     >
       {props.children}

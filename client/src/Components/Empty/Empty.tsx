@@ -3,13 +3,13 @@ import empty2 from "../../assets/json/empty.json";
 export default function Empty() {
   return (
     <div>
-      <Player
+      {/* <Player
         autoplay={true}
         controls
         loop
         src={empty2}
         style={{ height: "300px", width: "300px" }}
-      ></Player>
+      ></Player> */}
     </div>
   );
 }

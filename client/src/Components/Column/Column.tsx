@@ -54,11 +54,8 @@ export default function Column({
       column: column,
     },
   });
-  const style = {
-    transition: {
-      duration: 150, // milliseconds
-      easing: "cubic-bezier(0.25, 1, 0.5, 1)",
-    },
+  const style: React.CSSProperties = {
+    transition: `transform 150ms cubic-bezier(0.25, 1, 0.5, 1)`,
     transform: transform
       ? `translate(${transform.x}px, ${transform.y}px)`
       : undefined,

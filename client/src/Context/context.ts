@@ -26,6 +26,7 @@ export type AuthContextType = {
   isLoggedIn: boolean;
   isLoading: boolean;
   logOutUser: Function; // Add logOutUser property
+  setLogOut: React.Dispatch<React.SetStateAction<boolean>>;
   storeToken: (token: string) => void;
   authenticateUser: () => void;
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
@@ -48,6 +49,7 @@ export type AuthContextType = {
   handleUserDelete: (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
+  logOut: boolean;
 };
 
 type User = {

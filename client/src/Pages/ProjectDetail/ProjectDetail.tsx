@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../Context/AuthContext";
 import axios from "axios";
@@ -8,16 +8,14 @@ import { ProjectsDetails } from "../../utils/types";
 import Boards from "../../Components/Boards/Boards";
 import Drawer from "../../Components/Drawer/Drawer";
 import { ProjectContext } from "../../Context/ProjectContext";
-import { useNavigate } from "react-router-dom";
 
 export default function ProjectDetail() {
   const { projectId } = useParams();
   const [projectDetail, setprojectDetail] = useState<ProjectsDetails | null>();
   const { token } = useContext(AuthContext);
-  const navigate = useNavigate();
   const [show, setShow] = useState(false);
-  const { handleDeleteProject, setProjects, setProjectName, projectName } =
-    useContext(ProjectContext);
+  const { handleDeleteProject, setProjects } = useContext(ProjectContext);
+  const [projectName, setProjectName] = useState<string>("");
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -89,7 +87,7 @@ export default function ProjectDetail() {
             toNavigate={`/projects/${projectId}/boards/createboard`}
           />
           <Drawer
-            id={projectId}
+            id={String(projectId)}
             showDelete={true}
             setShow={setShow}
             handleDelete={handleDeleteProject}

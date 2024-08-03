@@ -21,7 +21,7 @@ export default function CreateBoard() {
     e.preventDefault();
     const createBoard = async () => {
       try {
-        const response = await axios.post(
+        await axios.post(
           `${apiUrl}/${projectId}/createboard`,
           { boardName: boardName, projectName: project?.projectName },
           {

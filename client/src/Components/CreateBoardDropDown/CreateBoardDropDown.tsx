@@ -6,7 +6,6 @@ import { CreateBoardDropDownProps } from "../../utils/types";
 import { ProjectContext } from "../../Context/ProjectContext";
 import { AuthContext } from "../../Context/AuthContext";
 import { ChevronLeftIcon, XMarkIcon } from "@heroicons/react/20/solid";
-import { set } from "mongoose";
 
 export default function CreateBoardDropDown({
   setCreateBoard,
@@ -31,6 +30,7 @@ export default function CreateBoardDropDown({
 
         { headers: { Authorization: token } }
       );
+      console.log(response.data, "board");
       if (response.status === 200) {
         setCreateBoard(false);
         setDropdown((prev) => !prev);

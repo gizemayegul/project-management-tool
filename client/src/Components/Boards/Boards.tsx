@@ -1,4 +1,4 @@
-import { BoardType, Id } from "../../utils/types";
+import { BoardType } from "../../utils/types";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { apiUrl } from "../../utils/config";

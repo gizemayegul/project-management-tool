@@ -58,9 +58,7 @@ export default function Profile() {
       </form>
 
       <form
-        onSubmit={(e) => {
-          handleUpdate(e);
-        }}
+        onSubmit={(e) => handleUpdate(e)}
         className="flex flex-col lg:w-3/12 space-y-4"
       >
         <input

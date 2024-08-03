@@ -20,12 +20,21 @@ export default function DeleteModal({
   const notify = () => toast.success("Deleted!");
 
   return (
-    <div onClick={() => document.getElementById(modal)?.showModal?.()}>
+    <div
+      onClick={() =>
+        (
+          document.getElementById(String(modal)) as HTMLDialogElement
+        )?.showModal?.()
+      }
+    >
       <TrashIcon className="pb-1 h-4 mt-1.5 " />
       {showDelete && <div className="mx-1">Delete</div>}
 
       {/* Open the modal using document.getElementById('ID').showModal() method */}
-      <dialog id={modal} className="modal modal-bottom sm:modal-middle z-30">
+      <dialog
+        id={String(modal)}
+        className="modal modal-bottom sm:modal-middle z-30"
+      >
         <div className="modal-box">
           {/* <h3 className="font-bold text-lg text-black">Hello!</h3> */}
           <p className="py-4Are you sure you want to delete?">
@@ -37,10 +46,15 @@ export default function DeleteModal({
               <button className="btn mx-2">Cancel</button>
               <button
                 onClick={() => {
-                  handleDelete(id, id1);
-                  console.log("DeleteModal: Calling handleDelete for ID:", id); // Debug log
+                  if (id !== undefined && id1 !== undefined) {
+                    handleDelete(id, id1);
+                    console.log(
+                      "DeleteModal: Calling handleDelete for ID:",
+                      id
+                    ); // Debug log
 
-                  notify();
+                    notify();
+                  }
                 }}
                 className="btn bg-red-500  text-white mx-2"
               >

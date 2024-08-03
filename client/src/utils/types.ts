@@ -1,5 +1,4 @@
 export type Id = string | number;
-import CreateProjectDropDown from "../Components/CreateProjectDropDown/CreateProjectDropDown";
 
 export type TaskType = {
   _id: Id;
