@@ -11,8 +11,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "jest --watch --verbose",
-    "build:prod": "vite build --mode prod",
-    "serve:prod": "vite build --mode prod && vite preview --host 0.0.0.0 --port 5007",
+    "serve:prod": "tsc && vite build --mode prod && vite preview --host 0.0.0.0 --port 5007",
     "start:prod": "npm run serve:prod"
   },
   "dependencies": {

@@ -1,6 +1,5 @@
 import { useContext } from "react";
 import { AuthContext } from "../../Context/AuthContext";
-import Empty from "../../Components/Empty/Empty";
 import { ProjectContext } from "../../Context/ProjectContext";
 import Projects from "../../Components/Projects/Projects";
 import Boards from "../../Components/Boards/Boards";
@@ -39,7 +38,7 @@ export default function Dashboard() {
       )}
 
       {!projects?.length && (
-        <div className="flex items-center flex-col mt-5">
+        <div className="flex items-center flex-col mt-">
           <h1>You haven't created a Project yet Let's get start</h1>
 
           {/* <Empty /> */}

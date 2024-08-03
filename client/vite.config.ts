@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     resolve: {
-      extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json"],
+      extensions: [".js", ".ts", ".jsx", ".tsx", ".json"],
     },
     define: {
       __APP_ENV__: JSON.stringify(env.APP_ENV),
@@ -15,6 +15,5 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: "dist", // This should place the build in `client/dist`
     },
-    "serve:production": "vite build --mode production && serve -s dist -l 5006",
   };
 });

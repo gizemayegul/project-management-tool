@@ -8,7 +8,6 @@ import { AuthContext } from "../../Context/AuthContext";
 import { ProjectContext } from "../../Context/ProjectContext";
 import Card from "../Card/Card";
 import { BoardContext } from "../../Context/BoardContext";
-import Empty from "../Empty/Empty";
 
 export default function Boards() {
   const [boards, setBoards] = useState<BoardType[]>([]);

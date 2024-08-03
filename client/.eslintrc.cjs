@@ -17,4 +17,7 @@ module.exports = {
     ],
     "no-console": ["error"],
   },
+  semi: true,
+  singleQuote: true,
+  trailingComma: "all",
 };
