@@ -6,14 +6,14 @@ import cors from "cors";
 const FRONTEND_URL = process.env.CLIENT || "http://127.0.0.1:5006";
 console.log(FRONTEND_URL, "FRONTEND_URL");
 const HOST_URL = process.env.CLIENT_HOST || "http://127.0.0.1:5006";
-const PRODUCTION = process.env.CLIENT_PRODUCTION || "http://192.168.0.126:3000";
+console.log(HOST_URL, "HOST_URL");
 
 const middleWare = (app: Application) => {
   app.set("trust proxy", 1);
 
   app.use(
     cors({
-      origin: [FRONTEND_URL, HOST_URL, PRODUCTION],
+      origin: [FRONTEND_URL, HOST_URL],
     })
   );
 
