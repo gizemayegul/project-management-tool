@@ -16,10 +16,6 @@ app.use("/", projectRoute);
 app.use("/", boardRoute);
 app.use("/", columnRoute);
 
-app.get("/", (req, res) => {
-  res.send("Hello World");
-});
-
 errorHandler(app);
 
 export default app;
