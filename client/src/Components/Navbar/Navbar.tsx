@@ -70,9 +70,17 @@ export default function Navbar() {
                   />
                 </svg>
               </div>
-              <ul className="menu menu-sm dropdown-content bg-base-100 rounded-box z-30 mt-3 w-52 p-2 shadow ">
-                <li className="m-2 z-30">
-                  <Link to="/createaproject">Create Project</Link>
+              <ul className="menu menu-sm dropdown-content bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow ">
+                <li className="m-2">
+                  <details
+                    onClick={() => {
+                      navigate("/createaproject");
+                    }}
+                  >
+                    <summary>
+                      <div>Create a Project</div>
+                    </summary>
+                  </details>
                 </li>
 
                 <li className="m-2">
