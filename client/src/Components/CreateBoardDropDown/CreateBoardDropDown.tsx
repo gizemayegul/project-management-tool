@@ -1,11 +1,12 @@
-import React, { useState, useContext } from "react";
-import axios from "axios";
+import React, { useState, useContext, useEffect } from "react";
+import axios, { AxiosError } from "axios";
 import { apiUrl } from "../../utils/config";
 import { useNavigate } from "react-router-dom";
 import { CreateBoardDropDownProps } from "../../utils/types";
 import { ProjectContext } from "../../Context/ProjectContext";
 import { AuthContext } from "../../Context/AuthContext";
 import { ChevronLeftIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import { toast } from "react-toastify";
 
 export default function CreateBoardDropDown({
   setCreateBoard,
@@ -13,12 +14,15 @@ export default function CreateBoardDropDown({
 }: CreateBoardDropDownProps) {
   const { projects } = useContext(ProjectContext);
   const { token } = useContext(AuthContext);
+  const [error, setError] = useState<string | undefined>("");
+
   const [selectedProject, setSelectedProject] = useState<string>("");
   const [selectedProjectId, setSelectedProjectId] = useState<
     string | undefined
   >(undefined);
   const [boardName, setBoardName] = useState<string>("");
   const navigate = useNavigate();
+  const notify = () => toast.error(error);
 
   const project = projects.find((project) => project._id === selectedProjectId);
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -38,10 +42,19 @@ export default function CreateBoardDropDown({
           `projects/${selectedProjectId}/boards/${response.data.boardInfo._id}`
         );
       }
-    } catch (error) {
-      console.log(error);
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        setError(err.response?.data.message);
+      }
     }
   };
+
+  useEffect(() => {
+    if (error) {
+      notify();
+      setError("");
+    }
+  }, [error]);
 
   return (
     <div className="flex flex-col">

@@ -18,7 +18,16 @@ projectRoute.post(
       res.status(400).json({ message: "Please provide a project name" });
       return;
     }
+
     try {
+      const findProject = await Projects.findOne({
+        projectName: projectName,
+        userId: userId,
+      });
+      if (findProject) {
+        res.status(400).json({ message: "The project already exists" });
+        return;
+      }
       const response = await Projects.create({
         projectName: projectName,
         userId: userId,

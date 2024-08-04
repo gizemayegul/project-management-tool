@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { ChevronLeftIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { CreateProjectDropDownProps } from "../../utils/types";
 import { apiUrl } from "../../utils/config";
@@ -7,14 +7,18 @@ import { ProjectContext } from "../../Context/ProjectContext";
 import { AuthContext } from "../../Context/AuthContext";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 export default function CreateProjectDropDown({
   setCreateProject,
   setDropdown,
 }: CreateProjectDropDownProps) {
   const { setProjects } = useContext(ProjectContext);
   const [projectName, setProjectName] = useState<string>("");
+  const [error, setError] = useState<string>("");
   const navigate = useNavigate();
   const { token } = useContext(AuthContext);
+  const notify = () => toast.error(error);
 
   const submitHandler = async (
     e: React.FormEvent<HTMLFormElement>,
@@ -42,12 +46,18 @@ export default function CreateProjectDropDown({
         }
       } catch (err: unknown) {
         if (err instanceof AxiosError) {
-          console.log(err, "errorr");
+          setError(err.response?.data.message);
         }
       }
     };
     createProject();
   };
+
+  useEffect(() => {
+    if (error) {
+      notify();
+    }
+  }, [error]);
   return (
     <div className="flex flex-col ">
       <div className="flex justify-between w-full">
@@ -86,7 +96,6 @@ export default function CreateProjectDropDown({
             className="input input-bordered input-sm w-full max-w-xs mt-2"
             onChange={(e) => {
               setProjectName(e.target.value);
-              console.log(projectName);
             }}
           />
         </label>

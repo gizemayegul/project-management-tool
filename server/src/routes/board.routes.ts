@@ -18,6 +18,15 @@ boardRoute.post(
       res.status(400).json({ message: "Please provide a board name" });
       return;
     }
+    const findBoard = await Boards.findOne({
+      projectId: projectId,
+      boardName: boardName,
+      userId: userId,
+    });
+    if (findBoard) {
+      res.status(400).json({ message: "The board already exists" });
+      return;
+    }
     try {
       const createBoard = await Boards.create({
         projectId: projectId,

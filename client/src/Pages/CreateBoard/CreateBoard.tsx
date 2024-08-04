@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
 import { apiUrl } from "../../utils/config";
 import { useContext } from "react";
@@ -7,13 +7,15 @@ import { AuthContext } from "../../Context/AuthContext";
 
 import { useNavigate } from "react-router-dom";
 import { ProjectContext } from "../../Context/ProjectContext";
+import { toast } from "react-toastify";
 export default function CreateBoard() {
   const [boardName, setBoardName] = useState<string | undefined>("");
   const [error, setError] = useState<string | undefined>("");
-  const navigate = useNavigate();
   const { projectId } = useParams();
   const { token } = useContext(AuthContext);
   const { projects } = useContext(ProjectContext);
+  const navigate = useNavigate();
+  const notify = () => toast.error(error);
 
   const project = projects.find((project) => project._id === projectId);
 
@@ -21,23 +23,33 @@ export default function CreateBoard() {
     e.preventDefault();
     const createBoard = async () => {
       try {
-        await axios.post(
+        const response = await axios.post(
           `${apiUrl}/${projectId}/createboard`,
           { boardName: boardName, projectName: project?.projectName },
           {
             headers: { Authorization: token },
           }
         );
-        navigate(`/projects/${projectId}`);
+
+        if (response.status === 200) {
+          navigate(
+            `/projects/${projectId}/boards/${response.data.boardInfo._id}`
+          );
+        }
       } catch (err: unknown) {
         if (err instanceof AxiosError) {
-          console.log(err, "errorr");
           setError(err.response?.data.message);
         }
       }
     };
     createBoard();
   };
+  useEffect(() => {
+    if (error) {
+      notify();
+      setError("");
+    }
+  }, [error]);
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -65,13 +77,13 @@ export default function CreateBoard() {
               {" "}
               Create
             </button>
-            {error && (
+            {/* {error && (
               <div>
                 <p className=" bg-red-500 p-1.5 mt-2 rounded-md text-white px-3 py-2 text-sm font-semibold  flex w-full justify-center">
                   {error}
                 </p>
               </div>
-            )}
+            )} */}
           </form>
         </div>
       </div>

@@ -1,14 +1,18 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { apiUrl } from "../../utils/config";
 import axios from "axios";
 import { ProjectContext } from "../../Context/ProjectContext";
 import { AuthContext } from "../../Context/AuthContext";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function CreateProject() {
   const { setProjects, setDropdown } = useContext(ProjectContext);
   const [projectName, setProjectName] = useState<string>("");
+  const [error, setError] = useState<string>("");
+
+  const notify = () => toast.error(error);
 
   const { token } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -39,12 +43,18 @@ export default function CreateProject() {
         }
       } catch (err: unknown) {
         if (err instanceof AxiosError) {
-          console.log(err, "errorr");
+          setError(err.response?.data.message);
         }
       }
     };
     createProject();
   };
+  useEffect(() => {
+    if (error) {
+      notify();
+      setError("");
+    }
+  }, [error]);
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
