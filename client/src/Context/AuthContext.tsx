@@ -57,6 +57,11 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
     setToken(token);
   };
 
+  const clearAllCaches = async () => {
+    const cacheNames = await caches.keys();
+    await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
+  };
+
   const authenticateUser = async () => {
     const storedToken = localStorage.getItem("token");
 
@@ -83,17 +88,18 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
   };
   useEffect(() => {
     authenticateUser();
-  }, []);
+  }, [token]);
 
   const removeToken = () => {
     localStorage.removeItem("token");
   };
 
-  const logOutUser = () => {
+  const logOutUser = async () => {
     removeToken();
     setUser(null);
     setIsLoading(false);
     setIsLoggedIn(false);
+    await clearAllCaches();
   };
 
   const handleSubmitFile = async (e: React.FormEvent<HTMLFormElement>) => {
