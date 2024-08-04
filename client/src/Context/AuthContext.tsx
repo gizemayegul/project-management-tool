@@ -1,72 +1,161 @@
 import { createContext, useState, useEffect } from "react";
-import axios from "axios";
+import axios, { Axios } from "axios";
 import Loading from "../Components/Loading/Loading";
-type AuthContextType = {
-  user: any | null;
-  isLoggedIn: boolean;
-  loading: boolean;
-  token: string;
-  setToken: React.Dispatch<React.SetStateAction<string>>;
-  logoutUser: Function; // Add logoutUser property
-  userExpire: boolean;
-};
+import { AuthContextType } from "./context";
+import { toast } from "react-toastify";
+import { AxiosError } from "axios";
+import { set } from "mongoose";
+
 const AuthContext = createContext<AuthContextType>({
   user: null,
   isLoggedIn: false,
-  token: "",
-  setToken: () => {},
-  logoutUser: () => {},
-  loading: true,
-  userExpire: false,
+  logOutUser: () => {},
+  isLoading: true,
+  storeToken: () => {},
+  authenticateUser: () => {},
+  setIsLoggedIn: () => {},
+  token: null,
+  handleSubmitFile: () => {},
+  setIsLineLoading: () => {},
+  isLineLoading: false,
+  selectedFile: null,
+  handleFileChange: () => {},
+  setSelectedFile: () => {},
+  handleUpdate: () => {},
+  userUpdate: { name: "", email: "", password: "" },
+  setUserUpdate: () => {},
+  handleUserDelete: () => {},
+  logOut: false,
+  setLogOut: () => {},
 });
 
 const API_URL = import.meta.env.VITE_SERVER_URL;
 
 function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [userExpire, setUserExpire] = useState(false);
-  if (token) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLineLoading, setIsLineLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [logOut, setLogOut] = useState(false);
+  const [userUpdate, setUserUpdate] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const notify = () => toast.success("Uploaded!");
+  const notifyUpdate = () => toast.success("User information is changed!");
+  const [isError, setIsError] = useState<any>();
+  toast.error(isError);
+
+  const [token, setToken] = useState<string | null>(
+    localStorage.getItem("token")
+  );
+
+  const storeToken = (token: string): void => {
     localStorage.setItem("token", token);
-  }
-  useEffect(() => {
-    const localStoreToken = localStorage.getItem("token");
-    if (localStoreToken) {
-      const authenticateUser = async () => {
-        try {
-          const response = await axios.get(`${API_URL}/api/verify`, {
-            headers: { Authorization: localStoreToken },
-          });
-          if (response.data.isAuthenticated) {
-            setUser(response.data);
-            setIsLoggedIn(true);
-          }
-        } catch (err) {
-          console.log(err);
-          if (localStoreToken !== token) {
-            localStorage.removeItem("token");
-            setUserExpire(true);
-            setUser(null);
-            setToken("");
-          }
-        } finally {
-          setLoading(false);
-        }
-      };
-      authenticateUser();
+    setToken(token);
+  };
+
+  const clearAllCaches = async () => {
+    const cacheNames = await caches.keys();
+    await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
+  };
+
+  const authenticateUser = async () => {
+    const storedToken = localStorage.getItem("token");
+
+    if (storedToken) {
+      try {
+        const response = await axios.get(`${API_URL}/api/verify`, {
+          headers: { Authorization: storedToken },
+        });
+        const user = response.data;
+        setIsLoggedIn(true);
+        setIsLoading(false);
+        setUser(user);
+        setUserUpdate({ name: user.name, email: user.email, password: "" });
+      } catch (err) {
+        setIsLoggedIn(false);
+        setIsLoading(false);
+        setUser(null);
+      }
     } else {
-      setLoading(false);
+      setIsLoggedIn(false);
+      setIsLoading(false);
+      setUser(null);
     }
+  };
+  useEffect(() => {
+    authenticateUser();
   }, [token]);
 
-  const logoutUser = () => {
+  const removeToken = () => {
     localStorage.removeItem("token");
+  };
+
+  const logOutUser = async () => {
+    removeToken();
     setUser(null);
-    setLoading(false);
-    setToken("");
+    setIsLoading(false);
     setIsLoggedIn(false);
+    await clearAllCaches();
+  };
+
+  const handleSubmitFile = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const uploadData = new FormData();
+      uploadData.append("image", selectedFile as Blob);
+
+      const response = await axios.post(`${API_URL}/api/upload`, uploadData, {
+        headers: { Authorization: localStorage.getItem("token") },
+      });
+
+      setUser(response.data);
+      setIsLineLoading(false);
+      setSelectedFile(null);
+      notify();
+    } catch (err: any) {
+      setIsError(err.message);
+      console.log(err.message);
+      setIsLineLoading(false);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setSelectedFile(e.target.files[0]);
+      console.log(e.target.files[0]);
+    }
+  };
+
+  const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const response = await axios.put(`${API_URL}/api/update`, userUpdate, {
+        headers: { Authorization: token },
+      });
+      setUser(response.data);
+      notifyUpdate();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleUserDelete = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await axios.delete(`${API_URL}/api/delete`, {
+        headers: { Authorization: token },
+      });
+      removeToken();
+      setUser(null);
+      setIsLoading(false);
+      setIsLoggedIn(false);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -74,14 +163,27 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
       value={{
         user,
         isLoggedIn,
+        storeToken,
+        logOutUser,
+        setIsLoggedIn,
+        isLoading,
+        authenticateUser,
         token,
-        setToken,
-        logoutUser,
-        loading,
-        userExpire,
+        handleSubmitFile,
+        isLineLoading,
+        setIsLineLoading,
+        selectedFile,
+        handleFileChange,
+        setSelectedFile,
+        handleUpdate,
+        handleUserDelete,
+        userUpdate,
+        setUserUpdate,
+        logOut,
+        setLogOut,
       }}
     >
-      {loading ? <Loading /> : props.children}
+      {isLoading ? <Loading /> : props.children}
     </AuthContext.Provider>
   );
 }

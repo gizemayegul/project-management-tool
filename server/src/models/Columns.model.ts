@@ -10,6 +10,11 @@ const ColumnsSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Boards",
     },
+    projectId: {
+      type: Schema.Types.ObjectId,
+      ref: "Projects",
+    },
+
     tasks: [
       {
         taskName: {
@@ -22,7 +27,12 @@ const ColumnsSchema = new Schema(
           default: "P3",
           enum: ["P1", "P2", "P3"],
         },
+        taskDescription: {
+          type: String,
+          default: "No Description",
+        },
       },
+
       {
         timestamps: true,
       },
@@ -30,6 +40,10 @@ const ColumnsSchema = new Schema(
     index: {
       type: Number,
       default: 0,
+    },
+    color: {
+      type: String,
+      default: "",
     },
   },
   {

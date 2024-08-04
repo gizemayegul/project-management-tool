@@ -1,31 +1,42 @@
 import { createContext, useState, useEffect } from "react";
 import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
+import { Id, ProjectType } from "../utils/types";
+import { ProjectContextType } from "./context";
+import { apiUrl } from "../utils/config";
+import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
 
-type ProjectContextType = {
-  projects: [] | null;
-  setProjects: React.Dispatch<React.SetStateAction<null | any[]>>;
-};
 const ProjectContext = createContext<ProjectContextType>({
-  projects: null,
+  projects: [],
   setProjects: () => {},
+  handleDeleteProject: () => {},
+  handleFavoriteProject: () => {},
+  setFavoriteProjects: () => {},
+  favoriteProjects: [],
+  favChange: null,
+  dropdown: false,
+  setDropdown: () => {},
+  background: false,
+  setBackGround: () => {},
 });
-const API_URL = import.meta.env.VITE_SERVER_URL;
 
 function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
-  const { isLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn, token } = useContext(AuthContext);
+  const [projects, setProjects] = useState<ProjectType[]>([]);
+  const [favoriteProjects, setFavoriteProjects] = useState<ProjectType[]>([]);
+  const [favChange, setFavChange] = useState<boolean | null>(null);
+  const [dropdown, setDropdown] = useState<boolean>(false);
+  const [background, setBackGround] = useState<boolean>(false);
 
-  const localStoreToken = localStorage.getItem("token");
-
-  const [projects, setProjects] = useState(null);
+  const navigate = useNavigate();
   useEffect(() => {
     if (isLoggedIn) {
       const fetchProjects = async () => {
         try {
-          const response = await axios.get(`${API_URL}/projects`, {
-            headers: { Authorization: localStoreToken },
+          const response = await axios.get(`${apiUrl}/projects`, {
+            headers: { Authorization: token },
           });
           setProjects(response.data.projects);
         } catch (error) {
@@ -34,15 +45,63 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
       };
       fetchProjects();
     }
-  }, [localStoreToken, isLoggedIn]);
+  }, [token, isLoggedIn, favChange, background]);
+
+  useEffect(() => {
+    const fetchFavoriteProjects = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/api/projects/favorites`, {
+          headers: { Authorization: token },
+        });
+        setFavoriteProjects(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchFavoriteProjects();
+  }, [favChange]);
+
+  const handleDeleteProject = async (projectId: Id) => {
+    try {
+      await axios.delete(`${apiUrl}/projects/${projectId}`, {
+        headers: { Authorization: token },
+      });
+      if (!projects) return;
+      setProjects((prev) => {
+        return prev.filter((project) => project._id !== projectId);
+      });
+
+      navigate("/dashboard");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleFavoriteProject = async (projectId: Id) => {
+    const response = await axios.put(
+      `${apiUrl}/projects/${projectId}/favorite`,
+      {
+        projectId,
+      },
+      { headers: { Authorization: token } }
+    );
+    console.log(response.data);
+    setFavChange(response.data);
+  };
 
   return (
     <ProjectContext.Provider
       value={{
         projects,
-        setProjects: setProjects as React.Dispatch<
-          React.SetStateAction<any[] | null>
-        >,
+        handleDeleteProject,
+        setProjects,
+        background,
+        handleFavoriteProject,
+        favoriteProjects,
+        setFavoriteProjects,
+        setDropdown,
+        dropdown,
+        favChange,
+        setBackGround,
       }}
     >
       {props.children}

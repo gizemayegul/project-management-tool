@@ -1,10 +1,17 @@
 import { useParams } from "react-router-dom";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import Column from "../../Components/Column/Column";
-import { ColumnType, TaskType } from "../../types";
+import { ColumnType, TaskType, Id } from "../../utils/types";
 import { createPortal } from "react-dom";
 import Task from "../../Components/Tasks/Task";
+import { apiUrl } from "../../utils/config";
+import { AuthContext } from "../../Context/AuthContext";
+import { BoardType } from "../../utils/types";
+import { useNavigate } from "react-router-dom";
+import Drawer from "../../Components/Drawer/Drawer";
+import { PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
+
 import {
   DndContext,
   useSensor,
@@ -17,16 +24,26 @@ import {
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 
-const API_URL: string = import.meta.env.VITE_SERVER_URL;
-const localStoreToken = localStorage.getItem("token");
-
 export default function BoardsDetails() {
-  const { boardId } = useParams<{ boardId: string }>();
-
+  const { boardId, projectId } = useParams<{
+    boardId: string;
+    projectId: string;
+  }>();
   const [columns, setColumns] = useState<ColumnType[]>([]);
   const [activeColumn, setActiveColumn] = useState<ColumnType | null>(null);
-
+  const [addNewColumn, setAddNewColumn] = useState<string>("");
   const [activeTask, setActiveTask] = useState<TaskType | null>(null);
+  const [updateColumns, setUpdateColumns] = useState<string>("");
+  const [boardDetails, setBoardDetails] = useState<BoardType>();
+  const [boards, setBoards] = useState<BoardType[]>([]);
+  const [show, setShow] = useState(false);
+  const [boardName, setBoardName] = useState<string>("");
+  const [updateTask, setUpdateTask] = useState<boolean>(false);
+  const [addNewColumnShow, setAddNewColumnShow] = useState<boolean>(false);
+
+  const navigate = useNavigate();
+
+  const { token } = useContext(AuthContext);
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -38,9 +55,16 @@ export default function BoardsDetails() {
   useEffect(() => {
     const fetchColumns = async () => {
       try {
-        const response = await axios.get(`${API_URL}/columns/${boardId}`, {
-          headers: { Authorization: localStoreToken },
+        const response = await axios.get(`${apiUrl}/columns/${boardId}`, {
+          headers: { Authorization: token },
         });
+        const responseBoard = await axios.get(
+          `${apiUrl}/${projectId}/boards/${boardId}`,
+          {
+            headers: { Authorization: token },
+          }
+        );
+        setBoardDetails(responseBoard.data[0]);
 
         setColumns(response.data);
       } catch (error) {
@@ -49,7 +73,7 @@ export default function BoardsDetails() {
     };
 
     fetchColumns();
-  }, [boardId, localStoreToken]);
+  }, [boardId, updateColumns, show, updateTask]);
 
   function onDragStart(event: DragStartEvent) {
     if (event.active.data.current?.type === "column") {
@@ -58,7 +82,9 @@ export default function BoardsDetails() {
     }
 
     if (event.active.data.current?.type === "task") {
-      setActiveTask(event.active.data.current.task);
+      const task = event.active.data.current.task;
+      const columnId = event.active.data.current.column;
+      setActiveTask({ ...task, columnId });
       return;
     }
   }
@@ -83,6 +109,48 @@ export default function BoardsDetails() {
         const findColumnActive = columns.find((col) =>
           col.tasks.some((t) => t._id === activeId)
         );
+        const findOverColumn = columns.find((col) =>
+          col.tasks.some((t) => t._id === overId)
+        );
+
+        if (!findColumnActive || !findOverColumn) return;
+        if (findColumnActive._id !== findOverColumn._id) {
+          const activeIndex = findColumnActive.tasks.findIndex(
+            (t) => t._id === activeId
+          );
+
+          const overIndex = findOverColumn.tasks.findIndex(
+            (t) => t._id === overId
+          );
+          if (activeIndex === -1 || overIndex === -1) return;
+          // const activeTask = findColumnActive.tasks.find(
+          //   (t) => t._id === activeId
+          // );
+          // const overTask = findOverColumn.tasks.find((t) => t._id === overId);
+          const activeColumnIndex = columns.findIndex(
+            (columns) => columns._id === findColumnActive._id
+          );
+          const overColumnIndex = columns.findIndex(
+            (columns) => columns._id === findOverColumn._id
+          );
+          let newColumns = [...columns];
+          const [removeditem] = newColumns[activeColumnIndex].tasks.splice(
+            activeIndex,
+            1
+          );
+          newColumns[overColumnIndex].tasks.splice(overIndex, 0, removeditem);
+          // newColumns[overColumnIndex].tasks.unshift(removeditem);
+
+          setColumns(newColumns);
+
+          await axios.put(
+            `${apiUrl}/columns/tasks/updateColumns`,
+            { updatedColumns: newColumns },
+            {
+              headers: { Authorization: token },
+            }
+          );
+        }
         if (!findColumnActive) return;
 
         const activeIndex = findColumnActive.tasks.findIndex(
@@ -104,12 +172,12 @@ export default function BoardsDetails() {
           )
         );
         await axios.put(
-          `${API_URL}/columns/${findColumnActive._id}/tasks/reorder`,
+          `${apiUrl}/columns/${findColumnActive._id}/tasks/reorder`,
           {
             tasks: newOrders,
           },
           {
-            headers: { Authorization: localStoreToken },
+            headers: { Authorization: token },
           }
         );
       }
@@ -142,10 +210,10 @@ export default function BoardsDetails() {
         newColumns[overColumnIndex].tasks.push(removeditem);
         setColumns(newColumns);
         await axios.put(
-          `${API_URL}/columns/tasks/updateColumns`,
+          `${apiUrl}/columns/tasks/updateColumns`,
           { updatedColumns: newColumns },
           {
-            headers: { Authorization: localStoreToken },
+            headers: { Authorization: token },
           }
         );
       }
@@ -170,77 +238,254 @@ export default function BoardsDetails() {
       const isActiveAColumn = active.data.current?.type === "column";
       if (!isActiveAColumn) return;
 
-      console.log("DRAG END");
       const activeColumnIndex = columns.findIndex(
         (col) => col._id === activeId
       );
       const overColumnIndex = columns.findIndex((col) => col._id === overId);
 
       let newColumns = [...columns];
+
       newColumns = arrayMove(newColumns, activeColumnIndex, overColumnIndex);
-      setColumns(newColumns);
+      const updatedColumns = newColumns.map((column, index) => ({
+        ...column,
+        index: index,
+      }));
+      setColumns(updatedColumns);
+
       await axios.put(
-        `${API_URL}/columns/${activeId}`,
-        { index: overColumnIndex },
-        {
-          headers: { Authorization: localStoreToken },
-        }
-      );
-      await axios.put(
-        `${API_URL}/columns/${overId}`,
-        { index: activeColumnIndex },
-        {
-          headers: { Authorization: localStoreToken },
-        }
+        `${apiUrl}/columns/reorder`,
+        { updatedColumns: updatedColumns },
+        { headers: { Authorization: token } }
       );
     } catch (error) {
       console.log(error);
     }
   }
 
+  const handleSubmitColumn = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!addNewColumn) return;
+    try {
+      const response = await axios.post(
+        `${apiUrl}/columns`,
+        {
+          columnName: addNewColumn,
+          tasks: [],
+          boardId: boardId,
+          index: columns.length,
+          projectId: projectId,
+        },
+        { headers: { Authorization: token } }
+      );
+      if (response.status === 200) {
+        setColumns((prevColumns) => [...prevColumns, response.data]);
+        setAddNewColumn("");
+      } else {
+        console.log("Error");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDeleteTask = async (taskId: Id, columnId: Id) => {
+    try {
+      const response = await axios.delete(
+        `${apiUrl}/columns/${columnId}/deleteTask/${taskId}`,
+        { headers: { Authorization: token } }
+      );
+      console.log(taskId, "task");
+
+      if (response.status === 200) {
+        const response = await axios.get(`${apiUrl}/columns/${boardId}`, {
+          headers: { Authorization: token },
+        });
+        setColumns(response.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleColumnDelete = async (columnId: Id) => {
+    console.log(columnId, "columnId");
+    try {
+      const response = await axios.delete(`${apiUrl}/columns/${columnId}`, {
+        headers: { Authorization: token },
+      });
+      if (response.status === 200) {
+        setColumns((prevColumns) => {
+          return prevColumns.filter((col) => col._id !== columnId);
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handledeleteBoard = async (boardId: Id) => {
+    try {
+      const response = await axios.delete(`${apiUrl}/boards/${boardId}`, {
+        headers: { Authorization: token },
+      });
+      if (response.status === 200) {
+        navigate("/dashboard");
+      }
+
+      setBoards((prev) => prev.filter((board) => board._id !== boardId));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleBoardName = async () => {
+    console.log("handleBoardName");
+    try {
+      const response = await axios.put(
+        `${apiUrl}/boards/${boardId}/boardName`,
+        {
+          boardName: boardName,
+        },
+        {
+          headers: { Authorization: token },
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    <div>
+    <div className="px-4">
+      <div
+        className="h-20 w-full rounded-md bg-base-300
+ flex justify-between items-center px-4 mb-3 mt-3 min-h-max"
+      >
+        <div>
+          {boardDetails && !show && <div>{boardDetails.boardName}</div>}
+          {show && (
+            <div className={`flex align-bottom space-x-4`}>
+              <input
+                className="input input-bordered w-full "
+                type="text"
+                value={boardName}
+                onChange={(e) => {
+                  setBoardName(e.target.value);
+                }}
+              />
+              <button
+                onClick={() => {
+                  setShow(false);
+                  handleBoardName();
+                }}
+                className=" bg-indigo-600  text-white hover:bg-indigo-500  hover:text-white rounded-md px-3  text-sm font-medium"
+              >
+                Change Name
+              </button>
+            </div>
+          )}
+        </div>
+        <Drawer
+          handleDelete={handledeleteBoard}
+          id={boardDetails?._id ?? ""}
+          showDelete={true}
+          show={show}
+          setShow={setShow}
+          type="boards"
+        />
+      </div>
       <DndContext
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
         onDragOver={onDragOver}
         sensors={sensors}
+        // collisionDetection={closestCenter}
       >
-        <div className="m-auto flex gap-4">
+        <div className="m-auto flex gap-4 overflow-x-auto min-h-screen h-screen">
           <div className="flex gap-4">
-            <SortableContext items={columns.map((column) => column._id)}>
+            <SortableContext
+              // strategy={rectSortingStrategy}
+              items={columns.map((column) => column._id)}
+            >
               {columns.map((column) => (
-                <Column key={column._id} column={column} tasks={column.tasks} />
+                <Column
+                  key={column._id}
+                  column={column}
+                  tasks={column.tasks}
+                  setColumns={setColumns}
+                  handleDeleteTask={handleDeleteTask}
+                  handleColumnDelete={handleColumnDelete}
+                  setUpdateColumns={setUpdateColumns}
+                  setUpdateTask={setUpdateTask}
+                />
               ))}
-              <form
-                className="
-      h-[60px]
-      w-[350px]
-      min-w-[350px]
-      cursor-pointer
-      rounded-lg
-      bg-mainBackgroundColor
-      border-2
-      border-columnBackgroundColor
-      p-4
-      ring-rose-500
-      hover:ring-2
-      flex
-      gap-2
-      "
-              >
-                <input type="text" />
-                <button type="submit">Add Column</button>
-              </form>
             </SortableContext>
+            <form
+              className="bg-base-300  h-fit w-60 p-4 rounded-md bg-opacity-30"
+              onSubmit={(e) => handleSubmitColumn(e)}
+            >
+              {addNewColumnShow ? (
+                <div className="flex flex-col space-y-4">
+                  <input
+                    required
+                    onChange={(e) => {
+                      setAddNewColumn(e.target.value);
+                    }}
+                    className="input input-bordered w-full shadow-xl p-2 "
+                    type="text"
+                    value={addNewColumn}
+                  />
+                  <div className="flex items-center space-x-4">
+                    <button
+                      className=" p-0 m-0 btn bg-indigo-600 text-white w-fit px-4"
+                      type="submit"
+                    >
+                      Add Column
+                    </button>
+                    <button
+                      onClick={() => setAddNewColumnShow((prev) => !prev)}
+                    >
+                      <XMarkIcon className="h-8" />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div
+                  className="flex space-x-2"
+                  onClick={() => setAddNewColumnShow((prev) => !prev)}
+                >
+                  <PlusIcon className="h-5" />
+                  <button className="p-0 m-0" type="submit">
+                    <h2 className="pb-2"> Add Column</h2>
+                  </button>
+                </div>
+              )}
+            </form>
           </div>
         </div>
         {createPortal(
           <DragOverlay>
             {activeColumn && (
-              <Column column={activeColumn} tasks={activeColumn.tasks} />
+              <div>
+                <Column
+                  column={activeColumn}
+                  tasks={activeColumn.tasks}
+                  setColumns={setColumns}
+                  handleDeleteTask={handleDeleteTask}
+                  handleColumnDelete={handleColumnDelete}
+                  setUpdateColumns={setUpdateColumns}
+                  setUpdateTask={setUpdateTask}
+                />
+              </div>
             )}
-            {activeTask && <Task task={activeTask} />}
+            {activeTask && (
+              <Task
+                task={activeTask}
+                columnId={activeTask.columnId}
+                handleDeleteTask={handleDeleteTask}
+                setUpdateTask={setUpdateTask}
+              />
+            )}
           </DragOverlay>,
           document.body
         )}

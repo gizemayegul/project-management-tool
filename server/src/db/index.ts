@@ -9,6 +9,7 @@ const MONGO_URI =
   `mongodb://127.0.0.1:27017/${process.env.MONGODB_URI}` ||
   "mongodb://127.0.0.1:27017/fullstack";
 console.log(MONGO_URI);
+console.log(process.env.MONGODB_URI, "fb");
 
 mongoose
   .connect(MONGO_URI)

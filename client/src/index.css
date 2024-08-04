@@ -22,3 +22,35 @@ body,
 .task > ::-webkit-scrollbar-thumb {
   @apply bg-sky-500 rounded-xl;
 } */
+
+body {
+  overflow-x: hidden;
+  padding: 0 4rem 0 4rem;
+}
+.color-input {
+  width: 1rem;
+  height: 1rem;
+  padding: 0;
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0; /* Remove padding to fill the circle */
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border-radius: 50%; /* Ensure the swatch itself is circular */
+}
+
+@media screen and (max-width: 768px) {
+  body {
+    padding: 0 0.25rem 0 0.25rem;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  body {
+    padding: 0 0.5rem 0 0.5rem;
+  }
+}

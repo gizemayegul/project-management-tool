@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
 
-const API_URL = import.meta.env.VITE_SERVER_URL;
+import { apiUrl } from "../../utils/config";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
@@ -17,12 +17,11 @@ export default function Signup() {
     e.preventDefault();
 
     try {
-      const response: any = await axios.post(`${API_URL}/api/signup`, {
+      const response: any = await axios.post(`${apiUrl}/api/signup`, {
         email: email,
         password: password,
         name: name,
       });
-      console.log(response);
       setError("");
       setSuccess(response.data.message);
       navigate("/login");
@@ -43,14 +42,12 @@ export default function Signup() {
     setName("");
     setPassword("");
     setEmail("");
-    // setError("");
-    // setSuccess("");
   };
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight ">
           Create a new account
         </h2>
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -61,12 +58,12 @@ export default function Signup() {
             onSubmit={submitHandler}
           >
             <label
-              className="block text-sm font-medium leading-6 text-gray-900"
+              className="block text-sm font-medium leading-6 "
               htmlFor="name"
             >
               Name
               <input
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="input input-bordered block w-full rounded-md border-0 py-1.5  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 name="name"
                 type="text"
                 value={name}
@@ -76,12 +73,12 @@ export default function Signup() {
               />
             </label>
             <label
-              className="block text-sm font-medium leading-6 text-gray-900"
+              className="block text-sm font-medium leading-6 "
               htmlFor="email"
             >
               Email
               <input
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className=" input input-bordered block w-full rounded-md border-0 py-1.5  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 name="email"
                 type="email"
                 value={email}
@@ -91,12 +88,12 @@ export default function Signup() {
               />
             </label>
             <label
-              className="block text-sm font-medium leading-6 text-gray-900"
+              className="block text-sm font-medium leading-6 "
               htmlFor="password"
             >
               Password
               <input
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="input input-bordered block w-full rounded-md border-0 py-1.5  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 name="password"
                 type="password"
                 value={password}
@@ -115,7 +112,7 @@ export default function Signup() {
         </div>
         {error && (
           <div>
-            <p className=" bg-red-400 p-1.5 mt-2 rounded-md text-white px-3 py-2 text-sm font-semibold  flex w-full justify-center">
+            <p className=" bg-red-500 p-1.5 mt-2 rounded-md text-white px-3 py-2 text-sm font-semibold  flex w-full justify-center">
               {error}
             </p>
           </div>

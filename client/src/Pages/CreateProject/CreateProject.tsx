@@ -1,85 +1,94 @@
-import { useState, useEffect, useContext } from "react";
-import axios, { AxiosError } from "axios";
-const API_URL = import.meta.env.VITE_SERVER_URL;
-import { useNavigate } from "react-router-dom";
+import { useState, useContext, useEffect } from "react";
+import { apiUrl } from "../../utils/config";
+import axios from "axios";
 import { ProjectContext } from "../../Context/ProjectContext";
+import { AuthContext } from "../../Context/AuthContext";
+import { AxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function CreateProject() {
-  const [projectName, setProjectName] = useState<string | undefined>("");
-  const [error, setError] = useState<string | undefined>("");
-  const localStoreToken = localStorage.getItem("token");
-  const navigate = useNavigate();
-  const { setProjects } = useContext(ProjectContext);
+  const { setProjects, setDropdown } = useContext(ProjectContext);
+  const [projectName, setProjectName] = useState<string>("");
+  const [error, setError] = useState<string>("");
 
-  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+  const notify = () => toast.error(error);
+
+  const { token } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const submitHandler = async (
+    e: React.FormEvent<HTMLFormElement>,
+    setCreateProject?: (createProject: boolean) => void
+  ) => {
     e.preventDefault();
-    console.log(projectName);
     const createProject = async () => {
       try {
         const response = await axios.post(
-          `${API_URL}/createproject`,
+          `${apiUrl}/projects/createproject`,
           { projectName: projectName },
           {
-            headers: { Authorization: localStoreToken },
+            headers: { Authorization: token },
           }
         );
-        console.log(response.data.projects);
-        navigate("/projects");
+
+        if (response.status === 200) {
+          setProjects((prev) => [...prev, response.data]);
+          setDropdown((prev) => !prev);
+          navigate(`/projects/${response.data._id}`);
+          setProjectName("");
+          if (setCreateProject) {
+            setCreateProject(false);
+          }
+        }
       } catch (err: unknown) {
         if (err instanceof AxiosError) {
-          console.log(err, "errorr");
           setError(err.response?.data.message);
-        }
-      } finally {
-        try {
-          const response = await axios.get(`${API_URL}/projects`, {
-            headers: { Authorization: localStoreToken },
-          });
-          console.log(response.data.projects);
-          setProjects(response.data.projects);
-        } catch (error) {
-          console.log(error);
         }
       }
     };
     createProject();
-
-    //TODO : projects page is not updated directly maybe it is better move them inside context
   };
+  useEffect(() => {
+    if (error) {
+      notify();
+      setError("");
+    }
+  }, [error]);
+
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight">
           Create a project
         </h2>
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" onSubmit={submitHandler}>
+          <form
+            className="space-y-6"
+            onSubmit={(e) => {
+              submitHandler(e);
+              setProjectName("");
+            }}
+          >
             <label htmlFor="projectname">
               Project Name
               <input
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="input input-bordered block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 mt-2"
                 value={projectName}
                 name="projectname"
                 type="text"
-                onChange={(e: React.ChangeEvent): void => {
-                  setProjectName((e.target as HTMLInputElement).value);
+                onChange={(e) => {
+                  setProjectName(e.target.value);
                 }}
               />
             </label>
             <button
-              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="btn flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               type="submit"
             >
               {" "}
               Create
             </button>
-            {error && (
-              <div>
-                <p className=" bg-red-400 p-1.5 mt-2 rounded-md text-white px-3 py-2 text-sm font-semibold  flex w-full justify-center">
-                  {error}
-                </p>
-              </div>
-            )}
           </form>
         </div>
       </div>

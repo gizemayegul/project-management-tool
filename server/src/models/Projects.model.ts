@@ -9,7 +9,7 @@ const projectsSchema = new Schema(
     },
     imageUrl: {
       default:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-NSEUHWmQsGxt4SfVM3f8VMW7vN8JsHnL-CnVII5E4A&s",
+        "https://images.unsplash.com/photo-1443397646383-16272048780e?ixlib=rb-4.0.3",
       type: String,
     },
 
@@ -18,6 +18,10 @@ const projectsSchema = new Schema(
       ref: "User",
     },
     boards: [{ type: Schema.Types.ObjectId, ref: "Board" }],
+    favorite: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

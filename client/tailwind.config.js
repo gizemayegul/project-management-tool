@@ -2,7 +2,19 @@
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      backgroundColor: {
+        "dark-background": "#000000", // Custom dark background color
+        "light-background": "#ffffff", // Custom light background color
+      },
+    },
   },
-  plugins: [],
+  screens: {
+    xs: { max: "640px" },
+  },
+
+  plugins: [require("daisyui")],
+  daisyui: {
+    themes: ["light", "dark"], // Add all the themes you want to use
+  },
 };

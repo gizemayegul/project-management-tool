@@ -5,6 +5,7 @@ import Boards from "../models/Boards.model";
 import Columns from "../models/Columns.model";
 const columnRoute = Router();
 
+//!! i keep all columns in differnt database so boardId is needed
 columnRoute.get(
   "/columns/:boardId",
   isAuthenticated,
@@ -15,7 +16,7 @@ columnRoute.get(
       return;
     }
     try {
-      const response = await Columns.find({ boardId: boardId })
+      const response = await Columns.find({ boardId })
         .sort({
           index: 1,
         })
@@ -29,9 +30,10 @@ columnRoute.get(
     }
   }
 );
+//!! this route is for creating the a column, i didnt want to cause new column
 
 columnRoute.post(
-  "/columns/:boardId",
+  "/columns",
   isAuthenticated,
   async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
     try {
@@ -44,46 +46,54 @@ columnRoute.post(
     }
   }
 );
+//!! reorder the columns
+columnRoute.put("/columns/reorder", isAuthenticated, async (req, res) => {
+  const { updatedColumns } = req.body;
 
-columnRoute.put(
-  "/columns/:columnId",
-  isAuthenticated,
-  async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
-    const { columnId } = req.params;
-    const { index } = req.body;
+  try {
+    // Perform bulk update of column indices
+    const bulkOperations = updatedColumns.map((column: any) => ({
+      updateOne: {
+        filter: { _id: column._id },
+        update: { index: column.index },
+      },
+    }));
+    await Columns.bulkWrite(bulkOperations);
 
-    try {
-      const response = await Columns.findByIdAndUpdate(
-        columnId,
-        { index: index },
-        {
-          new: true,
-        }
-      );
-      res.status(200).json(response);
-    } catch (error) {
-      console.error({
-        message: "An error occurred while fetching the boards user",
-      });
-    }
+    // Fetch and return all columns sorted by index
+    const sortedColumns = await Columns.find().sort({ index: 1 });
+    res.status(200).json(sortedColumns);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "An error occurred while updating the columns" });
   }
-);
+});
+//!! this route is for creating the tasks
+
 columnRoute.post(
   "/columns/:columnId/createTask",
   isAuthenticated,
   async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
     const { columnId } = req.params;
-    const { task } = req.body;
+    const { taskName } = req.body;
 
     try {
       const response = await Columns.findByIdAndUpdate(
         columnId,
-        { $push: { tasks: task } },
+        { $push: { tasks: { taskName: taskName || "Untitled" } } },
         {
           new: true,
         }
       );
-      res.status(200).json(response);
+      if (!response) {
+        res.status(400).json({ message: "An expected error happened" });
+        return;
+      }
+      const createdTask = response.tasks[response.tasks.length - 1];
+
+      res.status(200).json(createdTask);
     } catch (error) {
       console.error({
         message: "An error occurred while fetching the boards user",
@@ -91,6 +101,8 @@ columnRoute.post(
     }
   }
 );
+//!! this route is for reordering the tasks
+
 columnRoute.put(
   "/columns/:columnId/tasks/reorder",
   isAuthenticated,
@@ -107,7 +119,6 @@ columnRoute.put(
         }
       );
       res.status(200).json(response);
-      console.log(response);
     } catch (error) {
       console.error({
         message: "An error occurred while fetching the boards user",
@@ -116,13 +127,16 @@ columnRoute.put(
   }
 );
 
+//!! this route is for Dragging a task over a column here we have sorting and
+//!! latest changes from column, i send eveything to backend from the frontend
+//!! to manipulate drag and drop
+
 columnRoute.put(
   "/columns/tasks/updateColumns",
   isAuthenticated,
   async (req, res, next) => {
     try {
       const { updatedColumns } = req.body;
-      console.log(updatedColumns, "selam");
 
       const updatePromises = updatedColumns.map((column: any) => {
         return Columns.findByIdAndUpdate(column._id, column, { new: true });
@@ -140,6 +154,136 @@ columnRoute.put(
         message: "Failed to update columns",
         error,
       });
+    }
+  }
+);
+
+//!! edit task information
+
+columnRoute.put(
+  "/columns/:columnId/editTask/:taskId",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
+    const { columnId, taskId } = req.params;
+    const { taskName } = req.body;
+
+    try {
+      const response = await Columns.findOneAndUpdate(
+        { _id: columnId, "tasks._id": taskId },
+        { $set: { "tasks.$.taskName": taskName } },
+        { new: true }
+      );
+
+      if (!response) {
+        return res.status(404).json({ message: "Column or task not found" });
+      }
+
+      res.status(200).json(response);
+    } catch (error) {
+      res.status(500).json({ message: "An error occurred" });
+    }
+  }
+);
+
+//!! this foute for deleting a task
+
+columnRoute.delete(
+  "/columns/:columnId/deleteTask/:taskId",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
+    const { columnId, taskId } = req.params;
+
+    try {
+      const response = await Columns.findByIdAndUpdate(
+        { _id: columnId, "tasks._id": taskId },
+        { $pull: { tasks: { _id: taskId } } },
+        { new: true }
+      );
+      res.json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+//!!this route for deleting column
+
+columnRoute.delete(
+  "/columns/:columnId",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
+    const { columnId } = req.params;
+    console.log(columnId);
+
+    try {
+      const response = await Columns.findByIdAndDelete(columnId);
+      res.json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+//!! this route for editing column name
+
+columnRoute.put(
+  "/columns/:columnId",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
+    const { columnId } = req.params;
+    const { columnName } = req.body;
+    try {
+      const response = await Columns.findByIdAndUpdate(
+        columnId,
+        { columnName },
+        { new: true }
+      );
+      res.json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+columnRoute.get(
+  "/tasks/:columnId/:taskId",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
+    try {
+      const { taskId, columnId } = req.params;
+      const response = await Columns.findById(columnId);
+      const taskDetail = response?.tasks.find(
+        (task) => task?._id?.toString() == taskId
+      );
+      res.status(200).json(taskDetail);
+    } catch (error) {
+      console.error({
+        message: "An error occurred while fetching the boards user",
+      });
+    }
+  }
+);
+
+columnRoute.put(
+  "/columns/:columnId/color",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
+    try {
+      const { columnId } = req.params;
+      const { color } = req.body;
+      console.log(columnId, color, "color");
+
+      const response = await Columns.findByIdAndUpdate(
+        columnId,
+        { color: color },
+        {
+          new: true,
+        }
+      );
+      console.log(response);
+      res.status(200).json(response);
+    } catch (err) {
+      console.log(err);
     }
   }
 );

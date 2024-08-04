@@ -11,14 +11,24 @@ const boardsSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Projects",
     },
+    projectName: {
+      type: String,
+    },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
     imageUrl: {
       type: String,
       default:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4WmAlrjjUTOOYs35vGliGHYUdtUkXyQ-t9cyThMmGX0Uh4gtmZ0lkJE8ixZIRSSmgJzI&usqp=CAU",
+        "https://pressbooks.cuny.edu/app/uploads/sites/93/2022/08/thanuj-mathew-8CSTVoDMEXg-unsplash-scaled.jpg",
     },
     columns: [{ type: Schema.Types.ObjectId, ref: "Column" }],
+    favorite: {
+      type: Boolean,
+      default: false,
+    },
   },
-
   {
     timestamps: true,
   }
