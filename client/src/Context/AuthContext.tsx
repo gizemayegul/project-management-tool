@@ -4,7 +4,6 @@ import Loading from "../Components/Loading/Loading";
 import { AuthContextType } from "./context";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
-import { set } from "mongoose";
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
