@@ -6,7 +6,6 @@ import CreateBoardDropDown from "../CreateBoardDropDown/CreateBoardDropDown";
 import { BoardContext } from "../../Context/BoardContext";
 import { ProjectContext } from "../../Context/ProjectContext";
 import { useRef } from "react";
-import { set } from "mongoose";
 
 export default function Navbar() {
   const { logOutUser, isLoggedIn, user } = useContext(AuthContext);
