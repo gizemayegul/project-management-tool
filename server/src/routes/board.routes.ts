@@ -4,6 +4,7 @@ import { CustomRequest, CustomResponse } from "../types/ types";
 import Boards from "../models/Boards.model";
 import Columns from "../models/Columns.model";
 const boardRoute = Router();
+const fileUploader = require("../config/cloudinary.config");
 
 boardRoute.post(
   "/:projectId/createboard",
@@ -15,6 +16,15 @@ boardRoute.post(
     const { _id: userId } = req.user;
     if (!boardName) {
       res.status(400).json({ message: "Please provide a board name" });
+      return;
+    }
+    const findBoard = await Boards.findOne({
+      projectId: projectId,
+      boardName: boardName,
+      userId: userId,
+    });
+    if (findBoard) {
+      res.status(400).json({ message: "The board already exists" });
       return;
     }
     try {
@@ -216,12 +226,33 @@ boardRoute.put(
         "An error occurred while updating the board's favorite status:",
         error
       );
-      res
-        .status(500)
-        .json({
-          message:
-            "An error occurred while updating the board's favorite status",
-        });
+      res.status(500).json({
+        message: "An error occurred while updating the board's favorite status",
+      });
+    }
+  }
+);
+
+boardRoute.put(
+  "/boards/:boardId/upload",
+  isAuthenticated,
+  fileUploader.single("imagebackground"),
+  async (req: CustomRequest, res: CustomResponse) => {
+    const { boardId } = req.params;
+    console.log(req.file);
+    if (!req.file) {
+      res.status(400).json({ message: "Please provide an image" });
+      return;
+    }
+    try {
+      const updateImage = await Boards.findByIdAndUpdate(
+        boardId,
+        { imageUrl: req.file.path },
+        { new: true }
+      );
+      res.status(200).json(updateImage);
+    } catch (error) {
+      res.status(500).json(error);
     }
   }
 );

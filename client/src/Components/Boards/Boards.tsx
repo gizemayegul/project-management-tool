@@ -1,4 +1,4 @@
-import { BoardType, Id } from "../../utils/types";
+import { BoardType } from "../../utils/types";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { apiUrl } from "../../utils/config";
@@ -38,7 +38,6 @@ export default function Boards() {
             headers: { Authorization: token },
           });
           setBoards(response.data.boards);
-          console.log(response.data.boards);
         } catch (error) {
           console.error("Error fetching boards:", error);
         }
@@ -49,13 +48,23 @@ export default function Boards() {
   }
 
   return (
-    <div className="flex">
-      <div className="flex flex-wrap">
-        {Array.isArray(boards) &&
-          boards.map((board) => (
-            <Card key={board._id} card={board} cardType="board" />
-          ))}
-      </div>
-    </div>
+    <>
+      {boards.length == 0 && projectId ? (
+        <div className="flex items-center mt-4 flex-col xs:flex-wrap xs:items-start xs:w-1/2 md-flex-wrap">
+          It looks like you don't have any boards yet. Create a new board to get
+          started!
+        </div>
+      ) : (
+        <div className="flex">
+          <div className="flex flex-wrap">
+            {" "}
+            {Array.isArray(boards) &&
+              boards.map((board) => (
+                <Card key={board._id} card={board} cardType="board" />
+              ))}
+          </div>
+        </div>
+      )}
+    </>
   );
 }

@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
 import { apiUrl } from "../../utils/config";
 import { useContext } from "react";
@@ -7,13 +7,15 @@ import { AuthContext } from "../../Context/AuthContext";
 
 import { useNavigate } from "react-router-dom";
 import { ProjectContext } from "../../Context/ProjectContext";
+import { toast } from "react-toastify";
 export default function CreateBoard() {
   const [boardName, setBoardName] = useState<string | undefined>("");
   const [error, setError] = useState<string | undefined>("");
-  const navigate = useNavigate();
   const { projectId } = useParams();
   const { token } = useContext(AuthContext);
   const { projects } = useContext(ProjectContext);
+  const navigate = useNavigate();
+  const notify = () => toast.error(error);
 
   const project = projects.find((project) => project._id === projectId);
 
@@ -28,20 +30,30 @@ export default function CreateBoard() {
             headers: { Authorization: token },
           }
         );
-        navigate(`/projects/${projectId}`);
+
+        if (response.status === 200) {
+          navigate(
+            `/projects/${projectId}/boards/${response.data.boardInfo._id}`
+          );
+        }
       } catch (err: unknown) {
         if (err instanceof AxiosError) {
-          console.log(err, "errorr");
           setError(err.response?.data.message);
         }
       }
     };
     createBoard();
   };
+  useEffect(() => {
+    if (error) {
+      notify();
+      setError("");
+    }
+  }, [error]);
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight">
           Create a board
         </h2>
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -49,7 +61,7 @@ export default function CreateBoard() {
             <label htmlFor="projectname">
               Board Name
               <input
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className=" mt-2 input input-bordered block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 value={boardName}
                 name="projectname"
                 type="text"
@@ -59,19 +71,19 @@ export default function CreateBoard() {
               />
             </label>
             <button
-              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="btn flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               type="submit"
             >
               {" "}
               Create
             </button>
-            {error && (
+            {/* {error && (
               <div>
                 <p className=" bg-red-500 p-1.5 mt-2 rounded-md text-white px-3 py-2 text-sm font-semibold  flex w-full justify-center">
                   {error}
                 </p>
               </div>
-            )}
+            )} */}
           </form>
         </div>
       </div>

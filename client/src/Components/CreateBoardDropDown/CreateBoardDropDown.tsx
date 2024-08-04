@@ -1,23 +1,28 @@
-import React, { useState, useContext } from "react";
-import { ChevronLeftIcon } from "@chakra-ui/icons";
-import axios from "axios";
+import React, { useState, useContext, useEffect } from "react";
+import axios, { AxiosError } from "axios";
 import { apiUrl } from "../../utils/config";
 import { useNavigate } from "react-router-dom";
 import { CreateBoardDropDownProps } from "../../utils/types";
 import { ProjectContext } from "../../Context/ProjectContext";
 import { AuthContext } from "../../Context/AuthContext";
+import { ChevronLeftIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import { toast } from "react-toastify";
 
 export default function CreateBoardDropDown({
   setCreateBoard,
+  setDropdown,
 }: CreateBoardDropDownProps) {
   const { projects } = useContext(ProjectContext);
   const { token } = useContext(AuthContext);
+  const [error, setError] = useState<string | undefined>("");
+
   const [selectedProject, setSelectedProject] = useState<string>("");
   const [selectedProjectId, setSelectedProjectId] = useState<
     string | undefined
   >(undefined);
   const [boardName, setBoardName] = useState<string>("");
   const navigate = useNavigate();
+  const notify = () => toast.error(error);
 
   const project = projects.find((project) => project._id === selectedProjectId);
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -29,38 +34,62 @@ export default function CreateBoardDropDown({
 
         { headers: { Authorization: token } }
       );
+      console.log(response.data, "board");
       if (response.status === 200) {
         setCreateBoard(false);
+        setDropdown((prev) => !prev);
         navigate(
           `projects/${selectedProjectId}/boards/${response.data.boardInfo._id}`
         );
       }
-    } catch (error) {
-      console.log(error);
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        setError(err.response?.data.message);
+      }
     }
   };
 
+  useEffect(() => {
+    if (error) {
+      notify();
+      setError("");
+    }
+  }, [error]);
+
   return (
     <div className="flex flex-col">
-      <button
-        className=" hover:round-sm h-5 w-6 self-start  hover:text-white"
-        onClick={() => setCreateBoard(false)}
-      >
-        <ChevronLeftIcon />
-      </button>
+      <div className="flex justify-between w-full">
+        <button
+          className=" hover:round-sm h-6 w-6 self-start  hover:text-white"
+          onClick={() => {
+            setCreateBoard(false);
+          }}
+        >
+          <ChevronLeftIcon className="h-5" />
+        </button>
+        <h3>Create a Board</h3>
+        <div
+          onClick={() => {
+            setDropdown((prev) => !prev);
+            setCreateBoard(false);
+          }}
+        >
+          <XMarkIcon className="h-5" />
+        </div>
+      </div>
+
       <form onSubmit={(e) => handleSubmit(e)}>
-        <label htmlFor="boardName"></label>
+        <label htmlFor="boardName"> Board Name</label>
         <input
-          className="input input-bordered input-sm w-full max-w-xs"
+          className="input input-bordered input-sm w-full max-w-xs mt-2"
           required
           type="text"
           name="boardName"
           id="boardName"
-          placeholder="Board Name"
           value={boardName}
           onChange={(e) => setBoardName(e.target.value)}
         />
-        <label htmlFor="projectSelect"></label>
+        <label htmlFor="projectSelect"> </label>
 
         <select
           className="input input-bordered input-sm w-full max-w-xs mt-2"

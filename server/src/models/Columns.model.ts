@@ -14,6 +14,7 @@ const ColumnsSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Projects",
     },
+
     tasks: [
       {
         taskName: {
@@ -25,6 +26,10 @@ const ColumnsSchema = new Schema(
           type: String,
           default: "P3",
           enum: ["P1", "P2", "P3"],
+        },
+        taskDescription: {
+          type: String,
+          default: "No Description",
         },
       },
 
@@ -38,7 +43,7 @@ const ColumnsSchema = new Schema(
     },
     color: {
       type: String,
-      default: "#000000",
+      default: "",
     },
   },
   {

@@ -7,6 +7,7 @@ import axios from "axios";
 import { apiUrl } from "../../utils/config";
 import { AuthContext } from "../../Context/AuthContext";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 export default function Task({
   task,
@@ -35,7 +36,7 @@ export default function Task({
 
   const taskStyle = {
     style:
-      "bg-base-100 h-fit-content break-words break-all min-h-12 px-2 my-2 items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset cursor-grab relative w-60 bg-white shadow-xl ",
+      "bg-base-100 h-fit-content break-words break-all min-h-12 px-2 my-2 items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset cursor-grab relative w-60 bg-base-100  shadow-xl ",
     editStyle:
       "h-fit-content break-words break-all  w-60 min-h-12  transition-all scale-y-110 p-3 min-h-12 z-[70] px-2 my-2 items-center bg-slate-300 flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:border-slate-500  cursor-grab relative task tra",
     draggingStyle:
@@ -84,19 +85,22 @@ export default function Task({
       <div className="flex justify-between w-full">
         {!edit ? (
           <>
-            <div className="w-fit py-2 px-1">{taskName}</div>
+            {/* <Link className="grow" to={`/tasks/${columnId}/${task._id}`}> */}
+            <div className="w-fit py-2 px-1 ">{taskName}</div>
+            {/* </Link> */}
+
             <div className="flex justify-between absolute right-1 top-3 ">
               {show && (
                 <>
                   <div
-                    className="mx-1 bg-[#F1F2F4] px-1 rounded-md"
+                    className="mx-1 bg-base-300 px-1 rounded-md"
                     onClick={() => {
                       setEdit((prev) => !prev);
                     }}
                   >
                     <Edit />
                   </div>
-                  <div className=" bg-[#F1F2F4] px-1 rounded-xl">
+                  <div className="bg-base-300 px-1 rounded-xl">
                     <DeleteModal
                       handleDelete={handleDeleteTask}
                       id1={columnId}

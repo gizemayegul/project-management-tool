@@ -6,26 +6,29 @@ import { ProjectContextType } from "./context";
 import { apiUrl } from "../utils/config";
 import { useNavigate } from "react-router-dom";
 
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 
 const ProjectContext = createContext<ProjectContextType>({
   projects: [],
   setProjects: () => {},
   handleDeleteProject: () => {},
-  submitHandler: () => {},
-  setProjectName: () => {},
-  projectName: "",
   handleFavoriteProject: () => {},
   setFavoriteProjects: () => {},
   favoriteProjects: [],
+  favChange: null,
+  dropdown: false,
+  setDropdown: () => {},
+  background: false,
+  setBackGround: () => {},
 });
 
 function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
   const { isLoggedIn, token } = useContext(AuthContext);
-  const [projectName, setProjectName] = useState<string>("");
   const [projects, setProjects] = useState<ProjectType[]>([]);
   const [favoriteProjects, setFavoriteProjects] = useState<ProjectType[]>([]);
-  const [favChange, setFavChange] = useState<boolean>();
+  const [favChange, setFavChange] = useState<boolean | null>(null);
+  const [dropdown, setDropdown] = useState<boolean>(false);
+  const [background, setBackGround] = useState<boolean>(false);
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -42,7 +45,7 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
       };
       fetchProjects();
     }
-  }, [token, isLoggedIn, favChange]);
+  }, [token, isLoggedIn, favChange, background]);
 
   useEffect(() => {
     const fetchFavoriteProjects = async () => {
@@ -51,45 +54,12 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
           headers: { Authorization: token },
         });
         setFavoriteProjects(response.data);
-        console.log(response.data, "fav projects");
       } catch (error) {
         console.log(error);
       }
     };
     fetchFavoriteProjects();
   }, [favChange]);
-
-  const submitHandler = async (
-    e: React.FormEvent<HTMLFormElement>,
-    setCreateProject?: (createProject: boolean) => void
-  ) => {
-    e.preventDefault();
-    const createProject = async () => {
-      try {
-        const response = await axios.post(
-          `${apiUrl}/projects/createproject`,
-          { projectName: projectName },
-          {
-            headers: { Authorization: token },
-          }
-        );
-        if (response.status === 200) {
-          setProjects((prev) => [...prev, response.data]);
-          setProjectName("");
-
-          navigate(`/projects/${response.data._id}`);
-          if (setCreateProject) {
-            setCreateProject(false);
-          }
-        }
-      } catch (err: unknown) {
-        if (err instanceof AxiosError) {
-          console.log(err, "errorr");
-        }
-      }
-    };
-    createProject();
-  };
 
   const handleDeleteProject = async (projectId: Id) => {
     try {
@@ -100,6 +70,8 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
       setProjects((prev) => {
         return prev.filter((project) => project._id !== projectId);
       });
+
+      navigate("/dashboard");
     } catch (error) {
       console.log(error);
     }
@@ -122,12 +94,14 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
         projects,
         handleDeleteProject,
         setProjects,
-        submitHandler,
-        setProjectName,
-        projectName,
+        background,
         handleFavoriteProject,
         favoriteProjects,
         setFavoriteProjects,
+        setDropdown,
+        dropdown,
+        favChange,
+        setBackGround,
       }}
     >
       {props.children}

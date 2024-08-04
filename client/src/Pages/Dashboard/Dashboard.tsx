@@ -1,6 +1,5 @@
 import { useContext } from "react";
 import { AuthContext } from "../../Context/AuthContext";
-import Empty from "../../Components/Empty/Empty";
 import { ProjectContext } from "../../Context/ProjectContext";
 import Projects from "../../Components/Projects/Projects";
 import Boards from "../../Components/Boards/Boards";
@@ -11,14 +10,16 @@ export default function Dashboard() {
   const { projects } = useContext(ProjectContext);
 
   return (
-    <div className="flex flex-col py-4">
+    <div className="flex flex-col py-4 px-4">
       <h1>Welcome {user && user.name}</h1>
       <div className="flex flex-col mt-6">
         {projects.length === 0 && (
           <div>
-            <h1>You haven't created a Project yet Let's get start</h1>
             <Link to="/createaproject">
-              <button className="btn"> Create A Project</button>
+              <button className="btn bg-indigo-600 text-base-100 mt-2">
+                {" "}
+                Create A Project
+              </button>
             </Link>
           </div>
         )}
@@ -37,8 +38,10 @@ export default function Dashboard() {
       )}
 
       {!projects?.length && (
-        <div>
-          <Empty />
+        <div className="flex items-center flex-col mt-">
+          <h1>You haven't created a Project yet Let's get start</h1>
+
+          {/* <Empty /> */}
         </div>
       )}
     </div>

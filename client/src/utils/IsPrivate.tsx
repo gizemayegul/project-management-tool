@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../Context/AuthContext";
@@ -7,10 +6,19 @@ import Loading from "../Components/Loading/Loading";
 export default function IsPrivate({ children }: { children: React.ReactNode }) {
   const { isLoggedIn, isLoading } = useContext(AuthContext);
 
-  if (isLoading) return <Loading />;
+  if (isLoading)
+    return (
+      <>
+        <Loading />
+      </>
+    );
   if (isLoggedIn) {
-    return children;
+    return <>{children}</>;
   } else {
-    return <Navigate to="/login" />;
+    return (
+      <>
+        <Navigate to="/login" />
+      </>
+    );
   }
 }

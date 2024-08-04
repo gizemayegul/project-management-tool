@@ -4,7 +4,9 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "fullstack": "concurrently --kill-others \"npm --prefix ./server run dev\" \"npm --prefix ./client run dev\""
+    "fullstack": "concurrently --kill-others \"npm --prefix ./server run dev\" \"npm --prefix ./client run dev\"",
+    "start:dev": "concurrently --kill-others \"npm --prefix ./server run start:dev\" \"npm --prefix ./client run start:dev\"",
+    "start:prod": "concurrently --kill-others \"npm --prefix ./server run start:prod\" \"npm --prefix ./client run start:prod\""
   },
   "repository": {
     "type": "git",

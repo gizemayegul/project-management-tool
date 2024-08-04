@@ -9,6 +9,7 @@ export type TaskType = {
   status: string;
   createdAt: string;
   updatedAt: string;
+  taskDescription: string;
 };
 
 export type ColumnType = {
@@ -19,6 +20,7 @@ export type ColumnType = {
   tasks: TaskType[];
   createdAt: string;
   updatedAt: string;
+  color: string;
 };
 
 export type ColumnProps = {
@@ -65,17 +67,6 @@ export type CardType = {
   favorite: boolean;
 };
 
-export type AuthContextType = {
-  user: any | null;
-  isLoggedIn: boolean;
-  isLoading: boolean;
-  logOutUser: Function; // Add logOutUser property
-  storeToken: (token: string) => void;
-  authenticateUser: () => void;
-  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-  token: string | null;
-};
-
 export type ProjectType = {
   projectName: string;
   _id: Id;
@@ -99,4 +90,10 @@ export type ProjectsDetails = {
 
 export type CreateBoardDropDownProps = {
   setCreateBoard: React.Dispatch<React.SetStateAction<boolean>>;
+  setDropdown: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export type CreateProjectDropDownProps = {
+  setCreateProject: React.Dispatch<React.SetStateAction<boolean>>;
+  setDropdown: React.Dispatch<React.SetStateAction<boolean>>;
 };

@@ -158,8 +158,6 @@ columnRoute.put(
   }
 );
 
-export default columnRoute;
-
 //!! edit task information
 
 columnRoute.put(
@@ -246,3 +244,48 @@ columnRoute.put(
     }
   }
 );
+
+columnRoute.get(
+  "/tasks/:columnId/:taskId",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
+    try {
+      const { taskId, columnId } = req.params;
+      const response = await Columns.findById(columnId);
+      const taskDetail = response?.tasks.find(
+        (task) => task?._id?.toString() == taskId
+      );
+      res.status(200).json(taskDetail);
+    } catch (error) {
+      console.error({
+        message: "An error occurred while fetching the boards user",
+      });
+    }
+  }
+);
+
+columnRoute.put(
+  "/columns/:columnId/color",
+  isAuthenticated,
+  async (req: CustomRequest, res: CustomResponse, next: NextFunction) => {
+    try {
+      const { columnId } = req.params;
+      const { color } = req.body;
+      console.log(columnId, color, "color");
+
+      const response = await Columns.findByIdAndUpdate(
+        columnId,
+        { color: color },
+        {
+          new: true,
+        }
+      );
+      console.log(response);
+      res.status(200).json(response);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
+
+export default columnRoute;

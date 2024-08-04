@@ -14,7 +14,7 @@ export default function Card({ card, cardType }: Card) {
   const { handleFavoriteProject } = useContext(ProjectContext);
 
   return (
-    <div className="card bg-base-100 max-h-26 image-full w-60 shadow-xl mx-3 my-3">
+    <div className="card bg-base-100 max-h-25 image-full w-60 shadow-xl mx-3 my-3  ">
       {cardType === "board" && (
         <>
           <figure>
@@ -36,7 +36,7 @@ export default function Card({ card, cardType }: Card) {
               >
                 <HeartIcon
                   className="h-6"
-                  fill={`${card.favorite ? "red" : "white"}`}
+                  fill={`${card.favorite ? " #FF6F61" : "white"}`}
                 />
               </div>
             </div>
@@ -63,7 +63,7 @@ export default function Card({ card, cardType }: Card) {
               >
                 <HeartIcon
                   className="h-6"
-                  fill={`${card.favorite ? "red" : "white"}`}
+                  fill={`${card.favorite ? "#FF6F61" : "white"}`}
                 />
               </div>
             </div>
