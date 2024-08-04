@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     resolve: {
-      extensions: [".js", ".ts", ".jsx", ".tsx", ".json"],
+      extensions: [".js", ".ts", ".jsx", ".tsx", ".json", ".mjs"],
     },
     define: {
       __APP_ENV__: JSON.stringify(env.APP_ENV),

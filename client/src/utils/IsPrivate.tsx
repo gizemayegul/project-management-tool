@@ -13,11 +13,11 @@ export default function IsPrivate({ children }: { children: React.ReactNode }) {
       </>
     );
   if (isLoggedIn) {
-    return <>{children};</>;
+    return <>{children}</>;
   } else {
     return (
       <>
-        <Navigate to="/login" />;
+        <Navigate to="/login" />
       </>
     );
   }
