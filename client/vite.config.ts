@@ -15,5 +15,10 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: "dist", // This should place the build in `client/dist`
     },
+    server: {
+      host: true,
+      strictPort: true,
+      port: 8000,
+    },
   };
 });
