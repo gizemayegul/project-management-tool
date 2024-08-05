@@ -17,6 +17,7 @@ userRoute.post(
   "/signup",
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { email, password, name } = req.body as UserRequestBody;
+    console.log(email, password, name);
     if (!email || !password || !name) {
       res
         .status(400)
@@ -25,6 +26,7 @@ userRoute.post(
     }
     try {
       const checkEmail = await User.findOne({ email: email });
+      console.log(checkEmail, "email cannot checked");
       if (checkEmail) {
         res.status(409).json({
           message: "Email already exists. Please choose a different email.",

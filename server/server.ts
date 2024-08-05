@@ -31,7 +31,7 @@ console.log(`HOST: ${process.env.HOST}`);
 console.log(`MONGODB_URI: ${process.env.MONGODB_URI}`);
 
 import "./src/db";
-import app from "./src/app";
+import app from "./app";
 
 app.listen(Number(port), host, () => {
   console.log(`Server listening on ${host}:${port}`);
