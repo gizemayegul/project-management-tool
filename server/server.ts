@@ -8,10 +8,10 @@ if (process.env.NODE_ENV === "development") {
   console.log(process.env.NODE_ENV, "NODE_ENV");
   envFile = path.resolve(
     __dirname,
-    `../.env.${process.env.NODE_ENV || "development"}`
+    `./.env.${process.env.NODE_ENV || "development"}`
   );
 } else {
-  envFile = path.resolve(`../.env.${process.env.NODE_ENV || "production"}`);
+  envFile = path.resolve(`./.env.${process.env.NODE_ENV || "production"}`);
 }
 
 console.log(__dirname, "dirname");
@@ -30,26 +30,8 @@ console.log(`PORT: ${process.env.PORT}`);
 console.log(`HOST: ${process.env.HOST}`);
 console.log(`MONGODB_URI: ${process.env.MONGODB_URI}`);
 
-import "../src/db";
-// import app from "../app";
-import express, { Application } from "express";
-import userRoute from "../src/routes/user.routes";
-import errorHandler from "../src/error-handling/index";
-import projectRoute from "../src/routes/project.routes";
-import boardRoute from "../src/routes/board.routes";
-import columnRoute from "../src/routes/column.routes";
-import middleWare from "../src/config/index";
-
-const app: Application = express();
-middleWare(app);
-
-app.use("/", userRoute);
-app.use("/", projectRoute);
-app.use("/", boardRoute);
-app.use("/", columnRoute);
-
-errorHandler(app);
-export default app;
+import "./src/db";
+import app from "./src/app";
 
 app.listen(Number(port), host, () => {
   console.log(`Server listening on ${host}:${port}`);
