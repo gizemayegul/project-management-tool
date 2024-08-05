@@ -13,7 +13,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <Router>
         <ProjectContextWrapper>
           <BoardContextWrapper>
-            <App />
+            <App></App>
           </BoardContextWrapper>
         </ProjectContextWrapper>
       </Router>

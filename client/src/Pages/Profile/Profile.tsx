@@ -46,7 +46,7 @@ export default function Profile() {
 
         <button
           type="submit"
-          className="btn"
+          className="btn w-1/3"
           disabled={selectedFile ? false : true}
         >
           {isLineLoading ? (

@@ -19,9 +19,9 @@ function BoardContextWrapper(props: React.PropsWithChildren<{}>) {
   const [favBoards, setFavBoards] = useState<BoardType[]>([]);
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [favChange, setFavChange] = useState<boolean | null>(null);
-  const { projectId } = useParams();
 
   useEffect(() => {
+    if (token === null) return;
     const fetchFavorites = async () => {
       try {
         const response = await axios.get(`${apiUrl}/boards/favorites`, {
@@ -33,7 +33,7 @@ function BoardContextWrapper(props: React.PropsWithChildren<{}>) {
       }
     };
     fetchFavorites();
-  }, [favChange]);
+  }, [favChange, token]);
 
   const handleFavoriteBoard = async (boardId: Id) => {
     const response = await axios.put(

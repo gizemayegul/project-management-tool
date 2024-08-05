@@ -48,6 +48,7 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
   }, [token, isLoggedIn, favChange, background]);
 
   useEffect(() => {
+    if (token === null) return;
     const fetchFavoriteProjects = async () => {
       try {
         const response = await axios.get(`${apiUrl}/api/projects/favorites`, {
@@ -59,7 +60,7 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
       }
     };
     fetchFavoriteProjects();
-  }, [favChange]);
+  }, [favChange, token]);
 
   const handleDeleteProject = async (projectId: Id) => {
     try {
@@ -84,7 +85,6 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
       },
       { headers: { Authorization: token } }
     );
-    console.log(response.data);
     setFavChange(response.data);
   };
 

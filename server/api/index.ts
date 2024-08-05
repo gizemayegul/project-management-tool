@@ -8,10 +8,10 @@ if (process.env.NODE_ENV === "development") {
   console.log(process.env.NODE_ENV, "NODE_ENV");
   envFile = path.resolve(
     __dirname,
-    `./.env.${process.env.NODE_ENV || "development"}`
+    `../.env.${process.env.NODE_ENV || "development"}`
   );
 } else {
-  envFile = path.resolve(`./.env.${process.env.NODE_ENV || "production"}`);
+  envFile = path.resolve(`../.env.${process.env.NODE_ENV || "production"}`);
 }
 
 console.log(__dirname, "dirname");
