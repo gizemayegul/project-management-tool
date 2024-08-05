@@ -10,13 +10,15 @@ console.log(HOST_URL, "HOST_URL");
 
 const middleWare = (app: Application) => {
   app.set("trust proxy", 1);
-
   app.use(
     cors({
       origin: [FRONTEND_URL, HOST_URL],
+      methods: ["GET", "POST"], // Only allow necessary methods
+      allowedHeaders: ["Content-Type", "Authorization"], // Only allow necessary headers
+      credentials: true,
+      optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
     })
   );
-
   app.use(logger("dev"));
 
   app.use(express.json());
