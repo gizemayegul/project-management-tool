@@ -13,7 +13,7 @@ const middleWare = (app: Application) => {
   app.use(
     cors({
       origin: [FRONTEND_URL, HOST_URL],
-      methods: ["GET", "POST"], // Only allow necessary methods
+      methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Authorization"], // Only allow necessary headers
       credentials: true,
       optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204

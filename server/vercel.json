@@ -23,5 +23,10 @@
         }
       ]
     }
-  ]
+  ],
+  "functions": {
+    "api/index.ts": {
+      "maxDuration": 30
+    }
+  }
 }
