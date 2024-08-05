@@ -9,7 +9,7 @@ import middleWare from "./config";
 const app: Application = express();
 middleWare(app);
 
-app.use("/api", userRoute);
+app.use("/", userRoute);
 app.use("/", projectRoute);
 app.use("/", boardRoute);
 app.use("/", columnRoute);

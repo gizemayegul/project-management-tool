@@ -66,7 +66,7 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
 
     if (storedToken) {
       try {
-        const response = await axios.get(`${API_URL}/api/verify`, {
+        const response = await axios.get(`${API_URL}/verify`, {
           headers: { Authorization: storedToken },
         });
         const user = response.data;
@@ -107,7 +107,7 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
       const uploadData = new FormData();
       uploadData.append("image", selectedFile as Blob);
 
-      const response = await axios.post(`${API_URL}/api/upload`, uploadData, {
+      const response = await axios.post(`${API_URL}/upload`, uploadData, {
         headers: { Authorization: localStorage.getItem("token") },
       });
 
@@ -132,7 +132,7 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`${API_URL}/api/update`, userUpdate, {
+      const response = await axios.put(`${API_URL}/update`, userUpdate, {
         headers: { Authorization: token },
       });
       setUser(response.data);
@@ -145,7 +145,7 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
   const handleUserDelete = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.delete(`${API_URL}/api/delete`, {
+      const response = await axios.delete(`${API_URL}/delete`, {
         headers: { Authorization: token },
       });
       removeToken();

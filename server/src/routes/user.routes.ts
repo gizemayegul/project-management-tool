@@ -39,6 +39,7 @@ userRoute.post(
         password: hashedPassword,
         name: name,
       });
+      console.log(email, password, name);
 
       const { password: _, ...userInfo } = createdUser.toObject();
       res.status(200).json({ message: "User created successfully" });
