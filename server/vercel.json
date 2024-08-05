@@ -9,10 +9,6 @@
   ],
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/src/app.ts"
-    },
-    {
       "source": "/(.*)",
       "destination": "/src/app.ts"
     }
