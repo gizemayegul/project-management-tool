@@ -10,7 +10,7 @@ export default {
     },
   },
   screens: {
-    xs: { max: "640px" },
+    custom: "640px",
   },
 
   plugins: [require("daisyui")],

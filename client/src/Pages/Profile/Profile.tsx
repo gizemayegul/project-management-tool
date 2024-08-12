@@ -21,14 +21,14 @@ export default function Profile() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col items-center justify-center relative space-y-6">
+    <div className="flex flex-col items-center relative space-y-6">
       <img
         className="inline-block h-40 w-40 rounded-full ring-2 ring-white border-8"
         src={user?.image ?? ""}
         alt=""
       />
       <form
-        className="flex flex-col lg:w-3/12 space-y-4"
+        className="flex flex-col xl:w-3/12 space-y- 4custom:w-4/12"
         onSubmit={(e) => {
           handleSubmitFile(e);
           setIsLineLoading(true);
@@ -38,28 +38,28 @@ export default function Profile() {
           type="file"
           id="file"
           name="file"
-          className=" w-full max-w-xs mb-2"
+          className="mb-2"
           onChange={(e) => {
             handleFileChange(e);
           }}
         />
 
         <button
+          className="btn"
           type="submit"
-          className="btn w-1/3"
           disabled={selectedFile ? false : true}
         >
           {isLineLoading ? (
             <span className="loading loading-dots loading-lg"></span>
           ) : (
-            <span className="dark:text-white">Submit</span>
+            <span>Submit</span>
           )}
         </button>
       </form>
 
       <form
         onSubmit={(e) => handleUpdate(e)}
-        className="flex flex-col lg:w-3/12 space-y-4"
+        className="flex flex-col xl:w-3/12 space-y-4 "
       >
         <input
           type="text"
@@ -72,7 +72,6 @@ export default function Profile() {
               ...userUpdate,
               name: e.target.value,
             });
-            console.log(e.target.value);
           }}
         />
         <input
@@ -119,13 +118,15 @@ export default function Profile() {
           <ArrowRightEndOnRectangleIcon className="h-6 w-6" />
         </button>
       </div>
-      <button
-        onClick={(e) => handleUserDelete(e)}
-        className="btn btn-error text-white"
-      >
-        {" "}
-        Delete Account
-      </button>
+      <div>
+        <button
+          onClick={(e) => handleUserDelete(e)}
+          className="btn btn-error text-white"
+        >
+          {" "}
+          Delete Account
+        </button>
+      </div>
     </div>
   );
 }

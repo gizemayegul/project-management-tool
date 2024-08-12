@@ -51,7 +51,6 @@ export default function Task({
         { headers: { Authorization: token } }
       );
       setEdit((prev) => !prev);
-      console.log(response.data, "edited");
       setUpdateTask((prev) => !prev);
     } catch (error) {
       console.log(error);
