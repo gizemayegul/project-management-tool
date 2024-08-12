@@ -20,6 +20,7 @@ import {
   DragStartEvent,
   DragOverlay,
   DragEndEvent,
+  TouchSensor,
   DragOverEvent,
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
@@ -40,6 +41,9 @@ export default function BoardsDetails() {
   const [boardName, setBoardName] = useState<string>("");
   const [updateTask, setUpdateTask] = useState<boolean>(false);
   const [addNewColumnShow, setAddNewColumnShow] = useState<boolean>(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean | undefined>(
+    undefined
+  );
 
   const navigate = useNavigate();
 
@@ -50,6 +54,12 @@ export default function BoardsDetails() {
         distance: 10,
       },
     })
+    // useSensor(TouchSensor, {
+    //   activationConstraint: {
+    //     delay: 100, // Add a delay for touch to avoid accidental drags
+    //     tolerance: 10, // Increase tolerance for touch interactions
+    //   },
+    // })
   );
 
   useEffect(() => {
@@ -377,6 +387,7 @@ export default function BoardsDetails() {
                 onClick={() => {
                   setShow(false);
                   handleBoardName();
+                  setIsDrawerOpen(undefined);
                 }}
                 className=" bg-indigo-600  text-white hover:bg-indigo-500  hover:text-white rounded-md px-3  text-sm font-medium"
               >
@@ -392,6 +403,8 @@ export default function BoardsDetails() {
           show={show}
           setShow={setShow}
           type="boards"
+          isDrawerOpen={isDrawerOpen}
+          setIsDrawerOpen={setIsDrawerOpen}
         />
       </div>
       <DndContext

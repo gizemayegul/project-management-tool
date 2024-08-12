@@ -8,9 +8,9 @@ export default {
         "light-background": "#ffffff", // Custom light background color
       },
     },
-  },
-  screens: {
-    custom: "640px",
+    screens: {
+      xs: { max: "639px" },
+    },
   },
 
   plugins: [require("daisyui")],
