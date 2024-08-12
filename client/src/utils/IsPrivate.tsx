@@ -17,7 +17,7 @@ export default function IsPrivate({ children }: { children: React.ReactNode }) {
   } else {
     return (
       <>
-        <Navigate to="/login" />
+        <Navigate to="/" />
       </>
     );
   }

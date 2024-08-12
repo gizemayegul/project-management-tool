@@ -5,6 +5,8 @@ import { Cog8ToothIcon, ArrowUpOnSquareIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
 import UploadBackground from "../UploadBackground/UploadBackground";
 import { XMarkIcon } from "@heroicons/react/16/solid";
+import { useEffect } from "react";
+import { set } from "mongoose";
 type propTypes = {
   id: Id;
   handleDelete: (id: Id) => void;
@@ -12,6 +14,8 @@ type propTypes = {
   show: boolean;
   setShow: (show: boolean) => void;
   type: string;
+  isDrawerOpen: boolean | undefined;
+  setIsDrawerOpen: (isDrawerOpen: boolean) => void;
 };
 
 export default function Drawer({
@@ -21,12 +25,20 @@ export default function Drawer({
   show,
   setShow,
   type,
+  isDrawerOpen,
+  setIsDrawerOpen,
 }: propTypes) {
   const [uploadImage, seUploadImage] = useState<boolean>(false);
+
   return (
     <div>
       <div className="drawer drawer-end z-30 ">
-        <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
+        <input
+          checked={isDrawerOpen}
+          id="my-drawer-4"
+          type="checkbox"
+          className="drawer-toggle"
+        />
         <div className="drawer-content">
           {/* Page content here */}
           <label htmlFor="my-drawer-4">
@@ -39,7 +51,7 @@ export default function Drawer({
             aria-label="close sidebar"
             className="drawer-overlay"
           ></label>
-          <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
+          <ul className="menu bg-base-200 text-base-content min-h-full w-80 xs:w-1/2 p-4">
             {/* Sidebar content here */}
             <li>
               <DeleteModal
@@ -53,6 +65,7 @@ export default function Drawer({
               className="flex"
               onClick={() => {
                 setShow(!show);
+                setIsDrawerOpen(false);
               }}
             >
               <Edit show={true} />

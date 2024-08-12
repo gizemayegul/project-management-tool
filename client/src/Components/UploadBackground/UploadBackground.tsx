@@ -51,7 +51,7 @@ export default function UploadBackground({
 
   return (
     <form
-      className="flex flex-col  space-y-4"
+      className="flex flex-col flex-wrap space-y-4 "
       onSubmit={(e) => {
         handleSubmitFile(e);
         setIsLineLoading(true);
@@ -61,7 +61,7 @@ export default function UploadBackground({
         type="file"
         id="file"
         name="file"
-        className="w-full max-w-xs mb-2 input input-bordered"
+        className="w-full max-w-xs mb-2"
         onChange={(e) => {
           handleFileChange(e);
         }}
