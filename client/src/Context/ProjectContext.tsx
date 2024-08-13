@@ -5,6 +5,7 @@ import { Id, ProjectType } from "../utils/types";
 import { ProjectContextType } from "./context";
 import { apiUrl } from "../utils/config";
 import { useNavigate } from "react-router-dom";
+import Loading from "../Components/Loading/Loading";
 
 import axios from "axios";
 
@@ -29,6 +30,7 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
   const [favChange, setFavChange] = useState<boolean | null>(null);
   const [dropdown, setDropdown] = useState<boolean>(false);
   const [background, setBackGround] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -39,6 +41,7 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
             headers: { Authorization: token },
           });
           setProjects(response.data.projects);
+          setIsLoading(false);
         } catch (error) {
           console.log(error);
         }
@@ -55,6 +58,7 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
           headers: { Authorization: token },
         });
         setFavoriteProjects(response.data);
+        setIsLoading(false);
       } catch (error) {
         console.log(error);
       }
@@ -104,7 +108,7 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
         setBackGround,
       }}
     >
-      {props.children}
+      {isLoggedIn && isLoading ? <Loading /> : props.children}
     </ProjectContext.Provider>
   );
 }

@@ -24,7 +24,7 @@ export default function Login() {
       setError("");
       storeToken(response.data.token);
       authenticateUser();
-      navigate("/");
+      navigate("/dashboard");
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         setError(err.response?.data.message);

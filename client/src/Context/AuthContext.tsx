@@ -45,7 +45,7 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
   const notify = () => toast.success("Uploaded!");
   const notifyUpdate = () => toast.success("User information is changed!");
   const [isError, setIsError] = useState<any>();
-  toast.error(isError);
+  const notifyError = () => toast.error(isError);
 
   const [token, setToken] = useState<string | null>(
     localStorage.getItem("token")
@@ -116,16 +116,17 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
       setSelectedFile(null);
       notify();
     } catch (err: any) {
-      setIsError(err.message);
-      console.log(err.message);
+      setIsError(
+        "An error occurred, please try another file type,or smaller file"
+      );
       setIsLineLoading(false);
+      notifyError();
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setSelectedFile(e.target.files[0]);
-      console.log(e.target.files[0]);
     }
   };
 
@@ -138,7 +139,7 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
       setUser(response.data);
       notifyUpdate();
     } catch (err) {
-      console.error(err);
+      setIsError("An error occurred, please try again");
     }
   };
 

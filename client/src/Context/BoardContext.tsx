@@ -6,7 +6,7 @@ import { BoardContextType } from "./context";
 import { AuthContext } from "./AuthContext";
 import { BoardType } from "../utils/types";
 import { Id } from "../utils/types";
-import { useParams } from "react-router-dom";
+import Loading from "../Components/Loading/Loading";
 
 const BoardContext = createContext<BoardContextType>({
   boards: [],
@@ -15,10 +15,11 @@ const BoardContext = createContext<BoardContextType>({
   favChange: null,
 });
 function BoardContextWrapper(props: React.PropsWithChildren<{}>) {
-  const { token } = useContext(AuthContext);
+  const { token, isLoggedIn } = useContext(AuthContext);
   const [favBoards, setFavBoards] = useState<BoardType[]>([]);
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [favChange, setFavChange] = useState<boolean | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (token === null) return;
@@ -28,6 +29,7 @@ function BoardContextWrapper(props: React.PropsWithChildren<{}>) {
           headers: { Authorization: token },
         });
         setFavBoards(response.data);
+        setIsLoading(false);
       } catch (error) {
         console.log(error);
       }
@@ -55,7 +57,7 @@ function BoardContextWrapper(props: React.PropsWithChildren<{}>) {
         favChange,
       }}
     >
-      {props.children}
+      {isLoggedIn && isLoading ? <Loading /> : props.children}
     </BoardContext.Provider>
   );
 }

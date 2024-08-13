@@ -18,6 +18,8 @@ export default function UploadBackground({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isLineLoading, setIsLineLoading] = useState<boolean>(false);
   const { setBackGround } = useContext(ProjectContext);
+  const [error, setError] = useState<any>();
+  const notifyError = () => toast.error(error);
 
   const handleSubmitFile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,7 +41,13 @@ export default function UploadBackground({
         setBackGround((prev) => !prev);
       }
     } catch (error) {
-      console.log(error);
+      setError(
+        "An error occurred, please try another file type,or smaller file"
+      );
+    } finally {
+      if (error.length > 0) {
+        notifyError();
+      }
     }
   };
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,7 +80,7 @@ export default function UploadBackground({
         className="btn"
         disabled={selectedFile ? false : true}
       >
-        {isLineLoading ? (
+        {isLineLoading && !error ? (
           <span className="loading loading-dots loading-lg"></span>
         ) : (
           <span>Submit</span>
