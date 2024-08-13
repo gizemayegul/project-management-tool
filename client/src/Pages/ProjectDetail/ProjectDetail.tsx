@@ -16,6 +16,9 @@ export default function ProjectDetail() {
   const [show, setShow] = useState(false);
   const { handleDeleteProject, setProjects } = useContext(ProjectContext);
   const [projectName, setProjectName] = useState<string>("");
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -56,8 +59,8 @@ export default function ProjectDetail() {
   return (
     <div className="px-4">
       <div
-        className="h-20 w-full rounded-md bg-base-300
- flex justify-between items-center px-4 mb-3 mt-3 min-h-max flex-wrap "
+        className="h-20 w-full rounded-md bg-base-300 min-w-80
+ flex justify-between items-center px-4 mb-3 mt-3 min-h-max flex-wrap max-sm:flex-nowrap max-sm:space-x-1 max-sm:justify-around"
       >
         {projectName && !show && <div>{projectName}</div>}
         {show && (
@@ -74,8 +77,9 @@ export default function ProjectDetail() {
               onClick={() => {
                 setShow(false);
                 handleProjectName();
+                setIsDrawerOpen(undefined);
               }}
-              className=" bg-indigo-600  text-white hover:bg-indigo-500  hover:text-white rounded-md px-3  text-sm font-medium"
+              className="btn sm:mx-0 bg-indigo-600 text-white hover:bg-indigo-500 hover:text-white rounded-md px-3 py-2 text-sm font-medium max-sm:w-2/5 max-sm:px-8"
             >
               Change Name
             </button>
@@ -93,6 +97,8 @@ export default function ProjectDetail() {
             handleDelete={handleDeleteProject}
             show={show}
             type="projects"
+            isDrawerOpen={isDrawerOpen}
+            setIsDrawerOpen={setIsDrawerOpen}
           />
         </div>
       </div>

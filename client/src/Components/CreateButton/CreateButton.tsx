@@ -7,17 +7,15 @@ export default function CreateButton({
 }: Create): React.ReactElement {
   const navigate = useNavigate();
   return (
-    <div>
+    <>
       <button
-        className="btn sm:mx-0 bg-indigo-600  text-white hover:bg-indigo-500  hover:text-white rounded-md px-3 py-2 text-sm font-medium "
-        type="submit"
+        className="btn sm:mx-0 bg-indigo-600 text-white hover:bg-indigo-500 hover:text-white rounded-md px-3 py-2 text-sm font-medium max-sm:w-2/5 max-sm:px-8"
         onClick={() => {
           navigate(toNavigate);
         }}
       >
-        {" "}
-        {name}{" "}
-      </button>{" "}
-    </div>
+        {name}
+      </button>
+    </>
   );
 }

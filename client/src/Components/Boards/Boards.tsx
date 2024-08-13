@@ -50,7 +50,7 @@ export default function Boards() {
   return (
     <>
       {boards.length == 0 && projectId ? (
-        <div className="flex items-center mt-4 flex-col xs:flex-wrap xs:items-start xs:w-1/2 md-flex-wrap">
+        <div className="flex items-center mt-4 flex-col md-flex-wrap">
           It looks like you don't have any boards yet. Create a new board to get
           started!
         </div>

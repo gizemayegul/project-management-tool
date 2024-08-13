@@ -53,13 +53,13 @@ export default function BoardsDetails() {
       activationConstraint: {
         distance: 10,
       },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 100, // Add a delay for touch to avoid accidental drags
+        tolerance: 10, // Increase tolerance for touch interactions
+      },
     })
-    // useSensor(TouchSensor, {
-    //   activationConstraint: {
-    //     delay: 100, // Add a delay for touch to avoid accidental drags
-    //     tolerance: 10, // Increase tolerance for touch interactions
-    //   },
-    // })
   );
 
   useEffect(() => {
@@ -369,7 +369,7 @@ export default function BoardsDetails() {
     <div className="px-4">
       <div
         className="h-20 w-full rounded-md bg-base-300
- flex justify-between items-center px-4 mb-3 mt-3 min-h-max"
+ flex justify-between items-center px-4 mb-3 mt-3 min-h-max "
       >
         <div>
           {boardDetails && !show && <div>{boardDetails.boardName}</div>}
@@ -389,7 +389,7 @@ export default function BoardsDetails() {
                   handleBoardName();
                   setIsDrawerOpen(undefined);
                 }}
-                className=" bg-indigo-600  text-white hover:bg-indigo-500  hover:text-white rounded-md px-3  text-sm font-medium"
+                className="btn sm:mx-0 bg-indigo-600  text-white hover:bg-indigo-500  hover:text-white rounded-md px-3 py-2 text-sm font-medium "
               >
                 Change Name
               </button>
