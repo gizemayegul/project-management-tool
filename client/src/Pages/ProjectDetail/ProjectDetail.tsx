@@ -8,7 +8,6 @@ import { ProjectsDetails } from "../../utils/types";
 import Boards from "../../Components/Boards/Boards";
 import Drawer from "../../Components/Drawer/Drawer";
 import { ProjectContext } from "../../Context/ProjectContext";
-import { set } from "mongoose";
 import Loading from "../../Components/Loading/Loading";
 
 export default function ProjectDetail() {

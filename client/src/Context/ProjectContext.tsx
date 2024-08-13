@@ -108,7 +108,7 @@ function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
         setBackGround,
       }}
     >
-      {isLoggedIn && isLoading ? <Loading /> : props.children}
+      {isLoggedIn && isLoading ? <Loading /> : props.children}s{" "}
     </ProjectContext.Provider>
   );
 }
