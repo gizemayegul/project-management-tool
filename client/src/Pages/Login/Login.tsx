@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../Context/AuthContext";
 import { apiUrl } from "../../utils/config";
+import { debounce } from "lodash";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -24,7 +25,6 @@ export default function Login() {
       setError("");
       storeToken(response.data.token);
       authenticateUser();
-      navigate("/dashboard");
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         setError(err.response?.data.message);

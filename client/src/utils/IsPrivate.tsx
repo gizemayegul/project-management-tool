@@ -6,19 +6,13 @@ import Loading from "../Components/Loading/Loading";
 export default function IsPrivate({ children }: { children: React.ReactNode }) {
   const { isLoggedIn, isLoading } = useContext(AuthContext);
 
-  if (!isLoggedIn) {
-    return (
-      <>
-        <Loading />
-      </>
-    );
-  } else if (isLoggedIn) {
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (isLoggedIn) {
     return <>{children}</>;
   } else {
-    return (
-      <>
-        <Navigate to="/dashboard" />
-      </>
-    );
+    return <Navigate to="/" />; // Redirect to login or home if not authenticated
   }
 }

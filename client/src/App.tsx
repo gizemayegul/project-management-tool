@@ -25,6 +25,22 @@ function App() {
       <Navbar />
       <Routes>
         <Route
+          path="/signup"
+          element={
+            <IsAnon>
+              <Signup />
+            </IsAnon>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <IsAnon>
+              <Login />
+            </IsAnon>
+          }
+        />
+        <Route
           path="/"
           element={
             <IsAnon>
@@ -32,8 +48,7 @@ function App() {
             </IsAnon>
           }
         />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
+
         <Route
           path="/dashboard"
           element={

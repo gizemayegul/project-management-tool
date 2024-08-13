@@ -71,13 +71,14 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
         });
         const user = response.data;
         setIsLoggedIn(true);
-        setIsLoading(false);
         setUser(user);
         setUserUpdate({ name: user.name, email: user.email, password: "" });
       } catch (err) {
         setIsLoggedIn(false);
         setIsLoading(false);
         setUser(null);
+      } finally {
+        setIsLoading(false);
       }
     } else {
       setIsLoggedIn(false);
@@ -87,7 +88,7 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
   };
   useEffect(() => {
     authenticateUser();
-  }, [token]);
+  }, []);
 
   const removeToken = () => {
     localStorage.removeItem("token");
@@ -98,7 +99,6 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
     setUser(null);
     setIsLoading(false);
     setIsLoggedIn(false);
-    await clearAllCaches();
   };
 
   const handleSubmitFile = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -183,7 +183,7 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
         setLogOut,
       }}
     >
-      {isLoading ? <Loading /> : props.children}
+      {isLoading ? <Loading /> : <>{props.children}</>}
     </AuthContext.Provider>
   );
 }
