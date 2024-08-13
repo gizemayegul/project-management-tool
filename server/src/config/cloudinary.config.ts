@@ -18,6 +18,9 @@ const storage = new CloudinaryStorage({
     folder: "project-management-tool", // The name of the folder in cloudinary
     // resource_type: 'raw' => this is in case you want to upload other type of files, not just images
   },
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB file size limit
+  },
 });
 
 //                     storage: storage

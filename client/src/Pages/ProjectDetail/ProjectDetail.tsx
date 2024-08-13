@@ -8,6 +8,8 @@ import { ProjectsDetails } from "../../utils/types";
 import Boards from "../../Components/Boards/Boards";
 import Drawer from "../../Components/Drawer/Drawer";
 import { ProjectContext } from "../../Context/ProjectContext";
+import { set } from "mongoose";
+import Loading from "../../Components/Loading/Loading";
 
 export default function ProjectDetail() {
   const { projectId } = useParams();
@@ -16,6 +18,7 @@ export default function ProjectDetail() {
   const [show, setShow] = useState(false);
   const { handleDeleteProject, setProjects } = useContext(ProjectContext);
   const [projectName, setProjectName] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean | undefined>(
     undefined
   );
@@ -28,6 +31,7 @@ export default function ProjectDetail() {
         });
         setprojectDetail(response.data[0]);
         setProjectName(response.data[0].projectName);
+        setIsLoading(false);
       } catch (error) {
         console.log(error);
       }
@@ -55,6 +59,13 @@ export default function ProjectDetail() {
       console.log(err);
     }
   };
+  if (isLoading) {
+    return (
+      <div>
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div className="px-4">

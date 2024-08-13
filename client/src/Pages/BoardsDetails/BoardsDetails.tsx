@@ -11,6 +11,7 @@ import { BoardType } from "../../utils/types";
 import { useNavigate } from "react-router-dom";
 import Drawer from "../../Components/Drawer/Drawer";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import Loading from "../../Components/Loading/Loading";
 
 import {
   DndContext,
@@ -41,6 +42,8 @@ export default function BoardsDetails() {
   const [boardName, setBoardName] = useState<string>("");
   const [updateTask, setUpdateTask] = useState<boolean>(false);
   const [addNewColumnShow, setAddNewColumnShow] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(true);
+
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean | undefined>(
     undefined
   );
@@ -75,6 +78,7 @@ export default function BoardsDetails() {
           }
         );
         setBoardDetails(responseBoard.data[0]);
+        setIsLoading(false);
 
         setColumns(response.data);
       } catch (error) {
@@ -364,6 +368,10 @@ export default function BoardsDetails() {
       console.log(error);
     }
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className="px-4">
