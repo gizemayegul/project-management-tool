@@ -28,7 +28,7 @@ export default function Profile() {
         alt=""
       />
       <form
-        className="flex flex-col xl:w-3/12 space-y- 4custom:w-4/12"
+        className="flex flex-col space-y-4 w-3/5 lg:w-1/3"
         onSubmit={(e) => {
           handleSubmitFile(e);
           setIsLineLoading(true);
@@ -45,7 +45,7 @@ export default function Profile() {
         />
 
         <button
-          className="btn"
+          className="btn bg-indigo-600 text-white"
           type="submit"
           disabled={selectedFile ? false : true}
         >
@@ -59,7 +59,7 @@ export default function Profile() {
 
       <form
         onSubmit={(e) => handleUpdate(e)}
-        className="flex flex-col xl:w-3/12 space-y-4 "
+        className="flex flex-col space-y-4 w-3/5 lg:w-1/3 "
       >
         <input
           type="text"

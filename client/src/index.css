@@ -4,7 +4,6 @@
 
 ::-webkit-file-upload-button {
   @apply btn bg-indigo-600 text-white;
-  @apply xs:p-1;
 }
 body {
   overflow-x: hidden;
