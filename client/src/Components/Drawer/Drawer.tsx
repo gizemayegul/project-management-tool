@@ -6,7 +6,6 @@ import { useState } from "react";
 import UploadBackground from "../UploadBackground/UploadBackground";
 import { XMarkIcon } from "@heroicons/react/16/solid";
 import { useEffect } from "react";
-import { set } from "mongoose";
 type propTypes = {
   id: Id;
   handleDelete: (id: Id) => void;
