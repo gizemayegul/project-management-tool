@@ -28,8 +28,9 @@ export default function Drawer({
   setIsDrawerOpen,
 }: propTypes) {
   const [uploadImage, seUploadImage] = useState<boolean>(false);
+  //localhost:5006/projects/66bb37cf45c5e0282f8baf5d/boards/66bb37ea45c5e0282f8baf6d
 
-  return (
+  http: return (
     <div>
       <div className="drawer drawer-end z-30 ">
         <input

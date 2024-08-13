@@ -60,7 +60,7 @@ export default function ProjectDetail() {
     <div className="px-4">
       <div
         className="h-20 w-full rounded-md bg-base-300 min-w-80
- flex justify-between items-center px-4 mb-3 mt-3 min-h-max flex-wrap max-sm:flex-nowrap max-sm:space-x-1 max-sm:justify-around"
+ flex justify-between items-center px-4 mb-3 mt-3 min-h-max flex-wrap max-sm:flex-nowrap max-sm:space-x-1 max-sm:justify-between"
       >
         {projectName && !show && <div>{projectName}</div>}
         {show && (
@@ -79,13 +79,13 @@ export default function ProjectDetail() {
                 handleProjectName();
                 setIsDrawerOpen(undefined);
               }}
-              className="btn sm:mx-0 bg-indigo-600 text-white hover:bg-indigo-500 hover:text-white rounded-md px-3 py-2 text-sm font-medium max-sm:w-2/5 max-sm:px-8"
+              className="btn sm:mx-0 bg-indigo-600 text-white hover:bg-indigo-500 hover:text-white rounded-md px-3 py-2 text-sm font-medium max-sm:w-2/5 max-sm:px-8 max-sm:text-sm max-sm:p-0"
             >
               Change Name
             </button>
           </div>
         )}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center justify-between space-x-4">
           <CreateButton
             name={"Create Board"}
             toNavigate={`/projects/${projectId}/boards/createboard`}
