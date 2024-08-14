@@ -24,7 +24,6 @@ export default function Login() {
         email: email,
         password: password,
       });
-      console.log(response);
       if (response.status === 201) {
         setError("");
         storeToken(response.data.token);
@@ -32,7 +31,6 @@ export default function Login() {
         setIsLoading(false);
         setSuccess(response.data.message);
       }
-      console.log(response.data.message);
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         setError(err.response?.data.message);
