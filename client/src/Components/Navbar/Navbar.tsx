@@ -97,7 +97,7 @@ export default function Navbar() {
                         setDropdown(false);
                       }}
                     >
-                      <div>Favs</div>
+                      <div>Favorites</div>
                     </summary>
                     <ul className="menu dropdown-content bg-base-100 rounded-box z-30 w-52 p-2 shadow">
                       {favBoards.length === 0 &&
@@ -212,7 +212,7 @@ export default function Navbar() {
                   {...(dropdown ? { open: false } : {})}
                 >
                   <summary onClick={toggleDropdown}>
-                    <div>Favs</div>
+                    <div>Favorites</div>
                   </summary>
                   <ul className="menu dropdown-content bg-base-100 rounded-box z-30 w-52 p-2 shadow">
                     {favBoards.length === 0 &&
@@ -272,6 +272,8 @@ export default function Navbar() {
                   type="checkbox"
                   className="theme-controller"
                   value="dark"
+                  id="theme-controller"
+                  name="theme-controller"
                 />
 
                 {/* sun icon */}

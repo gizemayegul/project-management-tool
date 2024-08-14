@@ -353,7 +353,6 @@ export default function BoardsDetails() {
   };
 
   const handleBoardName = async () => {
-    console.log("handleBoardName");
     try {
       const response = await axios.put(
         `${apiUrl}/boards/${boardId}/boardName`,

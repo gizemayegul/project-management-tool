@@ -14,7 +14,7 @@ type propTypes = {
   setShow: (show: boolean) => void;
   type: string;
   isDrawerOpen: boolean | undefined;
-  setIsDrawerOpen: (isDrawerOpen: boolean) => void;
+  setIsDrawerOpen: (isDrawerOpen: boolean | undefined) => void;
 };
 
 export default function Drawer({
@@ -28,7 +28,6 @@ export default function Drawer({
   setIsDrawerOpen,
 }: propTypes) {
   const [uploadImage, seUploadImage] = useState<boolean>(false);
-  //localhost:5006/projects/66bb37cf45c5e0282f8baf5d/boards/66bb37ea45c5e0282f8baf6d
 
   http: return (
     <div>

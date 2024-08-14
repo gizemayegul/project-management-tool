@@ -4,6 +4,7 @@ import { ProjectContext } from "../../Context/ProjectContext";
 import Projects from "../../Components/Projects/Projects";
 import Boards from "../../Components/Boards/Boards";
 import { Link } from "react-router-dom";
+import Empty from "../../Components/Empty/Empty";
 
 export default function Dashboard() {
   const { user } = useContext(AuthContext);
@@ -16,7 +17,7 @@ export default function Dashboard() {
         {projects.length === 0 && (
           <div>
             <Link to="/createaproject">
-              <button className="btn bg-indigo-600 text-base-100 mt-2">
+              <button className="btn bg-indigo-600 mt-2 text-white">
                 {" "}
                 Create A Project
               </button>
@@ -40,8 +41,7 @@ export default function Dashboard() {
       {!projects?.length && (
         <div className="flex items-center flex-col mt-">
           <h1>You haven't created a Project yet Let's get start</h1>
-
-          {/* <Empty /> */}
+          <Empty />
         </div>
       )}
     </div>

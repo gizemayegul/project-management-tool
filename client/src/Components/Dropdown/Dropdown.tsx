@@ -7,7 +7,7 @@ type Props = {
 export default function Dropdown({ children }: Props) {
   return (
     <div>
-      <div className="dropdown dropdown-right">
+      <div className="dropdown lg:dropdown-right max-sm:dropdown-left">
         <div tabIndex={0} role="button">
           <EllipsisHorizontalIcon className="h-6 opacity-70" />
         </div>

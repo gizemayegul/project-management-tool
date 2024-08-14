@@ -64,6 +64,7 @@ export default function Profile() {
         <input
           type="text"
           name="name"
+          autoComplete="true"
           placeholder="Name"
           className="input input-bordered w-full "
           value={userUpdate?.name}
@@ -76,6 +77,7 @@ export default function Profile() {
         />
         <input
           type="text"
+          autoComplete="true"
           name="email"
           placeholder="Email"
           className="input input-bordered w-full"
@@ -90,6 +92,7 @@ export default function Profile() {
         <input
           type="password"
           name="password"
+          autoComplete="true"
           placeholder="Password"
           className="input input-bordered w-full"
           value={userUpdate?.password}

@@ -8,6 +8,7 @@ import { AuthContext } from "../../Context/AuthContext";
 import { ProjectContext } from "../../Context/ProjectContext";
 import Card from "../Card/Card";
 import { BoardContext } from "../../Context/BoardContext";
+import Empty from "../Empty/Empty";
 
 export default function Boards() {
   const [boards, setBoards] = useState<BoardType[]>([]);
@@ -53,6 +54,7 @@ export default function Boards() {
         <div className="flex items-center mt-4 flex-col md-flex-wrap">
           It looks like you don't have any boards yet. Create a new board to get
           started!
+          <Empty />
         </div>
       ) : (
         <div className="flex">

@@ -199,6 +199,7 @@ export default function Column({
               </div>
               <label htmlFor="changeColor">
                 <input
+                  id="changeColor"
                   name="changeColor"
                   onChange={(e) => {
                     handleColorChange(e);
