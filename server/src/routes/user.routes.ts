@@ -84,7 +84,11 @@ userRoute.post(
       });
       res
         .status(201)
-        .json({ token: token, message: "success", payload: payload });
+        .json({
+          token: token,
+          message: "Succesfully logged in",
+          payload: payload,
+        });
     } catch (err) {
       console.error(err);
     }

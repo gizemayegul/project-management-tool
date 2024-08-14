@@ -5,26 +5,34 @@ import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../Context/AuthContext";
 import { apiUrl } from "../../utils/config";
-import { debounce } from "lodash";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+
   const { authenticateUser, storeToken } = useContext(AuthContext);
 
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
       const response = await axios.post(`${apiUrl}/login`, {
         email: email,
         password: password,
       });
-      setError("");
-      storeToken(response.data.token);
-      authenticateUser();
+      console.log(response);
+      if (response.status === 201) {
+        setError("");
+        storeToken(response.data.token);
+        authenticateUser();
+        setIsLoading(false);
+        setSuccess(response.data.message);
+      }
+      console.log(response.data.message);
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         setError(err.response?.data.message);
@@ -32,7 +40,10 @@ export default function Login() {
     }
     setEmail("");
     setPassword("");
+    setIsLoading(false);
+    setSuccess("");
   };
+  console.log(success);
 
   return (
     <>
@@ -108,13 +119,22 @@ export default function Login() {
 
             <div>
               <button
-                type="submit"
                 className="btn flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                type="submit"
               >
-                Login{" "}
+                {isLoading ? (
+                  <span className="loading loading-dots loading-lg"></span>
+                ) : (
+                  "Login"
+                )}
               </button>
             </div>
           </form>
+          {success.length > 0 && (
+            <div className=" bg-lime-500 p-1.5 mt-2 rounded-md text-white px-3 py-2 text-sm font-semibold  flex w-full justify-center">
+              <p>{success}</p>
+            </div>
+          )}
           {error && (
             <div className=" bg-red-500 p-1.5 mt-2 rounded-md text-white px-3 py-1.5 text-sm font-semibold  flex w-full justify-center">
               <h1>{error}</h1>

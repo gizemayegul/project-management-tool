@@ -11,10 +11,12 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
       const response: any = await axios.post(`${apiUrl}/signup`, {
@@ -24,24 +26,23 @@ export default function Signup() {
       });
       setError("");
       setSuccess(response.data.message);
-      navigate("/login");
+      if (response.status === 200) {
+        setTimeout(() => {
+          navigate("/login");
+        }, 500);
+      }
+      setIsLoading(false);
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         console.log(err, "errorr");
-        // if (err.name === "AxiosError") {
-        //   console.log(err.name === "AxiosError");
-        //   setError(err.message);
-        // }
         setError(err.response?.data.message);
+        setSuccess("");
+        setEmail("");
+        setPassword("");
+        setName("");
+        setIsLoading(false);
       }
     }
-
-    //TODO : add also network erros to error messages
-    //TODO : https://stackoverflow.com/questions/73798552/property-response-does-not-exist-on-type-error-in-try-and-catch-block-typesc
-
-    setName("");
-    setPassword("");
-    setEmail("");
   };
 
   return (
@@ -102,11 +103,16 @@ export default function Signup() {
                 }}
               />
             </label>
+
             <button
               className="btn flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               type="submit"
             >
-              Sign Up
+              {isLoading ? (
+                <span className="loading loading-dots loading-lg"></span>
+              ) : (
+                "Signup"
+              )}
             </button>
           </form>
         </div>
