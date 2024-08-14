@@ -308,7 +308,6 @@ export default function BoardsDetails() {
         `${apiUrl}/columns/${columnId}/deleteTask/${taskId}`,
         { headers: { Authorization: token } }
       );
-      console.log(taskId, "task");
 
       if (response.status === 200) {
         const response = await axios.get(`${apiUrl}/columns/${boardId}`, {
