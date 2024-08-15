@@ -34,8 +34,13 @@ export default function Signup() {
       setIsLoading(false);
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
-        console.log(err, "errorr");
-        setError(err.response?.data.message);
+        if (err.code === 'ECONNREFUSED') {
+          setError('The server is currently unreachable. Please try again later.');
+        } else if (err.response) {
+          setError(err.response?.data.message);
+        } else {
+          setError('The server is currently unreachable. Please try again later.');
+        }
         setSuccess("");
         setEmail("");
         setPassword("");

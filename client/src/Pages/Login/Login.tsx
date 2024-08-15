@@ -33,13 +33,19 @@ export default function Login() {
       }
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
-        setError(err.response?.data.message);
+        if (err.code === 'ECONNREFUSED') {
+          setError('The server is currently unreachable. Please try again later.');
+        } else if (err.response) {
+          setError(err.response?.data.message);
+        } else {
+          setError('The server is currently unreachable. Please try again later.');
+        }
+        setSuccess("");
+        setEmail("");
+        setPassword("");
+        setIsLoading(false);
       }
     }
-    setEmail("");
-    setPassword("");
-    setIsLoading(false);
-    setSuccess("");
   };
   console.log(success);
 
