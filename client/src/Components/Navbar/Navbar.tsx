@@ -262,7 +262,7 @@ export default function Navbar() {
               <img
                 className="inline-block h-8 w-18 rounded-full ring-2 ring-white border-2"
                 src={user?.image}
-                alt=""
+                alt="profile"
               />{" "}
             </div>
             <div>

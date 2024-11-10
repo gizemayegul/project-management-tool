@@ -8,6 +8,13 @@
         }
       }
     ],
+    [
+      "babel-preset-vite",
+      {
+        "env": true,
+        "glob": false
+      }
+    ],
     "@babel/preset-typescript",
     [
       "@babel/preset-react",
