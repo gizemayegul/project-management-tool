@@ -14,7 +14,7 @@ describe("Home", () => {
       screen.getByText("Boost your productivity by using our application")
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("linki want to ha", { name: /Get started/i })
+      screen.getByRole("link", { name: /Get started/i })
     ).toBeInTheDocument();
   });
 });
