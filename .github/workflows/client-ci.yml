@@ -33,7 +33,7 @@ jobs:
       # Run unit tests
       - name: Run unit tests
         working-directory: ./client
-        run: npm test:all
+        run: npm test
 
       # Build the client project
       - name: Build client project
