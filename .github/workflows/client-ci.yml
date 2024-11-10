@@ -23,7 +23,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
 
       # Install dependencies for client project
       - name: Install dependencies
@@ -33,7 +33,7 @@ jobs:
       # Run unit tests
       - name: Run unit tests
         working-directory: ./client
-        run: npm test
+        run: npm test:all
 
       # Build the client project
       - name: Build client project
