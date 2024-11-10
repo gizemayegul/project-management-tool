@@ -34,8 +34,14 @@ jobs:
       - name: Run unit tests
         working-directory: ./client
         run: npm test
+        
 
       # Build the client project
       - name: Build client project
         working-directory: ./client
         run: npm run build
+        
+    # Upload the built client project to GitHub Pages
+      - name: Install Cypress
+        working-directory: ./client
+        run: npm install cypress --save-dev
