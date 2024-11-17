@@ -8,7 +8,7 @@ import { ProjectContext } from "../../Context/ProjectContext";
 import { useRef } from "react";
 
 export default function Navbar() {
-  const { logOutUser, isLoggedIn, user } = useContext(AuthContext);
+  const { isLoggedIn, user } = useContext(AuthContext);
   const [createProject, setCreateProject] = useState<boolean>(false);
   const [createBoard, setCreateBoard] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -262,7 +262,7 @@ export default function Navbar() {
               <img
                 className="inline-block h-8 w-18 rounded-full ring-2 ring-white border-2"
                 src={user?.image}
-                alt=""
+                alt="profile"
               />{" "}
             </div>
             <div>
