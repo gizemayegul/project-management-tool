@@ -45,3 +45,5 @@ jobs:
       - name: Install Cypress
         working-directory: ./client
         run: npm install cypress --save-dev
+      - name: Run Tests with Coverage
+        run: npx jest --coverage
