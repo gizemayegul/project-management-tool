@@ -33,12 +33,16 @@ export default function Login() {
       }
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
-        if (err.code === 'ECONNREFUSED') {
-          setError('The server is currently unreachable. Please try again later.');
+        if (err.code === "ECONNREFUSED") {
+          setError(
+            "The server is currently unreachable. Please try again later."
+          );
         } else if (err.response) {
           setError(err.response?.data.message);
         } else {
-          setError('The server is currently unreachable. Please try again later.');
+          setError(
+            "The server is currently unreachable. Please try again later."
+          );
         }
         setSuccess("");
         setEmail("");
@@ -77,6 +81,7 @@ export default function Login() {
                   id="email"
                   name="email"
                   type="email"
+                  data-testid="email"
                   autoComplete="email"
                   required
                   value={email}
@@ -110,6 +115,7 @@ export default function Login() {
                   id="password"
                   name="password"
                   type="password"
+                  data-testid="password"
                   autoComplete="on d"
                   required
                   value={password}

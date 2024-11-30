@@ -12,5 +12,6 @@ export default {
   verbose: true,
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
+    "\\.(css|scss)$": "<rootDir>/__mocks__/styleMock.js",
   },
 };
