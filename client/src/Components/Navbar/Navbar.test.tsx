@@ -2,34 +2,23 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { AuthContext } from "../../Context/AuthContext"; // Import AuthContext to mock it
 import Navbar from "../../Components/Navbar/Navbar";
-import { defaultAuthContextValue } from "../../test-utils/helpers";
-import { AuthContextType } from "../../Context/context";
-import { BrowserRouter } from "react-router-dom";
+import { customRender } from "../../test-utils/TestComponents";
 
-export const renderWithAuthContext = (
-  ui: React.ReactElement,
-  overrides: Partial<AuthContextType> = {}
-) => {
-  return render(
-    <BrowserRouter>
-      <AuthContext.Provider
-        value={{ ...defaultAuthContextValue, ...overrides }}
-      >
-        {ui}
-      </AuthContext.Provider>
-    </BrowserRouter>
-  );
+const setup = (isLoggedIn: boolean) => {
+  return customRender(<Navbar />, {
+    authOverrides: { isLoggedIn: isLoggedIn ? true : false },
+  });
 };
 describe("Navbar Component", () => {
+  setup(false);
   test("renders Navbar if user is not logged in", () => {
-    renderWithAuthContext(<Navbar />, { isLoggedIn: false });
     expect(screen.getByRole("button", { name: /Login/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Signup/i })).toBeInTheDocument();
     expect(screen.getByText("TaskFlow")).toBeInTheDocument();
   });
 
   test("renders Navbar if user is logged in", () => {
-    renderWithAuthContext(<Navbar />, { isLoggedIn: true });
+    setup(true);
     expect(
       screen.getByRole("button", { name: /Dashboard/i })
     ).toBeInTheDocument();

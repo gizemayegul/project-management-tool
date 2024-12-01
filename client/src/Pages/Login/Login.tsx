@@ -51,7 +51,6 @@ export default function Login() {
       }
     }
   };
-  console.log(success);
 
   return (
     <>
@@ -116,7 +115,7 @@ export default function Login() {
                   name="password"
                   type="password"
                   data-testid="password"
-                  autoComplete="on d"
+                  autoComplete="password"
                   required
                   value={password}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -131,6 +130,7 @@ export default function Login() {
               <button
                 className="btn flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 type="submit"
+                data-testid="login-button"
               >
                 {isLoading ? (
                   <span className="loading loading-dots loading-lg"></span>

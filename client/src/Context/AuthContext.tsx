@@ -1,9 +1,8 @@
 import { createContext, useState, useEffect } from "react";
 import axios, { Axios } from "axios";
 import Loading from "../Components/Loading/Loading";
-import { AuthContextType } from "./context";
+import { AuthContextType, User } from "./context";
 import { toast } from "react-toastify";
-
 const AuthContext = createContext<AuthContextType>({
   user: null,
   isLoggedIn: false,
@@ -25,12 +24,13 @@ const AuthContext = createContext<AuthContextType>({
   handleUserDelete: () => {},
   logOut: false,
   setLogOut: () => {},
+  setUser: () => {},
 });
 
 const API_URL = import.meta.env.VITE_SERVER_URL;
 
 function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isLineLoading, setIsLineLoading] = useState(false);
@@ -54,12 +54,6 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
     localStorage.setItem("token", token);
     setToken(token);
   };
-
-  const clearAllCaches = async () => {
-    const cacheNames = await caches.keys();
-    await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
-  };
-
   const authenticateUser = async () => {
     const storedToken = localStorage.getItem("token");
 
@@ -98,6 +92,7 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
     setUser(null);
     setIsLoading(false);
     setIsLoggedIn(false);
+    // setUserUpdate({ name: "", email: "", password: "" });
   };
 
   const handleSubmitFile = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -180,6 +175,7 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
         setUserUpdate,
         logOut,
         setLogOut,
+        setUser,
       }}
     >
       {isLoading ? <Loading /> : <>{props.children}</>}

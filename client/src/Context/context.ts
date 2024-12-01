@@ -22,12 +22,13 @@ export type ProjectContextType = {
   setBackGround: React.Dispatch<React.SetStateAction<boolean>>;
 };
 export type AuthContextType = {
-  user: User | null;
+  user: null | User;
   isLoggedIn: boolean;
   isLoading: boolean;
   logOutUser: Function; // Add logOutUser property
   setLogOut: React.Dispatch<React.SetStateAction<boolean>>;
   storeToken: (token: string) => void;
+  setUser: (user: User | null) => void;
   authenticateUser: () => void;
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
   token: string | null;
@@ -52,7 +53,7 @@ export type AuthContextType = {
   logOut: boolean;
 };
 
-type User = {
+export type User = {
   email: string;
   image?: string;
   name: string;

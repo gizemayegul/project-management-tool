@@ -57,7 +57,8 @@ function BoardContextWrapper(props: React.PropsWithChildren<{}>) {
         favChange,
       }}
     >
-      {isLoggedIn && isLoading ? <Loading /> : props.children}
+      {/* {isLoggedIn && isLoading ? <Loading /> : props.children} */}
+      {props.children}
     </BoardContext.Provider>
   );
 }
