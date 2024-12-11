@@ -25,6 +25,7 @@ const AuthContext = createContext<AuthContextType>({
   logOut: false,
   setLogOut: () => {},
   setUser: () => {},
+  setIsLoading: () => {},
 });
 
 const API_URL = import.meta.env.VITE_SERVER_URL;
@@ -139,8 +140,9 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
 
   const handleUserDelete = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log(e);
     try {
-      const response = await axios.delete(`${API_URL}/delete`, {
+      await axios.delete(`${API_URL}/delete`, {
         headers: { Authorization: token },
       });
       removeToken();
@@ -176,6 +178,7 @@ function AuthProviderWrapper(props: React.PropsWithChildren<{}>) {
         logOut,
         setLogOut,
         setUser,
+        setIsLoading,
       }}
     >
       {isLoading ? <Loading /> : <>{props.children}</>}

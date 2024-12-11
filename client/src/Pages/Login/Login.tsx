@@ -24,31 +24,18 @@ export default function Login() {
         email: email,
         password: password,
       });
-      if (response.status === 201) {
-        setError("");
-        storeToken(response.data.token);
-        authenticateUser();
-        setIsLoading(false);
-        setSuccess(response.data.message);
-      }
-    } catch (err: unknown) {
-      if (err instanceof AxiosError) {
-        if (err.code === "ECONNREFUSED") {
-          setError(
-            "The server is currently unreachable. Please try again later."
-          );
-        } else if (err.response) {
-          setError(err.response?.data.message);
-        } else {
-          setError(
-            "The server is currently unreachable. Please try again later."
-          );
-        }
-        setSuccess("");
-        setEmail("");
-        setPassword("");
-        setIsLoading(false);
-      }
+      setError("");
+      storeToken(response.data.token);
+      authenticateUser();
+      setIsLoading(false);
+      setSuccess(response.data.message);
+    } catch (err: AxiosError | any) {
+      setError(err.response?.data.message);
+      setSuccess("");
+      setEmail("");
+      setPassword("");
+      setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -147,7 +134,7 @@ export default function Login() {
           )}
           {error && (
             <div className=" bg-red-500 p-1.5 mt-2 rounded-md text-white px-3 py-1.5 text-sm font-semibold  flex w-full justify-center">
-              <h1>{error}</h1>
+              <h1 data-test-id="error-message">{error}</h1>
             </div>
           )}
 

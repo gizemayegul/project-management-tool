@@ -5,6 +5,8 @@ export type BoardContextType = {
   favBoards: BoardType[];
   handleFavoriteBoard: (boardId: Id) => void;
   favChange: boolean | null;
+  setFavBoards: React.Dispatch<React.SetStateAction<BoardType[]>>;
+  setFavChange: React.Dispatch<React.SetStateAction<boolean | null>>;
 };
 
 export type ProjectContextType = {
@@ -51,6 +53,7 @@ export type AuthContextType = {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
   logOut: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export type User = {

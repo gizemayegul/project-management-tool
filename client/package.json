@@ -6,7 +6,7 @@
   "main": "main.js",
   "scripts": {
     "dev": "vite --port 5006 --host",
-    "coverage": "npx jest --coverage --watchAll=false && npx --clearCache ",
+    "coverage": "npx jest --coverage --watchAll=false",
     "start:dev": "npm run dev",
     "start": "tsc && vite build --mode prod && vite preview",
     "build": "tsc && vite build",

@@ -38,6 +38,7 @@ export default function Boards() {
           const response = await axios.get(`${apiUrl}/${projectId}/boards`, {
             headers: { Authorization: token },
           });
+          throw new Error("Error fetching boards");
           setBoards(response.data.boards);
         } catch (error) {
           console.error("Error fetching boards:", error);

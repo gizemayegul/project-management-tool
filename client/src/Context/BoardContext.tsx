@@ -1,6 +1,6 @@
 import { createContext } from "react";
 import { useEffect, useState, useContext } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { apiUrl } from "../utils/config";
 import { BoardContextType } from "./context";
 import { AuthContext } from "./AuthContext";
@@ -8,18 +8,21 @@ import { BoardType } from "../utils/types";
 import { Id } from "../utils/types";
 import Loading from "../Components/Loading/Loading";
 
+
 const BoardContext = createContext<BoardContextType>({
   boards: [],
   favBoards: [],
   handleFavoriteBoard: () => {},
   favChange: null,
+  setFavBoards: () => {},
+  setFavChange: () => {},
 });
 function BoardContextWrapper(props: React.PropsWithChildren<{}>) {
-  const { token, isLoggedIn } = useContext(AuthContext);
+  const { token, isLoggedIn,setIsLoading,isLoading } = useContext(AuthContext);
   const [favBoards, setFavBoards] = useState<BoardType[]>([]);
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [favChange, setFavChange] = useState<boolean | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [error,setError]=useState<string>("");
 
   useEffect(() => {
     if (token === null) return;
@@ -31,7 +34,11 @@ function BoardContextWrapper(props: React.PropsWithChildren<{}>) {
         setFavBoards(response.data);
         setIsLoading(false);
       } catch (error) {
-        console.log(error);
+        if (axios.isAxiosError(error) && error.response) {
+          setError(error.response.data.message);
+        } else {
+          setError("An unexpected error occurred");
+        }
       }
     };
     fetchFavorites();
@@ -46,7 +53,6 @@ function BoardContextWrapper(props: React.PropsWithChildren<{}>) {
       { headers: { Authorization: token } }
     );
     setFavChange(response.data.favorite);
-    // console.log(response.data.favorite);
   };
   return (
     <BoardContext.Provider
@@ -55,9 +61,11 @@ function BoardContextWrapper(props: React.PropsWithChildren<{}>) {
         favBoards: favBoards,
         handleFavoriteBoard,
         favChange,
+        setFavBoards,
+        setFavChange,
       }}
     >
-      {/* {isLoggedIn && isLoading ? <Loading /> : props.children} */}
+      {isLoggedIn && isLoading ? <Loading /> : props.children}
       {props.children}
     </BoardContext.Provider>
   );

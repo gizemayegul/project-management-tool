@@ -9,12 +9,13 @@ import {
 } from "../../test-utils/TestComponents";
 import "@testing-library/jest-dom";
 import Login from "./Login";
-import axios from "axios"; // Mock axios
+import axios from "axios";
 jest.mock("axios");
-
+const mockedAxios = axios as jest.Mocked<typeof axios>;
 const setup = () => {
   const mockStoreToken = jest.fn();
   const mockAuthenticateUser = jest.fn();
+
   customRender(<Login />, {
     authOverrides: {
       storeToken: mockStoreToken,
@@ -25,42 +26,52 @@ const setup = () => {
 };
 
 beforeEach(() => {
-  setup();
+  jest.clearAllMocks();
 });
 
 describe("Login", () => {
-  it("renders the login page", async () => {
-    expect(screen.getByTestId(/email/i)).toBeInTheDocument();
-    expect(screen.getByTestId(/password/i)).toBeInTheDocument();
-  });
-  it("sets the token after successful login", async () => {
-    const mockStoreToken = jest.fn();
-    const mockAuthenticateUser = jest.fn();
-    const mockToken = "mockToken123";
-    (axios.post as jest.Mock).mockResolvedValue({
-      status: 201,
-      data: {
-        token: "mockToken123",
-        message: "Login successful",
-      },
-    });
+  it("should render", async () => {
+    const { mockStoreToken, mockAuthenticateUser } = setup();
 
-    waitFor(() => {
-      fireEvent.change(screen.getByTestId(/email/i), {
+    mockedAxios.post.mockResolvedValue({
+      status: 201,
+      data: { token: "fakeToken", message: "Login successful!" },
+    });
+    await act(async () => {
+      fireEvent.change(screen.getByTestId("email"), {
         target: { value: "test@example.com" },
       });
-      fireEvent.change(screen.getByTestId(/password/i), {
-        target: { value: "password123" },
+      fireEvent.change(screen.getByTestId("password"), {
+        target: { value: "testpassword" },
       });
-      fireEvent.click(screen.getByTestId("login-button"));
+      fireEvent.submit(screen.getByText("Login"));
     });
-
     await waitFor(() => {
-      //   expect(mockStoreToken).toHaveBeenCalledWith(mockStoreToken);
-      //   expect(mockAuthenticateUser).toHaveBeenCalled(); // Verify authentication is triggered
+      expect(mockStoreToken).toHaveBeenCalledWith("fakeToken");
+      expect(mockAuthenticateUser).toHaveBeenCalled();
+      expect(screen.getByText("Login successful!")).toBeInTheDocument();
     });
-
-    // Check success message is displayed
-    expect(screen.getByText(/login successful/i)).toBeInTheDocument();
+  });
+  it("should render error message on failed login with server error", async () => {
+    const { mockStoreToken, mockAuthenticateUser } = setup();
+    mockedAxios.post.mockRejectedValue({
+      response: {
+        data: { message: "Something went wrong" },
+      },
+    });
+    await act(async () => {
+      fireEvent.change(screen.getByTestId("email"), {
+        target: { value: "test@example.com" },
+      });
+      fireEvent.change(screen.getByTestId("password"), {
+        target: { value: "testpassword" },
+      });
+      fireEvent.submit(screen.getByText("Login"));
+    });
+    await waitFor(() => {
+      expect(mockStoreToken).not.toHaveBeenCalled();
+      expect(mockAuthenticateUser).not.toHaveBeenCalled();
+      expect(screen.getByText("Something went wrong")).toBeInTheDocument();
+    });
   });
 });

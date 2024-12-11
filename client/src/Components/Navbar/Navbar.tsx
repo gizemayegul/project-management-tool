@@ -21,11 +21,10 @@ export default function Navbar() {
 
   const clickSomewhere = (e: MouseEvent) => {
     if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(e.target as Node)
+      (dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)) ||
+      (favRef.current && !favRef.current.contains(e.target as Node))
     ) {
-      setDropdown((prev) => !prev);
-    } else if (favRef.current && !favRef.current.contains(e.target as Node)) {
       setDropdown((prev) => !prev);
     }
   };
@@ -77,13 +76,16 @@ export default function Navbar() {
                     }}
                   >
                     <summary>
-                      <div>Create a Project</div>
+                      <div data-testid="small-screen-create-project">
+                        Create a Project
+                      </div>
                     </summary>
                   </details>
                 </li>
 
                 <li className="m-2">
                   <details
+                    data-testid="fav-dropdown"
                     className="dropdown"
                     tabIndex={0}
                     role="button"
@@ -91,12 +93,7 @@ export default function Navbar() {
                     onClick={(e) => e.stopPropagation()}
                     {...(dropdown ? { open: false } : {})}
                   >
-                    <summary
-                      onClick={(e: React.MouseEvent) => {
-                        toggleDropdown(e);
-                        setDropdown(false);
-                      }}
-                    >
+                    <summary onClick={toggleDropdown}>
                       <div>Favorites</div>
                     </summary>
                     <ul className="menu dropdown-content bg-base-100 rounded-box z-30 w-52 p-2 shadow">
@@ -108,6 +105,7 @@ export default function Navbar() {
                         favBoards.map((fav) => (
                           <li
                             key={fav._id}
+                            data-testid="favorite-board"
                             className=" p-2 hover:bg-gray-200 cursor-pointer rounded-md"
                             onClick={() => {
                               navigate(
@@ -123,6 +121,7 @@ export default function Navbar() {
                         favoriteProjects.length > 0 &&
                         favoriteProjects.map((fav) => (
                           <li
+                            data-testid="favorite-project"
                             key={fav._id}
                             className=" p-2 hover:bg-gray-200 cursor-pointer rounded-md"
                             onClick={() => {
@@ -157,11 +156,11 @@ export default function Navbar() {
                   {...(dropdown ? { open: false } : {})}
                 >
                   <summary onClick={toggleDropdown}>
-                    <div>Create</div>
+                    <div data-testid="create-button">Create</div>
                   </summary>
                   <ul className="menu dropdown-content bg-base-100 rounded-box z-30 w-80 p-2 shadow flex justify-between">
                     {!createBoard && (
-                      <li>
+                      <li data-testid="create-project-dropdown">
                         {createProject ? (
                           <CreateProjectDropDown
                             setCreateProject={setCreateProject}
@@ -169,6 +168,7 @@ export default function Navbar() {
                           />
                         ) : (
                           <button
+                            data-testid="create-project-button"
                             onClick={() => {
                               setCreateProject((prev) => !prev);
                               setCreateBoard(false);
@@ -181,7 +181,7 @@ export default function Navbar() {
                     )}
 
                     {!createProject && (
-                      <li>
+                      <li data-testid="create-board-dropdown">
                         {createBoard ? (
                           <CreateBoardDropDown
                             setCreateBoard={setCreateBoard}
@@ -189,6 +189,7 @@ export default function Navbar() {
                           />
                         ) : (
                           <button
+                            data-testid="create-board-button"
                             onClick={() => {
                               setCreateBoard((prev) => !prev);
                               setCreateProject(false);
@@ -222,6 +223,7 @@ export default function Navbar() {
                     {favBoards.length > 0 &&
                       favBoards.map((fav) => (
                         <li
+                          data-testid="favorite-board-small"
                           key={fav._id}
                           className=" p-2 hover:bg-gray-200 cursor-pointer rounded-md"
                           onClick={() => {
@@ -238,6 +240,7 @@ export default function Navbar() {
                       favoriteProjects.length > 0 &&
                       favoriteProjects.map((fav) => (
                         <li
+                          data-testid="favorite-project-small"
                           key={fav._id}
                           className=" p-2 hover:bg-gray-200 cursor-pointer rounded-md"
                           onClick={() => {
@@ -255,6 +258,7 @@ export default function Navbar() {
 
           <div className="navbar-end space-x-2 items-start">
             <div
+              data-testid="profile"
               onClick={() => {
                 navigate("/profile");
               }}

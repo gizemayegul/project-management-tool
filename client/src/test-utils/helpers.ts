@@ -31,6 +31,7 @@ export const defaultAuthOverrides: AuthContextType = {
   logOut: false,
   setLogOut: jest.fn(),
   setUser: jest.fn(),
+  setIsLoading: jest.fn(),
 };
 
 export const defaultBoardOverrides: BoardContextType = {
@@ -88,6 +89,8 @@ export const defaultBoardOverrides: BoardContextType = {
   ],
   handleFavoriteBoard: jest.fn(),
   favChange: true,
+  setFavBoards: jest.fn(),
+  setFavChange: jest.fn(),
 };
 
 export const defaultProjectOverides: ProjectContextType = {
