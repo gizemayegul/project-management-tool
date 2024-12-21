@@ -6,7 +6,8 @@
         "targets": {
           "node": "current"
         }
-      }
+      },
+      ["babel-preset-vite"]
     ],
     [
       "babel-preset-vite",
