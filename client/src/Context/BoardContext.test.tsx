@@ -13,7 +13,6 @@ import {
   defaultAuthOverrides,
   defaultBoardOverrides,
 } from "../test-utils/helpers";
-import { set } from "mongoose";
 
 jest.mock("axios");
 jest.mock("../utils/config", () => ({
