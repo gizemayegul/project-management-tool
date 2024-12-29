@@ -13,6 +13,6 @@ export default function IsPrivate({ children }: { children: React.ReactNode }) {
   if (isLoggedIn) {
     return <>{children}</>;
   } else {
-    return <Navigate to="/" />; // Redirect to login or home if not authenticated
+    return <Navigate to="/" />; // Redirect to login or home if not authenticated.
   }
 }
