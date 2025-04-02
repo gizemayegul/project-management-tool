@@ -1,4 +1,4 @@
-import { AuthContextType } from "../Context/context";
+import { AuthContextType, ProjectContextType } from "../Context/context";
 
 export const defaultAuthContextValue: AuthContextType = {
   user: null,
@@ -21,4 +21,18 @@ export const defaultAuthContextValue: AuthContextType = {
   handleUserDelete: jest.fn(),
   logOut: false,
   setLogOut: jest.fn(),
+};
+
+export const defaultProjectContextValue: ProjectContextType = {
+  setDropdown: jest.fn(),
+  dropdown: true,
+  favChange: true,
+  favoriteProjects: [],
+  projects: [],
+  setProjects: jest.fn(),
+  handleDeleteProject: jest.fn(),
+  handleFavoriteProject: jest.fn(),
+  setFavoriteProjects: jest.fn(),
+  background: true,
+  setBackGround: jest.fn(),
 };
