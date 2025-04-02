@@ -28,6 +28,7 @@
     "jest-environment-jsdom": "^29.7.0"
   },
   "dependencies": {
+    "@babel/runtime": "^7.27.0",
     "@dnd-kit/modifiers": "^7.0.0",
     "react-dom": "^18.3.1"
   }
