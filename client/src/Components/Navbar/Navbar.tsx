@@ -20,13 +20,13 @@ export default function Navbar() {
     useContext(ProjectContext);
 
   const clickSomewhere = (e: MouseEvent) => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(e.target as Node)
-    ) {
-      setDropdown((prev) => !prev);
-    } else if (favRef.current && !favRef.current.contains(e.target as Node)) {
-      setDropdown((prev) => !prev);
+    const isOutsideDropdown =
+      dropdownRef.current && !dropdownRef.current.contains(e.target as Node);
+    const isOutsideFavorites =
+      favRef.current && !favRef.current.contains(e.target as Node);
+
+    if (isOutsideDropdown && isOutsideFavorites) {
+      setDropdown(false); // Instead of toggling, explicitly close it
     }
   };
 
@@ -77,7 +77,7 @@ export default function Navbar() {
                     }}
                   >
                     <summary>
-                      <div>Create a Project</div>
+                      <div data-testid="create-project">Create a Project</div>
                     </summary>
                   </details>
                 </li>
@@ -97,7 +97,7 @@ export default function Navbar() {
                         setDropdown(false);
                       }}
                     >
-                      <div>Favorites</div>
+                      <div data-testid="favorites">Favorites</div>
                     </summary>
                     <ul className="menu dropdown-content bg-base-100 rounded-box z-30 w-52 p-2 shadow">
                       {favBoards.length === 0 &&
@@ -109,6 +109,7 @@ export default function Navbar() {
                           <li
                             key={fav._id}
                             className=" p-2 hover:bg-gray-200 cursor-pointer rounded-md"
+                            data-testid="fav-boards"
                             onClick={() => {
                               navigate(
                                 `/projects/${fav.projectId}/boards/${fav._id}`
@@ -124,6 +125,7 @@ export default function Navbar() {
                         favoriteProjects.map((fav) => (
                           <li
                             key={fav._id}
+                            data-testid="fav-project"
                             className=" p-2 hover:bg-gray-200 cursor-pointer rounded-md"
                             onClick={() => {
                               navigate(`/projects/${fav._id}`);
@@ -150,6 +152,7 @@ export default function Navbar() {
               <li className="m-2">
                 <details
                   ref={dropdownRef}
+                  data-testid="dropdown"
                   className="dropdown"
                   tabIndex={0}
                   onClick={(e) => e.stopPropagation()}
@@ -169,6 +172,7 @@ export default function Navbar() {
                           />
                         ) : (
                           <button
+                            data-testid="set-project"
                             onClick={() => {
                               setCreateProject((prev) => !prev);
                               setCreateBoard(false);
@@ -189,6 +193,7 @@ export default function Navbar() {
                           />
                         ) : (
                           <button
+                            data-testid="set-board"
                             onClick={() => {
                               setCreateBoard((prev) => !prev);
                               setCreateProject(false);
@@ -223,6 +228,7 @@ export default function Navbar() {
                       favBoards.map((fav) => (
                         <li
                           key={fav._id}
+                          data-testid="fav-boards"
                           className=" p-2 hover:bg-gray-200 cursor-pointer rounded-md"
                           onClick={() => {
                             navigate(
@@ -239,6 +245,7 @@ export default function Navbar() {
                       favoriteProjects.map((fav) => (
                         <li
                           key={fav._id}
+                          data-testid="fav-project"
                           className=" p-2 hover:bg-gray-200 cursor-pointer rounded-md"
                           onClick={() => {
                             navigate(`/projects/${fav._id}`);
@@ -255,6 +262,7 @@ export default function Navbar() {
 
           <div className="navbar-end space-x-2 items-start">
             <div
+              data-testid="profile"
               onClick={() => {
                 navigate("/profile");
               }}

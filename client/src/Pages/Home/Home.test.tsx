@@ -1,15 +1,11 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import Home from "../../Pages/Home/Home";
-import { BrowserRouter } from "react-router-dom";
+import { TestComponent } from "../../test-utils/TestComponent";
 
 describe("Home", () => {
   test("renders home page", () => {
-    render(
-      <BrowserRouter>
-        <Home />
-      </BrowserRouter>
-    );
+    TestComponent(<Home />);
     expect(
       screen.getByText("Boost your productivity by using our application")
     ).toBeInTheDocument();
