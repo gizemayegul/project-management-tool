@@ -8,12 +8,15 @@ import { BoardType } from "../utils/types";
 import { Id } from "../utils/types";
 import Loading from "../Components/Loading/Loading";
 
-const BoardContext = createContext<BoardContextType>({
+export const initialValues: BoardContextType = {
   boards: [],
   favBoards: [],
   handleFavoriteBoard: () => {},
   favChange: null,
-});
+};
+
+const BoardContext = createContext<BoardContextType>(initialValues);
+
 function BoardContextWrapper(props: React.PropsWithChildren<{}>) {
   const { token, isLoggedIn } = useContext(AuthContext);
   const [favBoards, setFavBoards] = useState<BoardType[]>([]);
@@ -38,15 +41,18 @@ function BoardContextWrapper(props: React.PropsWithChildren<{}>) {
   }, [favChange, token]);
 
   const handleFavoriteBoard = async (boardId: Id) => {
-    const response = await axios.put(
-      `${apiUrl}/boards/${boardId}/favorite`,
-      {
-        boardId,
-      },
-      { headers: { Authorization: token } }
-    );
-    setFavChange(response.data.favorite);
-    // console.log(response.data.favorite);
+    try {
+      const response = await axios.put(
+        `${apiUrl}/boards/${boardId}/favorite`,
+        {
+          boardId,
+        },
+        { headers: { Authorization: token } }
+      );
+      setFavChange(response.data.favorite);
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <BoardContext.Provider

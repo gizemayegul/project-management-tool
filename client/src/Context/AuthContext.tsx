@@ -3,9 +3,8 @@ import axios, { Axios } from "axios";
 import Loading from "../Components/Loading/Loading";
 import { AuthContextType } from "./context";
 import { toast } from "react-toastify";
-import { AxiosError } from "axios";
 
-const AuthContext = createContext<AuthContextType>({
+export const initialValues: AuthContextType = {
   user: null,
   isLoggedIn: false,
   logOutUser: () => {},
@@ -26,7 +25,9 @@ const AuthContext = createContext<AuthContextType>({
   handleUserDelete: () => {},
   logOut: false,
   setLogOut: () => {},
-});
+};
+
+const AuthContext = createContext<AuthContextType>(initialValues);
 
 const API_URL = import.meta.env.VITE_SERVER_URL;
 

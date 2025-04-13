@@ -9,7 +9,7 @@ import Loading from "../Components/Loading/Loading";
 
 import axios from "axios";
 
-const ProjectContext = createContext<ProjectContextType>({
+export const initialValues: ProjectContextType = {
   projects: [],
   setProjects: () => {},
   handleDeleteProject: () => {},
@@ -21,7 +21,9 @@ const ProjectContext = createContext<ProjectContextType>({
   setDropdown: () => {},
   background: false,
   setBackGround: () => {},
-});
+};
+
+const ProjectContext = createContext<ProjectContextType>(initialValues);
 
 function ProjectContextWrapper(props: React.PropsWithChildren<{}>) {
   const { isLoggedIn, token } = useContext(AuthContext);

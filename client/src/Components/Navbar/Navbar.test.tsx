@@ -1,80 +1,151 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { AuthContext } from "../../Context/AuthContext"; // Import AuthContext to mock it
 import Navbar from "../../Components/Navbar/Navbar";
-import {
-  defaultAuthContextValue,
-  defaultProjectContextValue,
-} from "../../test-utils/helpers";
-import { AuthContextType, ProjectContextType } from "../../Context/context";
-import { BrowserRouter } from "react-router-dom";
-import { ProjectContext } from "../../Context/ProjectContext";
+import { TestComponent } from "../../test-utils/TestComponent";
+import { BoardType, ProjectType } from "../../utils/types";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-export const renderNavbar = (
-  ui: React.ReactElement,
-  overrides: Partial<AuthContextType> = {},
-  projectContextOverride: Partial<ProjectContextType> = {}
-) => {
-  return render(
-    <BrowserRouter>
-      <AuthContext.Provider
-        value={{ ...defaultAuthContextValue, ...overrides }}
-      >
-        <ProjectContext.Provider
-          value={{ ...defaultProjectContextValue, ...projectContextOverride }}
-        >
-          {ui}
-        </ProjectContext.Provider>
-      </AuthContext.Provider>
-    </BrowserRouter>
-  );
-};
+const mockedUsedNavigate = vi.fn();
+
+vi.mock("react-router-dom", async () => {
+  const actual =
+    await vi.importActual<typeof import("react-router-dom")>(
+      "react-router-dom"
+    );
+  return {
+    ...actual,
+    useNavigate: () => mockedUsedNavigate,
+  };
+});
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
+
 describe("Navbar Component", () => {
-  test("renders Navbar if user is not logged in", () => {
-    renderNavbar(<Navbar />);
+  it("renders Navbar if user is not logged in", async () => {
+    TestComponent(<Navbar />, { authOverrides: { isLoggedIn: false } });
     expect(screen.getByRole("button", { name: /Login/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Signup/i })).toBeInTheDocument();
     expect(screen.getByText("TaskFlow")).toBeInTheDocument();
   });
 
-  test("renders Navbar if user is logged in", () => {
-    renderNavbar(<Navbar />, { isLoggedIn: true });
+  it("renders Navbar if user is logged in", async () => {
+    TestComponent(<Navbar />);
     expect(
       screen.getByRole("button", { name: /Dashboard/i })
     ).toBeInTheDocument();
     expect(screen.getByRole("img", { name: /profile/i })).toBeInTheDocument();
   });
 
-  test("renders", async () => {
-    const setDropdownMock = jest.fn();
-    const dropdownRefMock = { current: document.createElement("div") };
-    const favRefMock = { current: document.createElement("div") };
-    renderNavbar(
-      <Navbar />,
-      { isLoggedIn: true },
-      { dropdown: true, favoriteProjects: [], setDropdown: setDropdownMock }
-    );
-    document.body.appendChild(dropdownRefMock.current);
-    document.body.appendChild(favRefMock.current);
+  it("handles dropdown toggle on outside click", async () => {
+    const mockSetDropdown = vi.fn();
+    TestComponent(<Navbar />, {
+      projectContextOverride: {
+        dropdown: true,
+        favoriteProjects: [],
+        setDropdown: mockSetDropdown,
+      },
+    });
     fireEvent.click(document.body);
-    expect(setDropdownMock).toHaveBeenCalled();
-    const toggleFunction = setDropdownMock.mock.calls[0][0];
-    expect(toggleFunction(true)).toBe(false);
+
+    expect(mockSetDropdown).toHaveBeenCalledWith(false);
   });
 
-  test("rendersn2", async () => {
-    const setDropdownMock = jest.fn();
-    const favRefMock = { current: document.createElement("div") };
-    renderNavbar(
-      <Navbar />,
-      { isLoggedIn: true },
-      { dropdown: true, favoriteProjects: [], setDropdown: setDropdownMock }
+  it("clicking create a project takes the user to createproject", async () => {
+    TestComponent(<Navbar />);
+
+    var createProject = screen.getByTestId("create-project");
+    expect(createProject).toBeInTheDocument();
+
+    fireEvent.click(createProject);
+
+    expect(mockedUsedNavigate).toHaveBeenCalledWith("/createaproject");
+  });
+
+  it("clicking favorites takes the user favorites page", async () => {
+    const favBoard = {
+      _id: "abc123",
+      projectId: "proj456",
+    } as Partial<BoardType>;
+
+    TestComponent(<Navbar />, {
+      boardContextOverride: {
+        favBoards: [favBoard] as BoardType[],
+      },
+    });
+
+    var favorites = screen.getByTestId("favorites");
+    expect(favorites).toBeInTheDocument();
+    fireEvent.click(favorites);
+
+    var getFavBoards = screen.queryAllByTestId("fav-boards");
+    fireEvent.click(getFavBoards[0]);
+
+    expect(mockedUsedNavigate).toHaveBeenCalledWith(
+      `/projects/${favBoard.projectId}/boards/${favBoard._id}`
     );
-    const dropdownFavClick = document.body.appendChild(favRefMock.current);
-    document.body.appendChild(favRefMock.current);
-    fireEvent.click(document.body);
-    expect(setDropdownMock).toHaveBeenCalled();
-    const toggleFunction = setDropdownMock.mock.calls[0][0];
-    expect(toggleFunction(true)).toBe(false);
+    var getFavBoards = screen.queryAllByTestId("fav-boards");
+    fireEvent.click(getFavBoards[1]);
+
+    expect(mockedUsedNavigate).toHaveBeenCalledWith(
+      `/projects/${favBoard.projectId}/boards/${favBoard._id}`
+    );
+  });
+
+  it("clicking favorite projects takes user the project page", async () => {
+    const favoriteProjects = {
+      _id: 1,
+      projectName: "projectName",
+    } as Partial<ProjectType>;
+
+    TestComponent(<Navbar />, {
+      projectContextOverride: {
+        favoriteProjects: [favoriteProjects] as ProjectType[],
+      },
+    });
+
+    var favorites = screen.getByTestId("favorites");
+    expect(favorites).toBeInTheDocument();
+    fireEvent.click(favorites);
+
+    var getFavProjects = screen.queryAllByTestId("fav-project");
+    fireEvent.click(getFavProjects[0]);
+
+    expect(mockedUsedNavigate).toHaveBeenCalledWith(
+      `/projects/${favoriteProjects._id}`
+    );
+    var getFavProjects = screen.queryAllByTestId("fav-project");
+    fireEvent.click(getFavProjects[1]);
+
+    expect(mockedUsedNavigate).toHaveBeenCalledWith(
+      `/projects/${favoriteProjects._id}`
+    );
+  });
+
+  it("clicking create a project close create board", async () => {
+    TestComponent(<Navbar />);
+    var createProject = screen.getByTestId("set-project");
+    fireEvent.click(createProject);
+
+    var createBoard = screen.queryByTestId("set-board");
+    expect(createBoard).not.toBeInTheDocument();
+  });
+
+  it("clicking create a board close create project", async () => {
+    TestComponent(<Navbar />);
+    var createProject = screen.getByTestId("set-board");
+    fireEvent.click(createProject);
+
+    var createBoard = screen.queryByTestId("set-project");
+    expect(createBoard).not.toBeInTheDocument();
+  });
+
+  it("clicking profile takes user profile page", async () => {
+    TestComponent(<Navbar />);
+    var profile = screen.getByTestId("profile");
+    fireEvent.click(profile);
+
+    expect(mockedUsedNavigate).toHaveBeenCalledWith("/profile");
   });
 });
