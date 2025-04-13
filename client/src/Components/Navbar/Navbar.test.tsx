@@ -3,26 +3,34 @@ import "@testing-library/jest-dom";
 import Navbar from "../../Components/Navbar/Navbar";
 import { TestComponent } from "../../test-utils/TestComponent";
 import { BoardType, ProjectType } from "../../utils/types";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const mockedUsedNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useNavigate: () => mockedUsedNavigate,
-}));
+const mockedUsedNavigate = vi.fn();
+
+vi.mock("react-router-dom", async () => {
+  const actual =
+    await vi.importActual<typeof import("react-router-dom")>(
+      "react-router-dom"
+    );
+  return {
+    ...actual,
+    useNavigate: () => mockedUsedNavigate,
+  };
+});
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 describe("Navbar Component", () => {
-  test("renders Navbar if user is not logged in", async () => {
+  it("renders Navbar if user is not logged in", async () => {
     TestComponent(<Navbar />, { authOverrides: { isLoggedIn: false } });
     expect(screen.getByRole("button", { name: /Login/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Signup/i })).toBeInTheDocument();
     expect(screen.getByText("TaskFlow")).toBeInTheDocument();
   });
 
-  test("renders Navbar if user is logged in", async () => {
+  it("renders Navbar if user is logged in", async () => {
     TestComponent(<Navbar />);
     expect(
       screen.getByRole("button", { name: /Dashboard/i })
@@ -30,8 +38,8 @@ describe("Navbar Component", () => {
     expect(screen.getByRole("img", { name: /profile/i })).toBeInTheDocument();
   });
 
-  test("handles dropdown toggle on outside click", async () => {
-    const mockSetDropdown = jest.fn();
+  it("handles dropdown toggle on outside click", async () => {
+    const mockSetDropdown = vi.fn();
     TestComponent(<Navbar />, {
       projectContextOverride: {
         dropdown: true,
@@ -44,7 +52,7 @@ describe("Navbar Component", () => {
     expect(mockSetDropdown).toHaveBeenCalledWith(false);
   });
 
-  test("clicking create a project takes the user to createproject", async () => {
+  it("clicking create a project takes the user to createproject", async () => {
     TestComponent(<Navbar />);
 
     var createProject = screen.getByTestId("create-project");
@@ -55,7 +63,7 @@ describe("Navbar Component", () => {
     expect(mockedUsedNavigate).toHaveBeenCalledWith("/createaproject");
   });
 
-  test("clicking favorites takes the user favorites page", async () => {
+  it("clicking favorites takes the user favorites page", async () => {
     const favBoard = {
       _id: "abc123",
       projectId: "proj456",
@@ -85,7 +93,7 @@ describe("Navbar Component", () => {
     );
   });
 
-  test("clicking favorite projects takes user the project page", async () => {
+  it("clicking favorite projects takes user the project page", async () => {
     const favoriteProjects = {
       _id: 1,
       projectName: "projectName",
@@ -115,7 +123,7 @@ describe("Navbar Component", () => {
     );
   });
 
-  test("clicking create a project close create board", async () => {
+  it("clicking create a project close create board", async () => {
     TestComponent(<Navbar />);
     var createProject = screen.getByTestId("set-project");
     fireEvent.click(createProject);
@@ -124,7 +132,7 @@ describe("Navbar Component", () => {
     expect(createBoard).not.toBeInTheDocument();
   });
 
-  test("clicking create a board close create project", async () => {
+  it("clicking create a board close create project", async () => {
     TestComponent(<Navbar />);
     var createProject = screen.getByTestId("set-board");
     fireEvent.click(createProject);
@@ -133,7 +141,7 @@ describe("Navbar Component", () => {
     expect(createBoard).not.toBeInTheDocument();
   });
 
-  test("clicking profile takes user profile page", async () => {
+  it("clicking profile takes user profile page", async () => {
     TestComponent(<Navbar />);
     var profile = screen.getByTestId("profile");
     fireEvent.click(profile);

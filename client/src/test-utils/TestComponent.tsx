@@ -3,7 +3,6 @@ import {
   BoardContextType,
   ProjectContextType,
 } from "../Context/context";
-import { ProjectType } from "../utils/types";
 import { AuthContext } from "../Context/AuthContext";
 import { ProjectContext } from "../Context/ProjectContext";
 import { render } from "@testing-library/react";

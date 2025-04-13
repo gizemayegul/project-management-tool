@@ -2,9 +2,10 @@ import { screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import Home from "../../Pages/Home/Home";
 import { TestComponent } from "../../test-utils/TestComponent";
+import { describe, expect, it, test } from "vitest";
 
 describe("Home", () => {
-  test("renders home page", () => {
+  it("renders home page", () => {
     TestComponent(<Home />);
     expect(
       screen.getByText("Boost your productivity by using our application")

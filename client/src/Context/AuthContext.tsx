@@ -3,7 +3,6 @@ import axios, { Axios } from "axios";
 import Loading from "../Components/Loading/Loading";
 import { AuthContextType } from "./context";
 import { toast } from "react-toastify";
-import { AxiosError } from "axios";
 
 export const initialValues: AuthContextType = {
   user: null,

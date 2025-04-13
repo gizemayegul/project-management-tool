@@ -1,88 +1,61 @@
 import { fireEvent, screen, render, waitFor } from "@testing-library/react";
-import "@testing-library/jest-dom";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { TestComponent } from "../../test-utils/TestComponent";
 import CreateBoard from "./CreateBoard";
-import { BoardType, ProjectType } from "../../utils/types";
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, AxiosRequestHeaders } from "axios";
+import { ProjectType } from "../../utils/types";
 
-jest.mock("axios");
-const mockedAxios = axios as jest.Mocked<typeof axios>;
+vi.mock("axios", async () => {
+  const actual = await vi.importActual<typeof import("axios")>("axios");
+  return {
+    ...actual,
+    default: {
+      ...actual.default,
+      post: vi.fn(),
+    },
+  };
+});
 
-const mockedUsedNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useNavigate: () => mockedUsedNavigate,
-  useParams: () => ({ projectId: "1" }), // Mock the projectId
-}));
+const mockedAxios = axios as unknown as {
+  post: ReturnType<typeof vi.fn>;
+};
 
-jest.mock("react-toastify", () => ({
-  ...jest.requireActual("react-toastify"),
-  toast: {
-    error: jest.fn(),
-  },
-}));
+const mockedUsedNavigate = vi.fn();
 
-beforeEach(() => {
-  jest.clearAllMocks();
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual("react-router-dom");
+  return {
+    ...actual,
+    useNavigate: () => mockedUsedNavigate,
+    useParams: () => ({ projectId: 1 }),
+  };
+});
+const { mockedMethod } = vi.hoisted(() => {
+  return { mockedMethod: vi.fn() };
+});
+
+vi.mock("react-toastify", async () => {
+  return {
+    toast: {
+      error: mockedMethod,
+    },
+  };
 });
 
 describe("CreateBoard Component", () => {
-  test("creating a board succesfully takes user to board page", async () => {
+  it("creating a board successfully takes user to board page", async () => {
     mockedAxios.post.mockResolvedValueOnce({
       status: 200,
-      data: { boardInfo: { _id: "board123" } },
-    });
-    TestComponent(<CreateBoard />, {
-      projectContextOverride: {
-        projects: [{ _id: 1, projectName: "projectName" }] as ProjectType[],
-      },
-      authOverrides: {
-        token: "test-token",
-      },
-    });
-
-    var inputField = screen.getByTestId("board-name-input");
-    fireEvent.change(inputField, { target: { value: "New Board Name" } });
-
-    var createButton = screen.getByTestId("create-board");
-    fireEvent.click(createButton);
-
-    await waitFor(() => {
-      expect(mockedUsedNavigate).toHaveBeenCalledWith(
-        "/projects/1/boards/board123"
-      );
-    });
-  });
-
-  test("shows error toast on board creation failure", async () => {
-    const errorMessage = "Error creating board";
-    const axiosError = new AxiosError("Request failed");
-    axiosError.response = {
       data: {
-        message: "Error creating board",
-        code: "BOARD_CREATION_FAILED",
-        details: "Invalid board name or missing project ID",
+        boardInfo: {
+          _id: "board123",
+          boardName: "New Board Name",
+        },
       },
-      status: 400,
-      statusText: "Bad Request",
-      headers: {
-        "content-type": "application/json",
-      },
-      config: {
-        url: "http://localhost:3000/1/createboard",
-        method: "post",
-        headers: new axios.AxiosHeaders({
-          Authorization: "Bearer test-token",
-        }),
-      },
-    };
-    mockedAxios.post.mockRejectedValueOnce(axiosError);
-
-    const { toast } = require("react-toastify");
-
+    });
     TestComponent(<CreateBoard />, {
       projectContextOverride: {
-        projects: [{ _id: 1, projectName: "projectName" }] as ProjectType[],
+        projects: [{ _id: 1, projectName: "projectName" } as ProjectType],
       },
       authOverrides: {
         token: "test-token",
@@ -96,7 +69,50 @@ describe("CreateBoard Component", () => {
     fireEvent.click(screen.getByTestId("create-board"));
 
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith(errorMessage);
+      expect(mockedUsedNavigate).toHaveBeenCalledWith(
+        "/projects/1/boards/board123"
+      );
+    });
+  });
+
+  it("unsuccesful board creation handles the error message", async () => {
+    const error = new AxiosError(
+      "Board creation failed",
+      "400",
+      undefined,
+      null,
+      {
+        status: 400,
+        data: { message: "Board creation failed" },
+        statusText: "Bad Request",
+        headers: {},
+        config: {
+          headers: {
+            Authorization: "Bearer test-token",
+          } as AxiosRequestHeaders,
+        },
+      }
+    );
+
+    mockedAxios.post.mockRejectedValueOnce(error);
+
+    TestComponent(<CreateBoard />, {
+      projectContextOverride: {
+        projects: [{ _id: 1, projectName: "projectName" } as ProjectType],
+      },
+      authOverrides: {
+        token: "test-token",
+      },
+    });
+
+    fireEvent.change(screen.getByTestId("board-name-input"), {
+      target: { value: "New Board Name" },
+    });
+
+    fireEvent.click(screen.getByTestId("create-board"));
+
+    await waitFor(() => {
+      expect(mockedMethod).toHaveBeenCalledWith("Board creation failed");
     });
   });
 });
